@@ -1,0 +1,428 @@
+{
+  "stage": "functional-design",
+  "unit": "u1-mvp-foundation-skeleton",
+  "upstream_ids": [
+    "AC1.1.1",
+    "AC1.1.2",
+    "AC1.1.3",
+    "AC1.1.4",
+    "AC1.2.1",
+    "AC1.2.2",
+    "AC1.2.3",
+    "AC2.1.1",
+    "AC2.1.2",
+    "AC2.1.3",
+    "AC2.2.1",
+    "AC2.2.2",
+    "AC2.2.3",
+    "AC2.3.1",
+    "AC2.3.2",
+    "AC2.3.3",
+    "AC2.3.4",
+    "AC2.4.1",
+    "AC2.4.2",
+    "AC2.4.3",
+    "AC2.4.4",
+    "AC2.5.1",
+    "AC2.5.2",
+    "AC2.5.3",
+    "AC3.1.1",
+    "AC3.1.2",
+    "AC3.1.3",
+    "AC3.1.4",
+    "AC3.2.1",
+    "AC3.2.2",
+    "AC3.2.3",
+    "AC3.3.1",
+    "AC3.3.2",
+    "AC3.3.3",
+    "AC3.3.4",
+    "AC4.1.1",
+    "AC4.1.2",
+    "AC4.1.3",
+    "AC4.2.1",
+    "AC4.2.2",
+    "AC4.2.3",
+    "AC5.1.1",
+    "AC5.1.2",
+    "AC5.1.3",
+    "AC5.2.1",
+    "AC5.2.2",
+    "AC5.2.3",
+    "AC5.3.1",
+    "AC5.3.2",
+    "AC5.3.3",
+    "AC5.4.1",
+    "AC5.4.2",
+    "AC5.4.3",
+    "AC5.5.1",
+    "AC5.5.2",
+    "AC5.5.3",
+    "AC5.6.1",
+    "AC5.6.2",
+    "AC5.6.3"
+  ],
+  "coverage": [
+    {
+      "id": "AC1.1.1",
+      "status": "Deferred",
+      "note": "U1 defines 7-day slot/state baseline and continuity metadata; U2/U4 complete behavior and UI.",
+      "target": "BR1.1, BR1.13"
+    },
+    {
+      "id": "AC1.1.2",
+      "status": "Deferred",
+      "note": "U1 slot structure baseline; U4 renders required slots.",
+      "target": "BR1.1"
+    },
+    {
+      "id": "AC1.1.3",
+      "status": "Deferred",
+      "note": "U1 preserves EMPTY/unfilled states; U4 presentation.",
+      "target": "BR1.1, BR1.13"
+    },
+    {
+      "id": "AC1.1.4",
+      "status": "Deferred",
+      "note": "U1 local continuity metadata baseline; U4 navigation/Today-Plan UX.",
+      "target": "BR1.13"
+    },
+    {
+      "id": "AC1.2.1",
+      "status": "Deferred",
+      "note": "U1 slot assignment state baseline; U2/U4 complete replacement flow.",
+      "target": "BR1.1"
+    },
+    {
+      "id": "AC1.2.2",
+      "status": "Deferred",
+      "note": "U1 state/lock awareness baseline; U2/U4 complete change behavior.",
+      "target": "BR1.1, BR1.9"
+    },
+    {
+      "id": "AC1.2.3",
+      "status": "Deferred",
+      "note": "U1 stale/explicit regeneration baseline; U3/U4 complete interaction.",
+      "target": "BR1.9, BR1.7"
+    },
+    {
+      "id": "AC2.1.1",
+      "status": "Deferred",
+      "note": "U1 source/fallback contract baseline; U2 completes Sydänmerkki acquisition/filtering.",
+      "target": "BR1.3, BR1.14"
+    },
+    {
+      "id": "AC2.1.2",
+      "status": "Deferred",
+      "note": "U1 DataSourceStatus baseline; U2/U4 complete labels/UI.",
+      "target": "BR1.3"
+    },
+    {
+      "id": "AC2.1.3",
+      "status": "Deferred",
+      "note": "U1 explicit unavailable/fallback states; U2/U4 complete behavior.",
+      "target": "BR1.3, BR1.13"
+    },
+    {
+      "id": "AC2.2.1",
+      "status": "Deferred",
+      "note": "U1 eligibility rule baseline; U2 completes candidate selection.",
+      "target": "BR1.2"
+    },
+    {
+      "id": "AC2.2.2",
+      "status": "OK",
+      "note": "U1 defines exclusion for >30 min weekday slots via baseline rule/contract.",
+      "target": "BR1.2"
+    },
+    {
+      "id": "AC2.2.3",
+      "status": "OK",
+      "note": "U1 defines minimum weekday-time exclusion explanation data fields (reasonCode, message/text source marker, slot/candidate refs, source marker); U2 may generalize; U4 presents.",
+      "target": "BR1.2"
+    },
+    {
+      "id": "AC2.3.1",
+      "status": "Deferred",
+      "note": "U1 fallback status contract; U2 implements live/fallback behavior.",
+      "target": "BR1.3"
+    },
+    {
+      "id": "AC2.3.2",
+      "status": "Deferred",
+      "note": "U1 explicit fallback states; U2/U4 complete UX.",
+      "target": "BR1.3, BR1.13"
+    },
+    {
+      "id": "AC2.3.3",
+      "status": "Deferred",
+      "note": "U1 source status types; U2/U4 complete labels.",
+      "target": "BR1.3"
+    },
+    {
+      "id": "AC2.3.4",
+      "status": "Deferred",
+      "note": "U1 typed unavailable state; U2/U4 complete handling.",
+      "target": "BR1.3, BR1.13"
+    },
+    {
+      "id": "AC2.4.1",
+      "status": "Deferred",
+      "note": "U1 season context/override DTO baseline; U2 completes season logic.",
+      "target": "BR1.4"
+    },
+    {
+      "id": "AC2.4.2",
+      "status": "Deferred",
+      "note": "U1 SEASON_FIT_UNKNOWN/status baseline; U2/U4 complete behavior.",
+      "target": "BR1.4"
+    },
+    {
+      "id": "AC2.4.3",
+      "status": "Deferred",
+      "note": "U1 override precedence in contracts; U2 completes effective resolution.",
+      "target": "BR1.4"
+    },
+    {
+      "id": "AC2.4.4",
+      "status": "Deferred",
+      "note": "U1 override/reset model baseline; U2/U4 complete UX.",
+      "target": "BR1.4"
+    },
+    {
+      "id": "AC2.5.1",
+      "status": "Deferred",
+      "note": "U1 allows nutrition cues when available; U2/U4 complete display.",
+      "target": "BR1.14"
+    },
+    {
+      "id": "AC2.5.2",
+      "status": "Deferred",
+      "note": "U1 requires `Nutrition information unavailable` handling contract; U2/U4 present.",
+      "target": "BR1.14"
+    },
+    {
+      "id": "AC2.5.3",
+      "status": "Deferred",
+      "note": "U1 non-medical/view-only constraint captured; downstream implementation must comply.",
+      "target": "BR1.14"
+    },
+    {
+      "id": "AC3.1.1",
+      "status": "OK",
+      "note": "U1 defines ADR-006 lock snapshot, explicit generate action, and ingredient re-resolution contracts.",
+      "target": "BR1.6, BR1.7, BR1.8"
+    },
+    {
+      "id": "AC3.1.2",
+      "status": "OK",
+      "note": "U1 defines measurable merge baseline (normalized name + compatible units/amounts; else separate; no fabrication).",
+      "target": "BR1.10"
+    },
+    {
+      "id": "AC3.1.3",
+      "status": "OK",
+      "note": "U1 requires explicit unresolved/missing data handling and no fabrication.",
+      "target": "BR1.8, BR1.10"
+    },
+    {
+      "id": "AC3.1.4",
+      "status": "OK",
+      "note": "U1 requires explicit Generate/Regenerate action and locked/finalized precondition.",
+      "target": "BR1.7"
+    },
+    {
+      "id": "AC3.2.1",
+      "status": "OK",
+      "note": "U1 defines STALE_LOCK behavior and exact stale warning text per ADR-006/R-02.",
+      "target": "BR1.9"
+    },
+    {
+      "id": "AC3.2.2",
+      "status": "OK",
+      "note": "U1 requires explicit confirmation before regeneration replaces edited list content.",
+      "target": "BR1.9"
+    },
+    {
+      "id": "AC3.2.3",
+      "status": "OK",
+      "note": "U1 prohibits auto-regeneration.",
+      "target": "BR1.9"
+    },
+    {
+      "id": "AC3.3.1",
+      "status": "Deferred",
+      "note": "U1 defines editable shopping-list item baseline; U3/U4 complete edit UX/behavior.",
+      "target": "BR1.11"
+    },
+    {
+      "id": "AC3.3.2",
+      "status": "Deferred",
+      "note": "U1 checked/editable fields baseline; U3/U4 complete behavior.",
+      "target": "BR1.11"
+    },
+    {
+      "id": "AC3.3.3",
+      "status": "OK",
+      "note": "U1 defines export uses current edited shopping list state.",
+      "target": "BR1.11"
+    },
+    {
+      "id": "AC3.3.4",
+      "status": "Deferred",
+      "note": "U1 fallback export boundary; U3/U4 complete full edit-before-export UX.",
+      "target": "BR1.11"
+    },
+    {
+      "id": "AC4.1.1",
+      "status": "OK",
+      "note": "U1 defines mandatory share-sheet/copy-text fallback boundary and typed results.",
+      "target": "BR1.11"
+    },
+    {
+      "id": "AC4.1.2",
+      "status": "OK",
+      "note": "U1 uses current edited list for export payload.",
+      "target": "BR1.11"
+    },
+    {
+      "id": "AC4.1.3",
+      "status": "Deferred",
+      "note": "Official-compatible S-ostoslista method investigational; extraction seam deferred to U3 per Q3=B/Q7=A.",
+      "target": "BR1.11"
+    },
+    {
+      "id": "AC4.2.1",
+      "status": "Deferred",
+      "note": "U1 store selection/suggestion contracts; U2/U3/U4 complete UX and location flow.",
+      "target": "BR1.5"
+    },
+    {
+      "id": "AC4.2.2",
+      "status": "OK",
+      "note": "U1 defines PRISMA name/presence-only result states PRESENT/NOT_FOUND/UNKNOWN with reason.",
+      "target": "BR1.5"
+    },
+    {
+      "id": "AC4.2.3",
+      "status": "OK",
+      "note": "U1 defines unknown/manual fallback and batch projection/remap contracts with explicit unknown reasons.",
+      "target": "BR1.5, BR1.12"
+    },
+    {
+      "id": "AC5.1.1",
+      "status": "Deferred",
+      "note": "U1 logical local persistence baseline; U2-U4/NFR Design complete implementation.",
+      "target": "BR1.13"
+    },
+    {
+      "id": "AC5.1.2",
+      "status": "Deferred",
+      "note": "U1 continuity metadata baseline; full degraded/offline behavior completed later.",
+      "target": "BR1.13"
+    },
+    {
+      "id": "AC5.1.3",
+      "status": "Deferred",
+      "note": "U1 typed fallback states; U2-U4 complete flows.",
+      "target": "BR1.13, BR1.3, BR1.5"
+    },
+    {
+      "id": "AC5.2.1",
+      "status": "Deferred",
+      "note": "U1 explicit fallback/next-action contract shapes; U4 presents.",
+      "target": "BR1.13"
+    },
+    {
+      "id": "AC5.2.2",
+      "status": "Deferred",
+      "note": "U1 requires no fabricated data in contracts/rules; all units must implement.",
+      "target": "BR1.13"
+    },
+    {
+      "id": "AC5.2.3",
+      "status": "Deferred",
+      "note": "U1 state/status baseline; U4 synchronizes Today/Plan UX.",
+      "target": "BR1.13"
+    },
+    {
+      "id": "AC5.3.1",
+      "status": "Deferred",
+      "note": "U1 stale/local metadata baseline; U4 renders statuses.",
+      "target": "BR1.13"
+    },
+    {
+      "id": "AC5.3.2",
+      "status": "Deferred",
+      "note": "U1 typed result/userActionRequired fields; U4 presents next actions.",
+      "target": "BR1.13"
+    },
+    {
+      "id": "AC5.3.3",
+      "status": "Deferred",
+      "note": "Cross-cutting status visibility; U1 provides baseline types.",
+      "target": "BR1.13"
+    },
+    {
+      "id": "AC5.4.1",
+      "status": "Deferred",
+      "note": "Nutrition cue availability baseline; U2/U4 complete.",
+      "target": "BR1.14"
+    },
+    {
+      "id": "AC5.4.2",
+      "status": "Deferred",
+      "note": "Partial data labeling contract baseline; U2/U4 complete.",
+      "target": "BR1.14"
+    },
+    {
+      "id": "AC5.4.3",
+      "status": "Deferred",
+      "note": "View-only non-medical constraint; U2/U4 implementation must comply.",
+      "target": "BR1.14"
+    },
+    {
+      "id": "AC5.5.1",
+      "status": "Deferred",
+      "note": "Location optional/manual store selection in contracts; U4/U2 complete flow.",
+      "target": "BR1.5, BR1.13"
+    },
+    {
+      "id": "AC5.5.2",
+      "status": "Deferred",
+      "note": "Minimal-data/on-device baseline; NFR/privacy implementation later.",
+      "target": "BR1.13"
+    },
+    {
+      "id": "AC5.5.3",
+      "status": "Deferred",
+      "note": "No MealPlanner account assumption preserved; later sync out of MVP.",
+      "target": "BR1.13"
+    },
+    {
+      "id": "AC5.6.1",
+      "status": "Deferred",
+      "note": "Curated/imported fallback status baseline; U2 completes source behavior.",
+      "target": "BR1.3"
+    },
+    {
+      "id": "AC5.6.2",
+      "status": "Deferred",
+      "note": "PRISMA manual fallback baseline; U2/U3 complete.",
+      "target": "BR1.5, BR1.13"
+    },
+    {
+      "id": "AC5.6.3",
+      "status": "OK",
+      "note": "U1 mandates share-sheet/copy-text fallback; official S-ostoslista method not required.",
+      "target": "BR1.11"
+    }
+  ],
+  "reverse": [
+    { "id": "BR1.1", "status": "OK", "target": "Covered by AC1.1.x/AC5.x baseline and schedule structure requirements; cross-cutting foundation rule." },
+    { "id": "BR1.3", "status": "OK", "target": "Covered by AC2.3.x Sydänmerkki attempt/fallback/visibility and AC5.x fallback-state requirements." },
+    { "id": "BR1.4", "status": "OK", "target": "Covered by AC2.4.x season context/unknown fit/override requirements." },
+    { "id": "BR1.13", "status": "OK", "target": "Covered by AC1.1.1, AC2.3.3, AC2.5.x, AC4.1.1, AC5.1.x, AC5.3.x, AC5.4.x, AC5.6.x reliability/fallback/continuity requirements." },
+    { "id": "BR1.14", "status": "OK", "target": "Covered by AC2.1.x and AC5.5.x nutrition availability/non-medical baseline requirements." }
+  ]
+}

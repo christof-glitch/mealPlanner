@@ -1,0 +1,43 @@
+{
+  "stage": "domain-design",
+  "upstream_ids": [
+    "US1.1",
+    "US1.2",
+    "US2.1",
+    "US2.5",
+    "US3.1",
+    "US3.3",
+    "US4.1",
+    "US4.2",
+    "US5.1",
+    "US5.6",
+    "US2.2",
+    "US3.2",
+    "US5.3",
+    "US5.2",
+    "US5.4",
+    "US5.5",
+    "US2.3",
+    "US2.4"
+  ],
+  "coverage": [
+    { "id": "US1.1", "status": "OK", "target": "MealPlanningComponent (WeeklyPlan, MealSlot)" },
+    { "id": "US1.2", "status": "OK", "target": "MealPlanningComponent, PresentationUiComponent" },
+    { "id": "US2.1", "status": "OK", "target": "RecipeCatalogComponent (Recipe), PresentationUiComponent" },
+    { "id": "US2.5", "status": "OK", "target": "RecipeCatalogComponent (Sydänmerkki source/fallback status)" },
+    { "id": "US3.1", "status": "OK", "target": "ShoppingListComponent (ShoppingList, ShoppingItem), MealPlanningComponent (LockedRecipeSnapshot)" },
+    { "id": "US3.3", "status": "OK", "target": "StoreAvailabilityComponent (PrismaStore, IngredientPresenceCheck), ShoppingListComponent" },
+    { "id": "US4.1", "status": "OK", "target": "ShoppingListComponent (export/fallback, current edited list)" },
+    { "id": "US4.2", "status": "OK", "target": "ShoppingListComponent (official S-ostoslista-compatible attempt + fallback)" },
+    { "id": "US5.1", "status": "OK", "target": "PreferencesPrivacyComponent, StoreAvailabilityComponent, PresentationUiComponent" },
+    { "id": "US5.6", "status": "OK", "target": "PreferencesPrivacyComponent (on-device/minimal data), local persistence boundaries" },
+    { "id": "US2.2", "status": "OK", "target": "RecipeCatalogComponent (weekday total-time eligibility)" },
+    { "id": "US3.2", "status": "OK", "target": "ShoppingListComponent (explicit generate/regenerate, edits, no silent loss)" },
+    { "id": "US5.3", "status": "OK", "target": "StoreAvailabilityComponent, ShoppingListComponent (Unknown/manual checklist fallback)" },
+    { "id": "US5.2", "status": "OK", "target": "StoreAvailabilityComponent (nearest PRISMA suggestion, best effort)" },
+    { "id": "US5.4", "status": "OK", "target": "RecipeCatalogComponent (curated/imported fallback catalog)" },
+    { "id": "US5.5", "status": "OK", "target": "PresentationUiComponent, MealPlanningComponent, RecipeCatalogComponent, ShoppingListComponent (local/fallback/first-launch states)" },
+    { "id": "US2.3", "status": "OK", "target": "PreferencesPrivacyComponent (SeasonContext, override), RecipeCatalogComponent (season fit labels)" },
+    { "id": "US2.4", "status": "OK", "target": "RecipeCatalogComponent (nutrition cues/availability), PresentationUiComponent (Nutrition Balance Cue)" }
+  ]
+}

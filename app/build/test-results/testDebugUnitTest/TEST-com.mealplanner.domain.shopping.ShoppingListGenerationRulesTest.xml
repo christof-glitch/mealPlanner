@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.mealplanner.domain.shopping.ShoppingListGenerationRulesTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-11-09T12:36:31.918Z" hostname="jyu-mac-20260120.local" time="0.001">
+  <properties/>
+  <testcase name="known resolvable items do not invent amount or unit" classname="com.mealplanner.domain.shopping.ShoppingListGenerationRulesTest" time="0.0"/>
+  <testcase name="blank name known ingredient is not fabricated into resolved item" classname="com.mealplanner.domain.shopping.ShoppingListGenerationRulesTest" time="0.0"/>
+  <testcase name="incompatible units keep items separate without fabricating quantities" classname="com.mealplanner.domain.shopping.ShoppingListGenerationRulesTest" time="0.0"/>
+  <testcase name="same normalized name with missing amounts is kept separate and explicit" classname="com.mealplanner.domain.shopping.ShoppingListGenerationRulesTest" time="0.001"/>
+  <testcase name="missing or changed ingredient data becomes explicit unresolved without fabrication" classname="com.mealplanner.domain.shopping.ShoppingListGenerationRulesTest" time="0.0"/>
+  <testcase name="compatible ingredients merge by normalized name and compatible unit" classname="com.mealplanner.domain.shopping.ShoppingListGenerationRulesTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

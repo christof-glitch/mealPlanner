@@ -1,0 +1,44 @@
+{
+  "stage": "nfr-requirements",
+  "unit": "u1-mvp-foundation-skeleton",
+  "upstream_ids": [
+    "NFR1",
+    "NFR2",
+    "NFR3",
+    "NFR4",
+    "NFR5"
+  ],
+  "notes": "Derived requirement IDs in U1 NFR artifacts use local namespaces (e.g., NFR1.1 local continuity, NFR2.1 explicit states, NFR3.1 performance, NFR4.1 security/privacy, NFR5.1 medical scope). This intentional local numbering differs from inception NFR IDs; each inception NFR below is mapped semantically to the correct derived requirement(s)/artifact coverage.",
+  "coverage": [
+    {
+      "id": "NFR1",
+      "status": "OK",
+      "target": "tech-stack-decisions.md (Platform Android app MVP; Kotlin/Gradle Kotlin DSL/AndroidX baseline)",
+      "note": "Inception NFR1 — Platform scope (Android only). Satisfied by Android-only MVP scope and U1 tech-stack baseline; iOS/web out of MVP."
+    },
+    {
+      "id": "NFR2",
+      "status": "OK",
+      "target": "NFR2.1, NFR2.2, NFR2.3, NFR2.4 (local reliability/observability artifact IDs)",
+      "note": "Inception NFR2 — Usability/clarity of fallback states. Mapped to typed explicit states/next actions, state consistency (ADR-006 stale semantics), recovery behavior, and user-visible fallback/unknown/stale state contracts."
+    },
+    {
+      "id": "NFR3",
+      "status": "OK",
+      "target": "NFR4.1, NFR4.2, NFR4.3, NFR4.4, NFR4.5, NFR4.6 (local security/privacy artifact IDs)",
+      "note": "Inception NFR3 — Privacy and GDPR-aware handling. Mapped to no MealPlanner account, data minimization, optional purpose-limited location, no hardcoded secrets, and privacy-safe minimal diagnostics."
+    },
+    {
+      "id": "NFR4",
+      "status": "OK",
+      "target": "tech-stack-decisions.md (Testing frameworks; Testability/quality gates inception NFR4 baseline)",
+      "note": "Inception NFR4 — Testability and quality gates. Explicitly mapped to testability/quality-gates baseline aligned with team posture (key behaviors tested where practical, critical tests/CI checks run, existing tests green, no weakened targets); concrete frameworks/CI confirmed in NFR Design/build-and-test/Code Generation."
+    },
+    {
+      "id": "NFR5",
+      "status": "OK",
+      "target": "NFR3.1, NFR3.2, NFR3.3, NFR3.5 (local performance artifact IDs)",
+      "note": "Inception NFR5 — Performance and responsiveness. Mapped to local responsiveness target, bounded external adapters with fallback/non-blocking core flows, first useful local view, and deferred diagnosability/measurement method."
+    }
+  ]
+}

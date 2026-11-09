@@ -1,0 +1,42 @@
+{
+  "stage": "user-stories",
+  "upstream_ids": [
+    "FR1",
+    "FR2",
+    "FR3",
+    "FR4",
+    "FR5",
+    "FR6",
+    "FR7",
+    "FR8",
+    "FR9",
+    "FR10",
+    "FR11",
+    "FR12",
+    "NFR1",
+    "NFR2",
+    "NFR3",
+    "NFR4",
+    "NFR5"
+  ],
+  "coverage": [
+    { "id": "FR1", "status": "OK", "target": "US1.1" },
+    { "id": "FR2", "status": "OK", "target": "US1.2, US2.1, US3.1" },
+    { "id": "FR3", "status": "OK", "target": "US2.1, US2.2" },
+    { "id": "FR4", "status": "OK", "target": "US2.5, US5.4" },
+    { "id": "FR5", "status": "OK", "target": "US2.3" },
+    { "id": "FR6", "status": "OK", "target": "US2.4" },
+    { "id": "FR7", "status": "OK", "target": "US3.3, US5.1, US5.2" },
+    { "id": "FR8", "status": "OK", "target": "US3.3, US5.3" },
+    { "id": "FR9", "status": "OK", "target": "US3.1, US3.2" },
+    { "id": "FR10", "status": "OK", "target": "US4.1, US4.2" },
+    { "id": "FR11", "status": "OK", "target": "US5.2, US5.3, US5.4, US5.5" },
+    { "id": "FR12", "status": "OK", "target": "US2.3, US3.3, US5.1, US5.6" },
+    { "id": "NFR1", "status": "OK", "target": "US1.1" },
+    { "id": "NFR2", "status": "OK", "target": "US1.1, US1.2, US2.1, US2.2, US2.3, US2.4, US2.5, US3.1, US3.2, US3.3, US4.1, US5.1, US5.2, US5.3, US5.4, US5.5" },
+    { "id": "NFR3", "status": "OK", "target": "US2.3, US3.3, US5.1, US5.6" },
+    { "id": "NFR4", "status": "Deferred", "target": "build-and-test" },
+    { "id": "NFR5", "status": "OK", "target": "US5.5" }
+  ],
+  "reverse": []
+}
