@@ -1,0 +1,32 @@
+{
+  "stage": "code-generation",
+  "unit": "u2-recipe-planning-completion",
+  "version": 1,
+  "writes": [
+    {"path": "app/src/main/java/com/mealplanner/adapters/A1RecipeSourceAdapter.kt"},
+    {"path": "app/src/main/java/com/mealplanner/adapters/IntegrationStubs.kt"},
+    {"path": "app/src/main/java/com/mealplanner/adapters/RecipeSourceBoundary.kt"},
+    {"path": "app/src/main/java/com/mealplanner/domain/model/CoreTypes.kt"},
+    {"path": "app/src/main/java/com/mealplanner/domain/model/PlanModels.kt"},
+    {"path": "app/src/main/java/com/mealplanner/domain/model/ReasonsAndStatus.kt"},
+    {"path": "app/src/main/java/com/mealplanner/domain/model/RecipeModels.kt"},
+    {"path": "app/src/main/java/com/mealplanner/domain/model/U2Types.kt"},
+    {"path": "app/src/main/java/com/mealplanner/domain/model/U2Validation.kt"},
+    {"path": "app/src/main/java/com/mealplanner/domain/planning/C3SlotSelectionService.kt"},
+    {"path": "app/src/main/java/com/mealplanner/domain/recipe/AlternativeRecipesSelector.kt"},
+    {"path": "app/src/main/java/com/mealplanner/domain/recipe/NutritionCueCalculator.kt"},
+    {"path": "app/src/main/java/com/mealplanner/domain/recipe/RecipeCatalogPortAdapter.kt"},
+    {"path": "app/src/main/java/com/mealplanner/domain/recipe/RecipeCatalogService.kt"},
+    {"path": "app/src/main/java/com/mealplanner/domain/recipe/RecipeTimeNormalizationEvaluator.kt"},
+    {"path": "app/src/main/java/com/mealplanner/domain/recipe/SeasonFitEvaluator.kt"},
+    {"path": "app/src/test/java/com/mealplanner/adapters/A1RecipeSourceAdapterGateTest.kt"},
+    {"path": "app/src/test/java/com/mealplanner/diagnostics/U2DiagnosticsHookTest.kt"},
+    {"path": "app/src/test/java/com/mealplanner/domain/planning/C3SlotSelectionServiceTest.kt"},
+    {"path": "app/src/test/java/com/mealplanner/domain/recipe/AlternativeRecipesServiceTest.kt"},
+    {"path": "app/src/test/java/com/mealplanner/domain/recipe/NutritionCueCalculatorTest.kt"},
+    {"path": "app/src/test/java/com/mealplanner/domain/recipe/RecipeCatalogServiceTest.kt"},
+    {"path": "app/src/test/java/com/mealplanner/domain/recipe/RecipeTimeNormalizationEvaluatorTest.kt"},
+    {"path": "app/src/test/java/com/mealplanner/domain/recipe/SeasonFitEvaluatorTest.kt"},
+    {"path": "app/src/test/java/com/mealplanner/domain/recipe/U2ModelValidationTest.kt"}
+  ]
+}

@@ -1,0 +1,233 @@
+AIDLC-UNIT: u1-mvp-foundation-skeleton
+AIDLC-TESTING-CONTRACT: sha256:08f951c92a56228b04800253ce17226a44c030963a64e478b9006a6d4f7c3c01
+
+## Progress before the interruption
+
+This plan's build already wrote code, and the plan file ticks none of its 8 steps (the approved plan below shows none ticked, because ticks are not part of the approval). Check each step against the files in the project, tick the box of each one that is done, and carry on from the first that is not.
+
+
+## Files and commands
+
+Write and edit files yourself with your file tools, never through the shell (no heredoc, no `echo`, `printf`, or `python3` writing a file, no `sed -i`, no `mkdir`; the file-write tool creates any missing folder). A command the person asks for, or one the plan names (a package install, a build, a scaffolder, a migration, a formatter, a code generator, even a `mkdir`), still runs as written. Do not stash, reset, check out over, restore or clean the person's working tree, and do not install what the plan does not name: for a before-and-after comparison, run the check on the unchanged tree before you edit. Every file you make on your own, a scratch file, a helper script, a command's output, stays inside the project (nothing in /tmp or any folder outside it), and a command's output is read from the tool result, never sent to a file; a file the person asks for, or one the plan names, goes where they say. Quote a pattern meant for the program, not the shell (`--include='*.ts'`), and never start an argument with `=`: zsh, the macOS default shell, stops on both. Read, list, and search (your own knowledge files included) with your file tools where you have them; where the shell is your only way to read, use one plain read command (no `cd` before it, no pipe or second command after it). Run every AI-DLC command exactly as written, as a command of its own (no `cd` before it, no pipe or second command after it), keeping its path as written (never a full path): a shell line can stop and ask the person to approve it.
+
+## The plan file
+
+Tick each step's box in `aidlc/spaces/default/intents/261107-weekly-meal-planner/construction/u1-mvp-foundation-skeleton/code-generation/code-generation-plan.md` as you finish the step. That is the only change you make to that file.
+
+## Approved plan
+
+# Code Generation Plan — U1 `u1-mvp-foundation-skeleton`
+
+## Summary
+
+- Builds: Android MVP foundation/skeleton (single app, modularized packages) with C1–C6/A1–A4 baseline contracts, local continuity, typed fallback states, and ADR-006 lock/generate/regenerate semantics.
+- Touches: `settings.gradle.kts`, `build.gradle.kts`, `gradle.properties`, `gradle/libs.versions.toml`, `gradle/wrapper/*`, `app/build.gradle.kts`, `app/src/main/**` (Compose shell, domain/use-case models, persistence, adapter boundaries, platform abstractions, diagnostics), `app/src/test/**`, `app/src/androidTest/**` (stubs only if needed), and `code-summary.md`/`traceability.json` in this stage record.
+- Tests: ~38 unit tests (5–8 per key domain component) + 3 integration stubs for Room/persistence boundaries (standard strategy, mvp scope floor); key behavior test-first where practical; coverage floor 80% checked by Build and Test on full suite.
+
+## Testing Contract
+
+```json
+{
+  "version": 1,
+  "methodology": "custom",
+  "source": "team",
+  "ordering": "For key behavior, write tests before implementation (TDD/BDD style where practical), then implement to satisfy those tests; for supporting or lower-risk behavior, use the most practical test cadence and keep tests runnable in CI.",
+  "scope": "mvp",
+  "test_strategy": "standard",
+  "project_type": "greenfield",
+  "applicable_notes": [
+    {
+      "layer": "org",
+      "text": "We treat tests as a first-class deliverable in every Bolt. The specific\nmethodology (TDD, BDD, ATDD, or classic test-after) is affirmed at\npractices-discovery and recorded in `team.md` under this heading with explicit\n`Methodology` and `Ordering` fields; Code Generation resolves those fields\nindependently from coverage, tooling, and scope notes.\n\nWhen no posture has been affirmed, our default per scope is:\n- **Methodology**: test-after\n- **Ordering**: implement each applicable testable layer, then write and run\n  that layer's tests.\n- `mvp`, `enterprise`, `feature`, `infra`, `classic` add an 80% line-coverage\n  floor and CI execution before merge.\n- `bugfix`, `security-patch` add a targeted regression for the specific\n  bug/vulnerability and require the existing suite to remain green.\n- `express` uses the Minimal strategy: requirement-driven unit tests (one per\n  requirement, with a happy-path floor per component); existing tests remain\n  green.\n- `poc`, `refactor`, `workshop` add no extra new-test floor and require the\n  existing suite to remain green.\n\nThe active `Test Strategy` still applies in every scope and determines test\nvolume/types. Scope floors are additive; they never reduce or replace the\nselected strategy.\n\nBuild and Test verifies defined coverage floors and affirmed quality targets;\nthey may not be weakened to make a step pass.\n\nAffirm a stricter posture in `team.md` if the team commits to one."
+    },
+    {
+      "layer": "team",
+      "text": "We treat tests as part of delivering MVP behavior, especially around meal-plan generation/selection, shopping-list aggregation, integration adapters/fallbacks, and privacy-sensitive data handling. [intent-statement, scope-document]\n\n- **Methodology**: custom\n- **Ordering**: For key behavior, write tests before implementation (TDD/BDD style where practical), then implement to satisfy those tests; for supporting or lower-risk behavior, use the most practical test cadence and keep tests runnable in CI.\n- **Methodology evidence**: Human affirmed Q3 for this learning/ASAP Android MVP. “Custom” reflects a practical mix (test-first for key behavior, flexible where practical) rather than a single pure cadence.\n- **Quality targets:** Keep critical tests and CI checks in place; keep existing tests green. Do not weaken quality targets to make a step pass. Coverage expectations and Android test tooling/CI details will be confirmed as the codebase and pipeline are established."
+    }
+  ],
+  "obligations": {
+    "strategy": "standard",
+    "strategy_volume": [
+      "Five to eight tests per component.",
+      "Unit tests plus integration tests for key boundaries.",
+      "Add E2E, performance, or security tests when requirements demand them."
+    ],
+    "scope_floor": [
+      "Meet an 80% line-coverage floor.",
+      "Run the selected tests in CI before merge."
+    ],
+    "combination_rule": "Apply every selected-strategy obligation and every scope-floor obligation; neither replaces the other, and a targeted scope regression may add the narrowest necessary test type beyond the strategy default."
+  },
+  "plan_profile": {
+    "methodology": "custom",
+    "runner_step": "Bootstrap the minimal test runner/configuration and record the exact unit-scoped command.",
+    "runner_ready_before_first_test": true,
+    "testable_layers": [
+      "Data model / database behavior",
+      "Repository / data access",
+      "Business logic",
+      "API / endpoint",
+      "Frontend behavior"
+    ],
+    "steps": [
+      "Project structure and production configuration skeleton.",
+      "Bootstrap the minimal test runner/configuration and record the exact unit-scoped command.",
+      "Custom ordering - For key behavior, write tests before implementation (TDD/BDD style where practical), then implement to satisfy those tests; for supporting or lower-risk behavior, use the most practical test cadence and keep tests runnable in CI.",
+      "Implementation and tests - preserve that exact ordering; do not convert it to layer-local TDD.",
+      "Environment/build configuration.",
+      "Documentation and traceability."
+    ]
+  },
+  "input_sha256": "sha256:59587920ee05541bac9d545befd046fa7ac9373c9a92b738b64c5406b0f6afde",
+  "contract_sha256": "sha256:08f951c92a56228b04800253ce17226a44c030963a64e478b9006a6d4f7c3c01"
+}
+```
+
+## Scope and constraints
+- **Unit:** U1 `u1-mvp-foundation-skeleton` (service/foundation, single Android app, modularized packages). Greenfield workspace: create Android project skeleton at workspace root; do not create duplicates of existing AI-DLC files.
+- **Stack (from NFR):** Kotlin + modern Android baseline (Gradle Kotlin DSL, AndroidX). **Jetpack Compose** UI target (Q1=A). **Room + DataStore** split for minimal continuity set (Q2=A). DI/testing libraries selected practically in Code Generation (kept minimal).
+- **Invariants to preserve:** ADR-006/R-01–R-03 (lock snapshot stores recipe IDs/selections + plan context, never ingredient freeze; C4 re-resolves; exact stale warning `"Meal plan modified. Grocery list not up-to-date. Press the Regenerate button."`; no auto-regeneration; regeneration with edits requires explicit confirmation). R-02 split: C5 `MapIngredientsToStorePresenceBatch` only presence mapping; C4 `ApplyBatchPresenceToList` only list projection/merge/remap/unknown-after-edit semantics; C4 never PRISMA lookup, C5 never merge/stale; U3 orchestrates. PRISMA name/presence only (`PRESENT|NOT_FOUND|UNKNOWN`), never stock/guarantee. S-ostoslista official method investigational; mandatory share sheet/copy-text fallback with instructions. No fabrication. Explicit fallback/unknown states and next actions.
+- **Not in U1 runtime completion:** full Sydänmerkki live query (OQ1) — adapter boundary/fallback contracts only; full PRISMA adapter and presence orchestration implementation (U3); U3 export extraction seam deferred to U3 FD (R-03/Q7=A); full RM UI flows (U4). API/endpoint server layer is N/A (on-device Android MVP).
+
+## Story/requirement traceability summary
+| Area | Stories | Requirements / rules |
+|---|---|---|
+| Plan/slots/weekday eligibility | US1.1, US2.2 | FR1–FR3, BR1.1–BR1.2 |
+| Recipe/source/nutrition/season baseline | US2.1, US2.3–US2.5 | FR4–FR6, BR1.3–BR1.4, BR1.14 |
+| Lock/generate/regenerate/stale | US3.1, US3.2 | FR9, ADR-006/R-01–R-03, BR1.6–BR1.10 |
+| Store/presence baseline | US4.2, US5.1 | FR7, FR8, BR1.5, BR1.12 |
+| Export fallback | US3.3, US4.1 | FR10, R-03, BR1.11 |
+| Reliability/privacy/local continuity | US5.1–US5.6 | FR11, FR12, NFR1–NFR5, BR1.13 |
+
+## Execution order (numbered, preserves dependency order and custom testing methodology)
+- [ ] **Step 1 — Project structure and production configuration skeleton** (plan profile step 1). Create Android greenfield skeleton: Gradle Kotlin DSL root (`settings.gradle.kts`, `build.gradle.kts`, `gradle.properties`, version catalog), Gradle wrapper, `:app` module with AndroidX/Compose/Room/DataStore/Kotlin test dependencies, manifest, minimal Compose entrypoint shell, and package layout modularized for future extraction (`domain`, `data/persistence`, `adapters`, `platform`, `diagnostics`, `ui`). No secrets. *(Supports all stories; NFR4.4, team code style.)*
+
+- [ ] **Step 2 — Bootstrap minimal test runner/configuration and record exact unit-scoped command** (plan profile step 2, required before first test-first cycle). Configure JUnit (Jupiter or Android-compatible JUnit4+Kotlin test as selected), MockK/Turbine/coroutines-test as needed for domain tests, and unit-test source sets. Record the exact unit-scoped command in `unit-test-instructions.md` (`./gradlew :app:testDebugUnitTest --tests "com.mealplanner.domain.*"` and exact test classes as they are created; never bare `./gradlew test`). Ensure command is runnable before first executable test-first step. *(Team testing posture, plan profile runner readiness.)*
+
+- [ ] **Step 3 — Key behavior tests first: planning/lock/merge/export/presence rules (custom ordering)** (plan profile step 3). Write failing/behavior-defining tests for highest-risk key behavior before implementation where practical:
+  - [ ] Step 3a: `WeeklyPlanState`/slot structure and weekday eligibility/exclusion reason baseline (BR1.1–BR1.2, FR1–FR3, US1.1/US2.2). Tests: required 7-day slot structure, empty slot visibility, weekday >30/ineligible with `WEEKDAY_TIME_OVER_30`, missing/ambiguous time with `WEEKDAY_TIME_AMBIGUOUS` and explanation fields.
+  - [ ] Step 3b: ADR-006 lock snapshot + stale semantics (BR1.6–BR1.9, FR9, US3.1/US3.2). Tests: snapshot stores IDs/selections+context only, no ingredient freeze; generate requires explicit action + locked snapshot; plan change marks `STALE_LOCK` and exact warning text; no auto-regenerate; regenerate with existing edits returns `NEEDS_CONFIRMATION`/requires explicit confirmation.
+  - [ ] Step 3c: C4 re-resolution/merge/no-fabrication baseline (BR1.8, BR1.10, FR9). Tests: re-resolve from C2 boundary, missing/changed ingredient data becomes explicit unresolved/unknown (no fabricated qty/unit), compatible merge by normalized name+compatible units/amounts, incompatible kept separate.
+  - [ ] Step 3d: R-02 presence split (BR1.12, FR8, US4.2). Tests: C5 maps batch presence projections name/presence only; C4 applies projections/remap and sets unknown after ambiguous mapping/edit/merge context as designed; no PRISMA lookup in C4 implementation path; no merge/stale ownership in C5.
+  - [ ] Step 3e: Export uses current edited list + mandatory fallback (BR1.11, FR10, US3.3/US4.1). Tests: payload built from current edited list; share/copy fallback result states `SHARED|COPIED|CANCELLED|FAILED|FALLBACK_INSTRUCTIONS_SHOWN`; official S-ostoslista path absent uses fallback.
+  Run/observe failing tests with the exact unit-scoped command (Red-equivalent where TDD-style is used); record failures in test evidence before Green. *(Custom test-first for key behavior.)*
+
+- [ ] **Step 4 — Implement domain contracts, use cases, and supporting persistence/adapter boundaries to satisfy key tests** (plan profile step 4). Implement minimal baseline to make Step 3 tests pass, then refactor while green:
+  - [ ] Step 4a: Domain models/contracts (ENT-U1 baseline): `WeeklyPlanState`, `PlanSlotState`, `LockSnapshot`/`LockedRecipeSelection`/`PlanSnapshotContext`, `ExclusionReason`, `DataSourceStatus`, recipe/ingredient refs, shopping list items/generation results, `StorePresenceResult`/batch request-result, `SharePayload`/`ShareResult`, typed A1–A3 status/reason shapes.
+  - [ ] Step 4b: C1/C3 planning/lock use cases (initialize plan, lock/finalize, mark stale, generate/regenerate with confirmations).
+  - [ ] Step 4c: C2/C5 boundary interfaces and fallback-safe stubs (no live external calls required in U1); weekday eligibility helper.
+  - [ ] Step 4d: C4 shopping/merge/presence application/export-fallback use cases preserving ADR-006/R-02/R-03.
+  - [ ] Step 4e: C6 platform share/copy boundary abstraction and fallback payload builder (extraction seam deferred to U3).
+  - [ ] Step 4f: Minimal Compose UI shell state wiring for the integrated skeleton (supporting; U4 owns full UX). Keep thin orchestration (ADR-005).
+  Add/adjust tests only as needed to preserve custom ordering and behavior coverage. *(FR1–FR12 baseline, BR1.1–BR1.14, ADR-005/006, R-01–R-03.)*
+
+- [ ] **Step 5 — Repository/data access and local persistence (Room + DataStore) with practical test cadence** (plan profile step 4/layers; supporting behavior). Implement persistence for minimal continuity set (plan state, lock snapshot context IDs/selections+plan context, shopping list+edits, selected store, season override, source/fallback/status metadata). Add unit tests for mappers/serialization logic and 3 integration test stubs/boundary tests for Room/DataStore repositories (runnable in local JVM where feasible; instrumented tests documented if environment-limited). *(FR11, FR12, NFR1.1, NFR4.2, BR1.13.)*
+
+- [ ] **Step 6 — Adapter resilience and platform abstractions (supporting, typed boundaries)**. Implement bounded timeout/cancellation hooks and typed fallback result mapping patterns for A1–A3 boundaries; A4 abstractions for permission, share sheet/clipboard, date/location signals (no continuous tracking). Privacy-safe diagnostic event model (no coordinates/raw personal identifiers). *(FR4, FR7, FR8, FR10, FR11, NFR1.2, NFR2.1, NFR3.2, NFR4.3–NFR4.6.)*
+
+- [ ] **Step 7 — Environment/build configuration** (plan profile step 5). Finalize Gradle config, test tasks, Compose/Room/DataStore compiler settings, lint/test configuration hooks (no CI pipeline created here unless trivially safe; CI execution before merge remains a scope floor checked when pipeline exists). Document coverage-floor handling: 80% project line-coverage floor is verified by Build and Test on full suite; do not weaken thresholds to make unit-scoped runs pass. *(Team deployment/style; mvp floor.)*
+
+- [ ] **Step 8 — Documentation and traceability** (plan profile step 6). Update `unit-test-instructions.md` with final exact unit-scoped commands and test inventory; create `code-summary.md` (files created/modified, key decisions, tests written/executed/not executed with reasons, deviations); create `source-manifest.json` listing every application-source path created/modified in this unit (including Gradle/wrapper/generated files as applicable); run `aidlc engine sensor-traceability --stage code-generation --output-path <code-generation-record>/traceability.json --unit u1-mvp-foundation-skeleton --write-upstream` and set `OK`/`Deferred` targets to existing workspace-relative files. *(Stage Step 5; R-04 follow-up.)*
+
+## Test plan notes (active strategy: Standard; scope: mvp)
+- **Components and target counts:** Planning/lock/schedule (6–8), Recipe/eligibility/source baseline (5–6), Shopping merge/regenerate/stale (6–8), Presence application split (5–6), Export fallback (5–6), Persistence mappers/repositories unit-level (5–6) = ~32–40 unit tests; plus 3 integration stubs/boundary tests for Room/DataStore persistence.
+- **Test-first key behavior:** Steps 3a–3e before corresponding implementation in Step 4.
+- **Regression/fallback coverage:** integration adapter fallback states, unknown presence, no fabrication, stale warning exact text, explicit confirmation before regeneration with edits.
+- **Not executed in this stage (expected):** instrumented Android/UI device tests, performance benchmarks, and CI pipeline runs if pipeline/device not available; record in `code-summary.md`.
+
+## Deviations to avoid
+- No backend service/API endpoints; no hardcoded secrets/endpoints.
+- No PRISMA stock/guarantee claims; no fabricated data.
+- No automatic regeneration; no silent inclusion of ineligible weekday recipes.
+- No weakening of quality thresholds/coverage targets.
+- No application code under `aidlc/` record tree.
+
+## Approved unit-test instructions
+
+# Unit Test Instructions — U1 `u1-mvp-foundation-skeleton`
+
+**Intent:** `261107-weekly-meal-planner` (scope `mvp`, space `default`)  
+**Unit:** U1 — MVP foundation + integration slice (Android, greenfield)  
+**Stage:** Code Generation (construction, per-unit)  
+**Test strategy:** Standard (5–8 tests per component, unit tests + integration stubs for key boundaries). **Scope floor (mvp):** 80% line-coverage floor and CI execution before merge when CI pipeline exists; neither replaces the selected strategy.
+
+## Scope of tests for this unit
+This unit's tests cover U1 foundation behavior only (C1–C6/A1–A4 baseline contracts and domain rules):
+- Weekly plan slot structure and weekday time eligibility/exclusion reasons (BR1.1–BR1.2, FR1–FR3).
+- ADR-006 lock snapshot, explicit generate/regenerate, stale warning, no auto-regeneration, confirmation before replacing edits (BR1.6–BR1.9, FR9).
+- Ingredient re-resolution, merge baseline, no fabrication, unresolved/unknown handling (BR1.8, BR1.10).
+- R-02 presence split: C5 batch presence mapping (name/presence only) and C4 apply/remap/unknown semantics (BR1.5, BR1.12, FR7–FR8).
+- Export uses current edited list with mandatory share/copy fallback result states (BR1.11, FR10).
+- Persistence boundary mapping/continuity metadata and privacy-safe fallback states (BR1.13, NFR1.1, NFR4.2).
+
+Out of scope for execution in this unit: full U4 UI flows, live Sydänmerkki/PRISMA/S-ostoslista network integration, instrumented device/end-to-end UI automation (unless environment provides it), and Build-and-Test full-project coverage gate.
+
+## Test framework setup and configuration
+- **Runner:** Kotlin/JUnit unit tests for Android module (`:app`) using the project's configured JUnit variant (JUnit4/AndroidX test compatibility or JUnit5 via configured plugin) plus `kotlin-test` assertions as needed.
+- **Libraries (planned, minimal):** `kotlinx-coroutines-test` for coroutine use cases, `MockK` (or equivalent) for boundary doubles, `Turbine` optional for Flow assertions, AndroidX test/core/Robolectric only if needed for local Android framework behavior. Room/DataStore integration stubs may use in-memory Room or local test doubles depending on feasibility in local JVM.
+- **Configuration files:** `app/build.gradle.kts` test dependencies/tasks; optional `gradle.properties` test flags. Do not weaken coverage/quality thresholds to make a unit-scoped run pass.
+- **Test data:** deterministic fixtures/fakes for recipes, plan slots, lock snapshots, ingredient refs, presence results, and share/export payloads. No real secrets, no live external endpoints, no precise personal location data.
+
+## Exact unit-scoped commands (runnable before first test-first cycle)
+> **All commands are scoped to this unit/module.** Do not use bare `./gradlew test`. A bare project-wide command would rerun unrelated tests and, in unit isolation, can misattribute coverage-threshold failures.
+
+Run from workspace root after Gradle wrapper/project skeleton exists:
+
+```bash
+# Primary unit-scoped command for U1 domain/unit tests (exact package filter)
+./gradlew :app:testDebugUnitTest --tests "com.mealplanner.domain.*" --tests "com.mealplanner.data.persistence.*" --console=plain
+```
+
+As tests are created, use exact class filters when debugging/regression scope is needed (examples; replace with actual class names created by this unit):
+
+```bash
+./gradlew :app:testDebugUnitTest --tests "com.mealplanner.domain.planning.WeeklyPlanStateTest" --console=plain
+./gradlew :app:testDebugUnitTest --tests "com.mealplanner.domain.planning.LockAndStaleStateTest" --console=plain
+./gradlew :app:testDebugUnitTest --tests "com.mealplanner.domain.shopping.ShoppingListGenerationRulesTest" --console=plain
+./gradlew :app:testDebugUnitTest --tests "com.mealplanner.domain.shopping.ApplyBatchPresenceToListTest" --console=plain
+./gradlew :app:testDebugUnitTest --tests "com.mealplanner.domain.export.ExportFallbackTest" --console=plain
+./gradlew :app:testDebugUnitTest --tests "com.mealplanner.data.persistence.PlanPersistenceMapperTest" --console=plain
+```
+
+If a selected test run exits non-zero only because a project-wide coverage threshold applies to all measured source while every selected test passes, record that with the unit test results; it is not a failed test for this unit. Do not put a later required step after such a threshold-failing command in the same command chain.
+
+## How to run this unit's tests during Code Generation
+1. After Step 2 bootstrap, run the primary unit-scoped command; it should execute the test classes present for U1.
+2. For key behavior (Step 3), write failing tests first where practical, run the exact class/package command, record Red/failing output, implement minimal code (Step 4), rerun until green, then refactor.
+3. For supporting behavior (persistence/platform abstractions), use the most practical cadence but keep tests runnable with the same unit-scoped command.
+
+## Expected coverage targets
+- **Standard strategy:** 5–8 tests per key component (planning/lock, recipe eligibility/source baseline, shopping merge/regenerate, presence application, export fallback, persistence mapping/boundaries) plus integration stubs for key Room/DataStore boundaries.
+- **Key behavior emphasis:** ADR-006 stale warning exact text, no auto-regeneration, confirmation before replacing edits, no fabrication, PRISMA name/presence only, explicit fallback/unknown states.
+- **Project coverage floor (mvp):** 80% line coverage is a project floor measured by **Build and Test** on the full assembled test suite. Unit-scoped runs in this stage do not judge that floor. Do not weaken threshold settings in build/test configuration to make unit-scoped runs pass.
+
+## Mocking/stubbing guidance
+- Mock or fake external boundaries (A1 Sydänmerkki, A2 PRISMA, A3 S-ostoslista, A4 platform effects) behind interfaces; return typed fallback/unknown/error results.
+- Use deterministic clocks/IDs only if needed; avoid time/network nondeterminism.
+- Never mock the domain rule under test in a way that hides behavior (especially ADR-006 state transitions, merge/no-fabrication, and R-02 split responsibilities).
+
+## Test data management
+- Keep fixtures in test source sets under `app/src/test/` (or shared test fixtures package) with clear names.
+- Use minimal, explicit data: slot refs, recipe IDs, ingredient refs, normalized names, compatible/incompatible units, presence results, edited list states.
+- Do not include secrets, tokens, precise coordinates, or personal identifiers.
+
+## Final test inventory (U1)
+| Component | Test class | Tests (approx.) | Key behavior |
+|---|---|---:|---|
+| Planning/lock/schedule | `com.mealplanner.domain.planning.WeeklyPlanStateTest` | 7 | BR1.1–BR1.2 slot structure, empty visibility, weekday time eligibility/exclusions |
+| ADR-006 lock/stale | `com.mealplanner.domain.planning.LockAndStaleStateTest` | 8 | BR1.6–BR1.9 snapshot IDs+context only, exact stale warning, no auto-regenerate, explicit confirmation |
+| Shopping merge/re-resolution | `com.mealplanner.domain.shopping.ShoppingListGenerationRulesTest` | 6 | BR1.8, BR1.10 merge baseline, no fabrication, unresolved explicit |
+| Presence split (R-02) | `com.mealplanner.domain.shopping.ApplyBatchPresenceToListTest` | 6 | BR1.12 C5 projections name/presence only, C4 apply/remap/unknown, no fabricated presence |
+| Export fallback | `com.mealplanner.domain.export.ExportFallbackTest` | 7 | BR1.11 current edited list, share/copy/fallback states, official path absent |
+| Persistence mapping | `com.mealplanner.data.persistence.PlanPersistenceMapperTest` | 3 | Continuity metadata, snapshot context, list edits/presence/unresolved round-trip |
+| Persistence boundary stubs | `ContinuityRepositoryBoundaryTest`, `SnapshotPersistenceBoundaryTest`, `ShoppingListPersistenceBoundaryTest` | 3 | Room/DataStore boundary intent, explicit null/no fabrication, ADR-006 continuity |
+
+**Total:** 40 tests across 8 test classes (includes 3 integration/boundary stubs runnable in local JVM with in-memory fakes).
+
+## Tests written but not executed / environment limits (to record in code-summary.md)
+- Instrumented/Compose UI tests requiring emulator/device were deferred (U4 owns full UX; no device/emulator in this execution).
+- Performance benchmarks and full CI 80% line-coverage floor are verified by Build and Test/CI, not by unit-scoped runs.
+- **Execution environment limit:** `./gradlew` is present but `gradle/wrapper/gradle-wrapper.jar` is not available in this workspace and Android SDK/Gradle distribution were not configured in the environment. Tests were **written but not executed**. Exact commands remain valid once wrapper JAR and Android SDK are available:
+  - `./gradlew :app:testDebugUnitTest --tests "com.mealplanner.domain.*" --tests "com.mealplanner.data.persistence.*" --console=plain`
+  - Per-class filters listed above under "Exact unit-scoped commands".
+  Do not claim execution. Record any project-wide coverage-threshold failure separately from test failures per unit-test instructions.

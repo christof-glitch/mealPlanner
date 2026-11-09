@@ -228,7 +228,7 @@ entities:
       - { name: fallbackReason, type: FallbackReason, required: false }
       - { name: userActionRequired, type: string, required: false }
     status_values: []
-    notes: "C2 mapping: SYDANMERKKI_LIVE <= recipe source `SYDANMERKKI` with current/verified result; SYDANMERKKI_FALLBACK <= curated/imported/local fallback carrying Sydänmerkki-compatible baseline; NONE/LOCAL_CACHE/MANUAL used only with explicit fallback/unknown semantics. C2 `RecipeSourceStatus` (ENT-U1-019) is the recipe-facing minimum; `DataSourceStatus` is the cross-cutting envelope."
+    notes: "C2 mapping: SYDANMERKKI_LIVE <= recipe source `SYDANMERKKI` with current/verified result; SYDANMERKKI_FALLBACK <= curated/imported/local fallback carrying Sydänmerkki-compatible baseline; LOCAL_CACHE/MANUAL/IMPORTED used only with explicit fallback/unknown semantics (IMPORTED maps from ENT-U1-019 `IMPORTED` sourceType); NONE used when no applicable source/result is available. C2 `RecipeSourceStatus` (ENT-U1-019) is the recipe-facing minimum; `DataSourceStatus` is the cross-cutting envelope."
 
   - id: ENT-U1-016
     name: RecipeSummary
@@ -285,7 +285,7 @@ entities:
       - { name: fallbackReason, type: FallbackReason, required: false }
       - { name: userActionRequired, type: string, required: false }
     status_values: []
-    notes: "Maps to ENT-U1-015 as described there; Sydänmerkki attempt/fallback visibility required by FR4/BR1.3."
+    notes: "Maps to ENT-U1-015/DataSourceStatus: SYDANMERKKI => SYDANMERKKI_LIVE or fallback context as applicable; CURATED_SYDANMERKKI_FALLBACK => SYDANMERKKI_FALLBACK; LOCAL_CACHE/MANUAL/IMPORTED => corresponding cross-cutting values with explicit fallback/unknown semantics; NONE => NONE. Sydänmerkki attempt/fallback visibility required by FR4/BR1.3."
 
   - id: ENT-U1-020
     name: SeasonContext

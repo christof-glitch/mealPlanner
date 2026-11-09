@@ -11,6 +11,16 @@ data class StoreRef(
     val isConfirmed: Boolean = false,
 )
 
+/** U3/C5 store identity (PRISMA/manual). */
+data class PrismaStoreRef(
+    val storeId: String,
+    val displayName: String? = null,
+    val addressSummary: String? = null,
+    val sourceStatus: String? = null,
+)
+
+fun PrismaStoreRef.toStoreRef(): StoreRef = StoreRef(storeId = storeId, displayName = displayName ?: storeId, chain = StoreChain.PRISMA)
+
 /** ENT-U1-010: name/presence only, never stock quantity or guaranteed availability. */
 data class StorePresenceResult(
     val ingredientRef: IngredientRefId? = null,
@@ -24,7 +34,7 @@ data class StorePresenceResult(
 
 enum class PresenceSource { PRISMA, MANUAL_FALLBACK, CACHE, UNAVAILABLE }
 
-/** ENT-U1-011 */
+/** ENT-U1-011 legacy batch shape. */
 data class BatchPresenceResult(
     val storeRef: StoreRef,
     val results: List<StorePresenceResult>,
@@ -68,3 +78,50 @@ data class ApplyBatchPresenceToListResult(
     val unknownOrRemapCount: Int = 0,
     val fallbackReason: FallbackReason? = null,
 )
+
+// --- U3 C5 aligned types (BR3.5-BR3.7) ---
+
+data class PresenceCheckQuery(
+    val itemRef: String,
+    val queryName: String,
+    val normalizedQueryName: String? = null,
+    val mergeKey: String? = null,
+)
+
+data class PresenceCheckResult(
+    val itemRef: String,
+    val queryName: String,
+    val resultStatus: StorePresenceStatus,
+    val reason: String? = null,
+    val checkedAt: Instant? = null,
+    val storeId: String? = null,
+    val checkScope: String? = null,
+    val raw: StorePresenceResult? = null,
+)
+
+data class PresenceCheckBatchResult(
+    val storeId: String? = null,
+    val storeRef: StoreRef? = null,
+    val results: List<PresenceCheckResult> = emptyList(),
+    val batchStatus: PresenceBatchStatus = PresenceBatchStatus.OK,
+    val message: String? = null,
+    val fallbackReason: FallbackReason? = null,
+)
+
+enum class StoreSelectionMode { NONE, MANUAL, NEAREST_SUGGESTION }
+enum class StoreSuggestionStatus { OK, UNAVAILABLE, DENIED, NOT_FOUND, UNKNOWN }
+
+data class StoreSelectionState(
+    val selectedStore: PrismaStoreRef? = null,
+    val selectionMode: StoreSelectionMode = StoreSelectionMode.NONE,
+    val suggestionStatus: StoreSuggestionStatus? = null,
+    val message: String? = null,
+)
+
+data class StoreSuggestionResult(
+    val status: StoreSuggestionStatus,
+    val suggestedStore: PrismaStoreRef? = null,
+    val message: String? = null,
+    val fallbackReason: FallbackReason? = null,
+)
+

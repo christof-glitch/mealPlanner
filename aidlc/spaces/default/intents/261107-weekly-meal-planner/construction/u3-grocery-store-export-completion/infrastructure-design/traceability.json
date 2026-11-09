@@ -1,0 +1,45 @@
+{
+  "stage": "infrastructure-design",
+  "unit": "u3-grocery-store-export-completion",
+  "upstream_ids": [
+    "NFR1.1","NFR1.2","NFR1.3",
+    "NFR2.1","NFR2.2","NFR2.3","NFR2.4","NFR2.5","NFR2.6","NFR2.7",
+    "NFR3.1","NFR3.2","NFR3.3","NFR3.4","NFR3.5","NFR3.6","NFR3.7",
+    "NFR4.1","NFR4.2","NFR4.3",
+    "NFR5.1","NFR5.2","NFR5.3","NFR5.4","NFR5.5","NFR5.6"
+  ],
+  "coverage": [
+    { "id": "NFR1.1", "status": "N/A", "target": "No cloud/server infrastructure for on-device U3 library unit; Android build/release process handled at project level (cicd-pipeline.md)." },
+    { "id": "NFR1.2", "status": "N/A", "target": "No cloud scaling resource; MVP-bounded local data/operation scale is a code/test concern verified via CI gates (cicd-pipeline.md)." },
+    { "id": "NFR1.3", "status": "N/A", "target": "No cloud infrastructure; bounded batch/query behavior is adapter/code concern verified by fake-based tests (cicd-pipeline.md)." },
+    { "id": "NFR2.1", "status": "N/A", "target": "No cloud infrastructure; explicit snapshot-safe generation/no fabrication verified by unit tests in CI (cicd-pipeline.md)." },
+    { "id": "NFR2.2", "status": "N/A", "target": "No cloud infrastructure; regeneration confirmation/preserved edits verified by unit tests in CI (cicd-pipeline.md)." },
+    { "id": "NFR2.3", "status": "OK", "target": "cicd-pipeline.md requires tests for exact ADR-006 stale warning text and no auto-regeneration; no cloud stale-state infrastructure needed." },
+    { "id": "NFR2.4", "status": "N/A", "target": "No cloud infrastructure; ShoppingList-owned applyPresenceCheckBatch/remap-to-Unknown verified by unit tests in CI (cicd-pipeline.md)." },
+    { "id": "NFR2.5", "status": "OK", "target": "cicd-pipeline.md enforces fallback-first adapter verification for PRISMA/S-ostoslista (OQ2–OQ4), no live network/credentials in CI, mandatory share/copy/manual fallbacks." },
+    { "id": "NFR2.6", "status": "OK", "target": "cicd-pipeline.md requires tests that export DTO uses current edited list and share/copy fallback remains available." },
+    { "id": "NFR2.7", "status": "N/A", "target": "No cloud observability infrastructure; typed status/reason metadata is contract-level and verified by tests (cicd-pipeline.md)." },
+    { "id": "NFR3.1", "status": "OK", "target": "cicd-pipeline.md source/build gates enforce no account/auth/remote identity or secrets for U3." },
+    { "id": "NFR3.2", "status": "N/A", "target": "No cloud infrastructure; minimal local data handling is implementation/test concern (cicd-pipeline.md)." },
+    { "id": "NFR3.3", "status": "OK", "target": "cicd-pipeline.md source gates prohibit raw GPS coords in U3 domain code/tests/logging; permission UI remains outside U3." },
+    { "id": "NFR3.4", "status": "OK", "target": "cicd-pipeline.md prohibits hardcoded secrets/API keys/tokens/private endpoints; CI uses no live PRISMA/S-ostoslista credentials." },
+    { "id": "NFR3.5", "status": "OK", "target": "cicd-pipeline.md/static checks support privacy-safe diagnostics posture (no sensitive payload logging patterns where tooling allows)." },
+    { "id": "NFR3.6", "status": "OK", "target": "cicd-pipeline.md enforces untrusted boundary testing with fakes and typed mapped outcomes; no fabricated presence/export success." },
+    { "id": "NFR3.7", "status": "N/A", "target": "No cloud observability infrastructure; coarse typed investigation-outcome mapping is contract/test concern (cicd-pipeline.md)." },
+    { "id": "NFR4.1", "status": "OK", "target": "cicd-pipeline.md stage→gate mapping requires automated BR3.* tests with fakes for C2/A2/A3/platform ports." },
+    { "id": "NFR4.2", "status": "OK", "target": "cicd-pipeline.md requires typed fallback/denied/unavailable/not-supported/failed-mapped adapter tests (OQ2–OQ4), no live network." },
+    { "id": "NFR4.3", "status": "OK", "target": "cicd-pipeline.md preserves project verification baseline, existing tests green, and no weakened quality targets." },
+    { "id": "NFR5.1", "status": "N/A", "target": "No cloud infrastructure; on-device generation/merge responsiveness is verified by local tests/smoke (cicd-pipeline.md)." },
+    { "id": "NFR5.2", "status": "N/A", "target": "No cloud infrastructure; local edit/applyPresenceCheckBatch responsiveness verified by tests (cicd-pipeline.md)." },
+    { "id": "NFR5.3", "status": "N/A", "target": "No cloud infrastructure; export DTO built from current state verified by tests (cicd-pipeline.md)." },
+    { "id": "NFR5.4", "status": "OK", "target": "cicd-pipeline.md requires adapter-fake tests proving local edit/fallback export paths remain usable when external checks fail/are unavailable." },
+    { "id": "NFR5.5", "status": "N/A", "target": "No cloud infrastructure; no hard ms SLO established, MVP baseline measured later if needed." },
+    { "id": "NFR5.6", "status": "N/A", "target": "No external telemetry/observability infrastructure required for U3 MVP (cicd-pipeline.md)." }
+  ],
+  "reverse": [
+    { "id": "ADR-006/R-01-R-03", "status": "OK", "target": "cicd-pipeline.md test gates cover snapshot/re-resolve, regenerate confirmation, exact stale warning, no auto-regeneration." },
+    { "id": "R-02/BR3.5", "status": "OK", "target": "cicd-pipeline.md test gates cover explicit applyPresenceCheckBatch projection/remap to UNKNOWN/NOT_CHECKED." },
+    { "id": "FR8", "status": "OK", "target": "cicd-pipeline.md test gates enforce PRISMA name/presence only (PRESENT|NOT_FOUND|UNKNOWN), never stock/guarantee." },
+    { "id": "BR3.9/OQ4", "status": "OK", "target": "cicd-pipeline.md preserves current-edited export, mandatory share/copy fallback, and no live S-ostoslista dependency in CI." }
+  ]
+}

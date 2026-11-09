@@ -52,12 +52,12 @@ X. Other (please specify)
 ### Q4. On-device state persistence baseline for U1 foundation
 U1 establishes local-first foundation behavior (NFR1/NFR4). What minimum persistence baseline should Functional Design specify for U1 without over-designing storage technology?
 
-A. SQ5: eration.  
+A. Specify a logical local persistence baseline for plan state, ADR-006 lock snapshot context (recipe IDs/selections and plan context as defined), shopping-list content/edits, selected store, season override, and source/fallback/status metadata needed for continuity; defer concrete technology choice to NFR Design/Infrastructure Design.  
 B. Specify persistence only for plan state and shopping-list lock/snapshot/list content; treat store/season/source metadata as in-memory where acceptable and document risks.  
 C. Defer persistence model to NFR Design/Infrastructure Design except for ADR-006 lock snapshot fields, which must be persisted.  
 X. Other (please specify)
 
-[Answer]: 
+[Answer]: A
 
 ### Q5. US2.2 AC2.2.3 explanation-data ownership in U1
 Contract summary states U1/U2 own explanation data/contracts; U4 owns presentation. For U1 Functional Design, what minimum explanation contract should be defined?

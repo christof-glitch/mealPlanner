@@ -1,0 +1,227 @@
+AIDLC-UNIT: u2-recipe-planning-completion
+AIDLC-TESTING-CONTRACT: sha256:08f951c92a56228b04800253ce17226a44c030963a64e478b9006a6d4f7c3c01
+
+## Progress before the interruption
+
+This plan's build stopped part way. The plan file ticks 11 of its 33 steps (the approved plan below shows none ticked, because ticks are not part of the approval):
+
+1. Confirm U1 Android/Kotlin/JUnit structure is runnable (no changes to unrelated files). Add only minimal U2 packages/classes as needed: `com.mealplanner.domain.recipe` (C2 evaluators/services), extend `domain.model`/`adapters`/`diagnostics` in-place. No secrets/endpoints/keys; A1 config injection points only.
+2. Record any required build/config touchpoints (none expected beyond existing app module); do not relax coverage/quality thresholds.
+3. Verify existing test runner executes unit-scoped U2 command recorded in `unit-test-instructions.md`: `./gradlew :app:testDebugUnitTest --tests "com.mealplanner.domain.recipe.*" --tests "com.mealplanner.domain.planning.SlotSelection*" --tests "com.mealplanner.domain.planning.C3*" --tests "com.mealplanner.adapters.A1*" --tests "com.mealplanner.adapters.RecipeSourceAdapter*" --console=plain` (and future module-scoped tasks if layout changes).
+4. Ensure fakes/stub patterns are usable (no live network). Command must be runnable before first test-first step.
+5. Apply per key behavior area below: write tests first (TDD/BDD-style where practical), implement minimal code to satisfy, refactor while green. Supporting/lower-risk glue uses practical cadence but remains runnable in CI. Preserve exact custom ordering; do not convert to blanket layer-local TDD for all supporting code.
+6. **Tests first:** add/extend model tests for U2 entities (`RecipeSourceAdapterRequest/Result`, `RecipeDetail`, `RecipeTimeNormalization`, `SeasonFitEvaluation`, `NutritionProfile`, `WeeklyNutritionBalanceCueRequest`/`WeeklyNutritionBalanceCue`, `AlternativeRecipesRequest/Result`, `SlotSelectionChangeRequest/Result`, `RecipeFilters`) and boundary validation (invalid `PlanSlotRef`/slot compatibility, malformed IDs/filters/requests → typed non-fabricated failures).
+7. **Implement:** add U2 data types/enums in `domain.model` (additive to existing types; use canonical `PlanSlotRef`; include A1 statuses `ok|fallback_used|unavailable|restricted|timeout|parse_error_mapped|not_supported`, investigation outcomes, typed reason/status fields). Add input validator/mapper helpers.
+8. **Refactor/green:** keep existing U1 tests passing.
+9. **Tests first (fake adapters, no live network):** default-off gate (`allowLiveSource=false` and OQ1 not approved) never invokes live client; curated fallback returned with typed reason; live enabled+approved path maps success; timeout/restriction/parse_error_mapped/unavailable/not_supported map to typed statuses and fallback when available; partial safe parse may contribute with explicit status, no fabrication; retries limited/idempotent only when allowed; no raw exceptions across boundary.
+10. **Implement:** complete `RecipeSourceBoundary`/A1 adapter abstraction (port) and add `A1LiveAccessGate`/config injection, resilience chain (gate → bounded timeout → 0–2 idempotent retries allowed only → defensive parse/map → curated fallback resolver), curated/imported fallback source implementation, and diagnostics hook interface/no-op (NFR5.5). Keep `FallbackRecipeSourceBoundary` behavior compatible or migrate in-place.
+11. **Refactor/green:** ensure U1 adapter stub tests remain valid or are updated to new compatible behavior.
+
+Continue at step 12 of 33: "**Tests where practical / implement:** C2 service/use-case methods for catalog/summary/detail/ingredients queries using A1 boundary results; expose `RecipeSourceStatus`/fallback/provenance; normalize missing fields to explicit unavailable/partial states; never fabricate.".
+Before you skip any other ticked step, check that the files it names exist; redo any ticked step whose files are missing.
+
+## Files and commands
+
+Write and edit files yourself with your file tools, never through the shell (no heredoc, no `echo`, `printf`, or `python3` writing a file, no `sed -i`, no `mkdir`; the file-write tool creates any missing folder). A command the person asks for, or one the plan names (a package install, a build, a scaffolder, a migration, a formatter, a code generator, even a `mkdir`), still runs as written. Do not stash, reset, check out over, restore or clean the person's working tree, and do not install what the plan does not name: for a before-and-after comparison, run the check on the unchanged tree before you edit. Every file you make on your own, a scratch file, a helper script, a command's output, stays inside the project (nothing in /tmp or any folder outside it), and a command's output is read from the tool result, never sent to a file; a file the person asks for, or one the plan names, goes where they say. Quote a pattern meant for the program, not the shell (`--include='*.ts'`), and never start an argument with `=`: zsh, the macOS default shell, stops on both. Read, list, and search (your own knowledge files included) with your file tools where you have them; where the shell is your only way to read, use one plain read command (no `cd` before it, no pipe or second command after it). Run every AI-DLC command exactly as written, as a command of its own (no `cd` before it, no pipe or second command after it), keeping its path as written (never a full path): a shell line can stop and ask the person to approve it.
+
+## The plan file
+
+Tick each step's box in `aidlc/spaces/default/intents/261107-weekly-meal-planner/construction/u2-recipe-planning-completion/code-generation/code-generation-plan.md` as you finish the step. That is the only change you make to that file.
+
+## Approved plan
+
+# Code Generation Plan — U2 `u2-recipe-planning-completion`
+
+**Intent:** `261107-weekly-meal-planner` (scope `mvp`, test strategy `Standard`)
+**Unit:** U2 — Recipe + planning completion (`library`, C2/C3 + A1)
+**Stage:** Code Generation (construction, per-unit)
+**Date:** 2026-11-09
+
+## Summary
+
+- Builds: U2 C2/C3 completion + A1 recipe-source adapter boundary (normalization/eligibility/season/nutrition/alternatives, slot planning state, gated live + mandatory curated fallback) on existing Android/Kotlin codebase.
+- Touches: `app/src/main/java/com/mealplanner/domain/model/*`, `domain/recipe/*` (new), `domain/planning/*`, `adapters/*`, `diagnostics/*` (hook as needed), and scoped tests under `app/src/test/java/com/mealplanner/...` (plus module files only if layout requires).
+- Tests: ~40–60 unit/fake-boundary tests across A1 adapter/gate/fallback, time normalization, season fit, nutrition/cue, alternatives, and C3 slot/stale semantics (Standard, 5–8 per key area/component), unit-scoped command in `unit-test-instructions.md`.
+
+## Testing Contract
+
+```json
+{
+  "version": 1,
+  "methodology": "custom",
+  "source": "team",
+  "ordering": "For key behavior, write tests before implementation (TDD/BDD style where practical), then implement to satisfy those tests; for supporting or lower-risk behavior, use the most practical test cadence and keep tests runnable in CI.",
+  "scope": "mvp",
+  "test_strategy": "standard",
+  "project_type": "greenfield",
+  "applicable_notes": [
+    {
+      "layer": "org",
+      "text": "We treat tests as a first-class deliverable in every Bolt. The specific\nmethodology (TDD, BDD, ATDD, or classic test-after) is affirmed at\npractices-discovery and recorded in `team.md` under this heading with explicit\n`Methodology` and `Ordering` fields; Code Generation resolves those fields\nindependently from coverage, tooling, and scope notes.\n\nWhen no posture has been affirmed, our default per scope is:\n- **Methodology**: test-after\n- **Ordering**: implement each applicable testable layer, then write and run\n  that layer's tests.\n- `mvp`, `enterprise`, `feature`, `infra`, `classic` add an 80% line-coverage\n  floor and CI execution before merge.\n- `bugfix`, `security-patch` add a targeted regression for the specific\n  bug/vulnerability and require the existing suite to remain green.\n- `express` uses the Minimal strategy: requirement-driven unit tests (one per\n  requirement, with a happy-path floor per component); existing tests remain\n  green.\n- `poc`, `refactor`, `workshop` add no extra new-test floor and require the\n  existing suite to remain green.\n\nThe active `Test Strategy` still applies in every scope and determines test\nvolume/types. Scope floors are additive; they never reduce or replace the\nselected strategy.\n\nBuild and Test verifies defined coverage floors and affirmed quality targets;\nthey may not be weakened to make a step pass.\n\nAffirm a stricter posture in `team.md` if the team commits to one."
+    },
+    {
+      "layer": "team",
+      "text": "We treat tests as part of delivering MVP behavior, especially around meal-plan generation/selection, shopping-list aggregation, integration adapters/fallbacks, and privacy-sensitive data handling. [intent-statement, scope-document]\n\n- **Methodology**: custom\n- **Ordering**: For key behavior, write tests before implementation (TDD/BDD style where practical), then implement to satisfy those tests; for supporting or lower-risk behavior, use the most practical test cadence and keep tests runnable in CI.\n- **Methodology evidence**: Human affirmed Q3 for this learning/ASAP Android MVP. “Custom” reflects a practical mix (test-first for key behavior, flexible where practical) rather than a single pure cadence.\n- **Quality targets:** Keep critical tests and CI checks in place; keep existing tests green. Do not weaken quality targets to make a step pass. Coverage expectations and Android test tooling/CI details will be confirmed as the codebase and pipeline are established."
+    }
+  ],
+  "obligations": {
+    "strategy": "standard",
+    "strategy_volume": [
+      "Five to eight tests per component.",
+      "Unit tests plus integration tests for key boundaries.",
+      "Add E2E, performance, or security tests when requirements demand them."
+    ],
+    "scope_floor": [
+      "Meet an 80% line-coverage floor.",
+      "Run the selected tests in CI before merge."
+    ],
+    "combination_rule": "Apply every selected-strategy obligation and every scope-floor obligation; neither replaces the other, and a targeted scope regression may add the narrowest necessary test type beyond the strategy default."
+  },
+  "plan_profile": {
+    "methodology": "custom",
+    "runner_step": "Bootstrap the minimal test runner/configuration and record the exact unit-scoped command.",
+    "runner_ready_before_first_test": true,
+    "testable_layers": [
+      "Data model / database behavior",
+      "Repository / data access",
+      "Business logic",
+      "API / endpoint",
+      "Frontend behavior"
+    ],
+    "steps": [
+      "Project structure and production configuration skeleton.",
+      "Bootstrap the minimal test runner/configuration and record the exact unit-scoped command.",
+      "Custom ordering - For key behavior, write tests before implementation (TDD/BDD style where practical), then implement to satisfy those tests; for supporting or lower-risk behavior, use the most practical test cadence and keep tests runnable in CI.",
+      "Implementation and tests - preserve that exact ordering; do not convert it to layer-local TDD.",
+      "Environment/build configuration.",
+      "Documentation and traceability."
+    ]
+  },
+  "input_sha256": "sha256:59587920ee05541bac9d545befd046fa7ac9373c9a92b738b64c5406b0f6afde",
+  "contract_sha256": "sha256:08f951c92a56228b04800253ce17226a44c030963a64e478b9006a6d4f7c3c01"
+}
+```
+
+## Inputs and constraints
+- **Consumes:** `functional-design/{functional-spec,rules,entities}.md`, `contract-summary.md`, `nfr-design/security-design.md`, `units-generation/unit-of-work.md`, `requirements-analysis/requirements.md`.
+- **Invariants:** FQ1=A live Sydänmerkki default-off with explicit approved OQ1 gate; mandatory curated/imported fallback; no scraping/terms assumptions; no fabrication (FR4/FR5/FR6/FR11); PRISMA name/presence only irrelevant to U2 but boundary discipline applies; ADR-006 exact stale warning `"Meal plan modified. Grocery list not up-to-date. Press the Regenerate button."`, no auto-regeneration, explicit regenerate confirmation owned downstream, snapshot IDs+context only; R-06 single Today/Plan source of truth (`WeeklyPlanState`/C3); U2 never reads `WeeklyPlanState` for C2 nutrition cue aggregation except via `WeeklyNutritionBalanceCueRequest` inputs; NFR4.3 no weakened quality targets.
+- **Brownfield in workspace:** U1 app/tests exist; modify in-place, no duplicate `*_modified` files. Leave unrelated project files as-is unless required.
+- **Application code:** workspace root (`app/`), never under `aidlc/`. Tests in `app/src/test/...`.
+
+## Story/requirement traceability (plan-level)
+- US1.1/US1.2, FR1/FR2/FR9, BR2.7/BR2.8, R-06/ADR-006 → Steps 2, 11, 12.
+- US2.1/US2.5, FR4/FR11/FR12, BR2.1/BR2.2/BR2.9, NFR2/NFR3 → Steps 2, 4, 5, 6.
+- US2.2, FR3, BR2.3, OQ7 → Steps 2, 7.
+- US2.3, FR5, BR2.4, OQ5 → Steps 2, 8.
+- US2.4, FR6, BR2.5, OQ6 → Steps 2, 9.
+- US1.2 alternatives, BR2.6 → Steps 2, 10.
+- NFR1–NFR5.x, NFR4.1–4.3 → all relevant steps + `unit-test-instructions.md`.
+
+## Steps
+
+### Step 1 — Project structure and production configuration skeleton (U2 delta)
+- [ ] Confirm U1 Android/Kotlin/JUnit structure is runnable (no changes to unrelated files). Add only minimal U2 packages/classes as needed: `com.mealplanner.domain.recipe` (C2 evaluators/services), extend `domain.model`/`adapters`/`diagnostics` in-place. No secrets/endpoints/keys; A1 config injection points only.
+- [ ] Record any required build/config touchpoints (none expected beyond existing app module); do not relax coverage/quality thresholds.
+
+### Step 2 — Bootstrap minimal test runner/config and exact unit-scoped command (runner ready before first executable test)
+- [ ] Verify existing test runner executes unit-scoped U2 command recorded in `unit-test-instructions.md`: `./gradlew :app:testDebugUnitTest --tests "com.mealplanner.domain.recipe.*" --tests "com.mealplanner.domain.planning.SlotSelection*" --tests "com.mealplanner.domain.planning.C3*" --tests "com.mealplanner.adapters.A1*" --tests "com.mealplanner.adapters.RecipeSourceAdapter*" --console=plain` (and future module-scoped tasks if layout changes).
+- [ ] Ensure fakes/stub patterns are usable (no live network). Command must be runnable before first test-first step.
+
+### Step 3 — Custom ordering (test-first for key behavior, practical for supporting/lower-risk)
+- [ ] Apply per key behavior area below: write tests first (TDD/BDD-style where practical), implement minimal code to satisfy, refactor while green. Supporting/lower-risk glue uses practical cadence but remains runnable in CI. Preserve exact custom ordering; do not convert to blanket layer-local TDD for all supporting code.
+
+### Step 4 — Key behavior (test-first): U2 domain contracts/types and input validation (BR2.2, BR2.9, NFR3.3, NFR3.6)
+- [ ] **Tests first:** add/extend model tests for U2 entities (`RecipeSourceAdapterRequest/Result`, `RecipeDetail`, `RecipeTimeNormalization`, `SeasonFitEvaluation`, `NutritionProfile`, `WeeklyNutritionBalanceCueRequest`/`WeeklyNutritionBalanceCue`, `AlternativeRecipesRequest/Result`, `SlotSelectionChangeRequest/Result`, `RecipeFilters`) and boundary validation (invalid `PlanSlotRef`/slot compatibility, malformed IDs/filters/requests → typed non-fabricated failures).
+- [ ] **Implement:** add U2 data types/enums in `domain.model` (additive to existing types; use canonical `PlanSlotRef`; include A1 statuses `ok|fallback_used|unavailable|restricted|timeout|parse_error_mapped|not_supported`, investigation outcomes, typed reason/status fields). Add input validator/mapper helpers.
+- [ ] **Refactor/green:** keep existing U1 tests passing.
+
+### Step 5 — Key behavior (test-first): A1 adapter port, default-off gate, resilience chain, mandatory curated fallback (BR2.1, BR2.2, NFR2.1, NFR2.4, NFR3.1–NFR3.3, NFR5.2, FQ1=A)
+- [ ] **Tests first (fake adapters, no live network):** default-off gate (`allowLiveSource=false` and OQ1 not approved) never invokes live client; curated fallback returned with typed reason; live enabled+approved path maps success; timeout/restriction/parse_error_mapped/unavailable/not_supported map to typed statuses and fallback when available; partial safe parse may contribute with explicit status, no fabrication; retries limited/idempotent only when allowed; no raw exceptions across boundary.
+- [ ] **Implement:** complete `RecipeSourceBoundary`/A1 adapter abstraction (port) and add `A1LiveAccessGate`/config injection, resilience chain (gate → bounded timeout → 0–2 idempotent retries allowed only → defensive parse/map → curated fallback resolver), curated/imported fallback source implementation, and diagnostics hook interface/no-op (NFR5.5). Keep `FallbackRecipeSourceBoundary` behavior compatible or migrate in-place.
+- [ ] **Refactor/green:** ensure U1 adapter stub tests remain valid or are updated to new compatible behavior.
+
+### Step 6 — Supporting behavior (practical cadence): C2 catalog/query facade and safe normalization wiring (BR2.2, BR2.9)
+- [ ] **Tests where practical / implement:** C2 service/use-case methods for catalog/summary/detail/ingredients queries using A1 boundary results; expose `RecipeSourceStatus`/fallback/provenance; normalize missing fields to explicit unavailable/partial states; never fabricate.
+- [ ] **Green:** verify no regression in U1 recipe model usage.
+
+### Step 7 — Key behavior (test-first): weekday time normalization and eligibility (BR2.3, FR3, OQ7)
+- [ ] **Tests first:** `KNOWN` total <=30 eligible for Mon–Fri Breakfast/Dinner; >30 => `WEEKDAY_TIME_OVER_30`; missing/ambiguous/range/conflicting/unit-confusing/unparseable => `MISSING|AMBIGUOUS`, not guessed, `WEEKDAY_TIME_AMBIGUOUS` exclusion; weekend unaffected by weekday 30-min rule.
+- [ ] **Implement:** deterministic `RecipeTimeNormalization` evaluator/service (pure domain logic) producing typed `ExclusionReason` data compatible with U1/U2 contracts.
+- [ ] **Refactor/green.**
+
+### Step 8 — Key behavior (test-first): season fit evaluation and override precedence contracts (BR2.4, FR5, OQ5)
+- [ ] **Tests first:** tag/curated mapping => `IN_SEASON|OUT_OF_SEASON|SHOULDER` when evidence sufficient; insufficient evidence => `SEASON_FIT_UNKNOWN` with explanation key (no false match); override precedence `DEFAULT|OVERRIDE|RESET` reflected in effective resolution inputs.
+- [ ] **Implement:** `SeasonFitEvaluation` service using `SeasonContext`/`EffectiveSeasonResolution` inputs; bounded mapping lookup, no persistent cache.
+- [ ] **Refactor/green.**
+
+### Step 9 — Key behavior (test-first): nutrition availability labels and weekly non-medical cue (BR2.5, FR6, OQ6)
+- [ ] **Tests first:** missing profile => `Nutrition information unavailable`/`UNAVAILABLE`; partial/available handled explicitly; `WeeklyNutritionBalanceCue` computed only from `WeeklyNutritionBalanceCueRequest` (selected IDs + profiles map), excludes missing data, reports exclusion count, never reads `WeeklyPlanState`, no medical targets/dosing/diagnoses.
+- [ ] **Implement:** nutrition profile/cue calculators in `domain.recipe` or dedicated nutrition package; pure aggregation with typed statuses.
+- [ ] **Refactor/green.**
+
+### Step 10 — Key behavior (test-first): alternatives respecting eligibility/season/fallback (BR2.6)
+- [ ] **Tests first:** alternatives filtered by slot/weekday eligibility, season context, and source/fallback status; empty result returns typed `EMPTY/FALLBACK/UNAVAILABLE` with reason and excluded candidates where useful; no fabricated alternatives.
+- [ ] **Implement:** alternatives selector/service using C2 catalog, time normalization, season fit, and A1 source status.
+- [ ] **Refactor/green.**
+
+### Step 11 — Key behavior (test-first): C3 slot selection changes, R-06, ADR-006 stale signaling (BR2.7, BR2.8, FR1/FR2/FR9)
+- [ ] **Tests first:** `SET_SELECTION|REPLACE_WITH_ALTERNATIVE|CLEAR_SELECTION` affect only target `PlanSlotRef`; invalid refs/ops rejected with typed result; `WeeklyPlanState` remains single source model; when active lock/list context exists, change marks stale per BR1.9 with exact warning `"Meal plan modified. Grocery list not up-to-date. Press the Regenerate button."`; **no auto-regeneration**; no ingredient freeze in U2.
+- [ ] **Implement:** C3 planning state manager/use-case in `domain.planning` (additive to `PlanLockService`/`Adr006LockRules`/`WeekdayEligibilityEvaluator`), preserving existing lock/stale behavior.
+- [ ] **Refactor/green:** keep all existing planning tests passing.
+
+### Step 12 — Supporting behavior (practical cadence): observability/diagnostics hook and safe logging fields (NFR5.4–NFR5.6, NFR3.1)
+- [ ] **Tests where practical:** hook receives safe structured fields only (op/status/reason/count/timing bucket); default no-op; fake hook captures events; no PII/secrets/payload assertions required beyond absence from API.
+- [ ] **Implement:** `U2Diagnostics`/equivalent interface + no-op and wiring points in A1/C2 boundaries.
+
+### Step 13 — Environment/build configuration (minimal, only if needed)
+- [ ] [ ] Add/update configuration only if required for test tasks/module wiring; no new secrets; no relaxed quality thresholds. Record exact commands in `unit-test-instructions.md` if changed.
+
+### Step 14 — Documentation and traceability (Step 5 files after generation/review prep)
+- [ ] [ ] After implementation and tests pass (unit-scoped), create `code-summary.md`, `traceability.json` (via `aidlc engine sensor-traceability --stage code-generation --output-path ... --write-upstream` then map AC/NFR/BR IDs to existing workspace-relative implementation/test files), and `source-manifest.json` listing every application-source path U2 created/modified/deleted (including generator/shell-written files). Prepare for adversarial review of finished work.
+- [ ] [ ] Run unit-scoped verification: `./gradlew :app:testDebugUnitTest --tests "com.mealplanner.domain.recipe.*" --tests "com.mealplanner.domain.planning.SlotSelection*" --tests "com.mealplanner.domain.planning.C3*" --tests "com.mealplanner.adapters.A1*" --tests "com.mealplanner.adapters.RecipeSourceAdapter*" --console=plain` (record result; whole-project coverage-floor failures on scoped run are handled per `unit-test-instructions.md`).
+
+## Notes
+- `MealSlotRef` not introduced; use canonical `PlanSlotRef`.
+- A1 live execution remains disabled by default pending OQ1 approved, auditable path (FQ1=A).
+- U4 owns UI/presentation, permission prompts, and orchestration wiring; U3 owns C4 apply-batch/stale regeneration flows. U2 provides typed contracts and domain behavior only.
+
+## Approved unit-test instructions
+
+# Unit Test Instructions — U2 `u2-recipe-planning-completion`
+
+**Intent:** `261107-weekly-meal-planner` (scope `mvp`, test strategy `Standard`)  
+**Unit:** U2 — Recipe + planning completion (`library`, C2/C3 + A1)  
+**Stage:** Code Generation (construction)  
+**Date:** 2026-11-09
+
+## Scope
+Requirement/key-behavior coverage for BR2.1–BR2.9 and NFR4.1–NFR4.3 (Standard strategy: ~5–8 tests per component/key area, with integration-like boundary tests using fakes/stubs; additive MVP floor/CI posture preserved). All commands below are **unit-scoped** (exact class/package filters or module tasks) to avoid rerunning the whole suite per unit in Build and Test.
+
+## Test framework and setup
+- **Runner:** JUnit (Kotlin/JVM unit tests) via Android Gradle/Kotlin test setup already established by U1 (`app/src/test/...`, `kotlin.test`).
+- **Fakes/stubs:** Use in-test fakes for `RecipeSourceBoundary`/A1 adapter ports, curated fallback sources, and diagnostics hooks; **no live Sydänmerkki/network in CI**.
+- **Config:** Reuse existing test configuration. If a new U2 module is introduced, add minimal test task/config and record the exact command here and in the plan.
+
+## Exact runnable commands (before first test-first cycle, and for verification)
+Run from project root. Use `--console=plain`. These commands are scoped to U2-relevant tests; they **always include U2 tests regardless of module layout** (per infrastructure-design gate). Keep existing tests green; do not weaken thresholds.
+
+```bash
+./gradlew :app:testDebugUnitTest --tests "com.mealplanner.domain.recipe.*" --tests "com.mealplanner.domain.planning.SlotSelection*" --tests "com.mealplanner.domain.planning.C3*" --tests "com.mealplanner.adapters.A1*" --tests "com.mealplanner.adapters.RecipeSourceAdapter*" --console=plain
+```
+
+If U2 code is split into a dedicated module later, add that module’s unit-test task (scoped to U2 packages/classes) alongside the command above and update this file.
+
+## Expected coverage targets
+- **Project floor:** MVP/Standard additive floor is 80% line coverage (team/org posture). **Build and Test checks the project coverage floor on the full assembled test suite.** A unit-scoped run does not judge the whole-project floor; do not change coverage thresholds to make a unit-scoped run pass. If a unit-scoped command exits non-zero only because a whole-project coverage threshold fails while all selected tests pass, record that result for this unit—it is not a failed test (run such commands without later steps that the threshold exit would stop).
+- **U2 target:** Meaningful coverage for BR2.1–BR2.9 key behaviors (adapter gate/fallback/status mapping, normalization no-guess, season fit/unknown, nutrition unavailable/cue boundaries, alternatives, C3 slot state/stale semantics). Add targeted regressions for review findings.
+
+## Mocking/stubbing guidance
+- **A1 live gate:** default `allowLiveSource=false` and OQ1 not approved in tests unless a controlled scenario explicitly injects an approved gate; assert no live client invocation when gated off.
+- **Adapter outcomes:** assert typed statuses `ok|fallback_used|unavailable|restricted|timeout|parse_error_mapped|not_supported` and safe mapped reasons; no raw exceptions across boundaries.
+- **Time/season/nutrition:** pure deterministic inputs; no fabricated values for missing/ambiguous data.
+- **ADR-006/R-06:** assert exact stale warning `"Meal plan modified. Grocery list not up-to-date. Press the Regenerate button."` and no auto-regeneration; only target slot mutates.
+
+## Test data management
+- Use small in-memory fixtures for curated recipe catalogs, ingredient lines, season contexts, and nutrition profiles.
+- Keep fixtures minimal and readable; prefer builders/helpers in test scope.
+- No PII/secrets in fixtures or logs. No external network/resources.

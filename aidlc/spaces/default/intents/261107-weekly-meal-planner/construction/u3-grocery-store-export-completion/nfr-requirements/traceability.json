@@ -1,0 +1,60 @@
+{
+  "stage": "nfr-requirements",
+  "unit": "u3-grocery-store-export-completion",
+  "upstream_ids": [
+    "NFR1",
+    "NFR2",
+    "NFR3",
+    "NFR4",
+    "NFR5"
+  ],
+  "coverage": [
+    {
+      "id": "NFR1",
+      "status": "OK",
+      "target": "NFR1.1, NFR1.2, NFR1.3",
+      "note": "Android/on-device library unit (C4/C5/C6); no backend/public API; MVP-bounded scale and bounded adapter batch/query behavior."
+    },
+    {
+      "id": "NFR2",
+      "status": "OK",
+      "target": "NFR2.1, NFR2.2, NFR2.3, NFR2.4, NFR2.5, NFR2.6, NFR2.7",
+      "note": "Explicit generation/confirmation/stale/availability/export fallback semantics (ADR-006/R-01–R-03, BR3.1–BR3.8); typed status/reason metadata for U4 fallback clarity."
+    },
+    {
+      "id": "NFR3",
+      "status": "OK",
+      "target": "NFR3.1, NFR3.2, NFR3.3, NFR3.4, NFR3.5, NFR3.6, NFR3.7",
+      "note": "No account, minimal local data, optional/purpose-limited location boundary (no raw coords in U3), no secrets, privacy-safe diagnostics, untrusted external boundaries, name/presence only (never stock/guaranteed availability)."
+    },
+    {
+      "id": "NFR4",
+      "status": "OK",
+      "target": "NFR4.1, NFR4.2, NFR4.3",
+      "note": "Testability/quality gates recorded in tech-stack-decisions.md: automated tests for BR3.* critical paths and adapter fallbacks (OQ2–OQ4) with fakes; existing tests green; no weakened quality targets."
+    },
+    {
+      "id": "NFR5",
+      "status": "OK",
+      "target": "NFR5.1, NFR5.2, NFR5.3, NFR5.4, NFR5.5, NFR5.6",
+      "note": "MVP responsiveness for local generation/merge/applyPresenceCheckBatch/export DTO construction; bounded/non-blocking adapter boundaries; representable long-running outcomes; no premature hard ms SLO."
+    }
+  ],
+  "reverse": [
+    {
+      "id": "ADR-006",
+      "status": "N/A",
+      "target": "Preserved by NFR2.1/NFR2.2/NFR2.3: snapshot IDs+context/re-resolve, explicit regeneration confirmation, exact stale warning text, no auto-regeneration."
+    },
+    {
+      "id": "OQ2-OQ4",
+      "status": "N/A",
+      "target": "PRISMA/S-ostoslista investigational; reflected in NFR2.5/NFR3.4/NFR3.6/NFR5.4/NFR4.2 via bounded typed fallback-first adapter boundaries."
+    },
+    {
+      "id": "BR3.9",
+      "status": "N/A",
+      "target": "Stable grocery/export extraction seam reflected in tech-stack-decisions.md (export use-case interface, DTO, platform/share adapter port, inward dependencies)."
+    }
+  ]
+}

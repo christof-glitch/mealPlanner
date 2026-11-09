@@ -1,0 +1,55 @@
+{
+  "stage": "nfr-requirements",
+  "unit": "u2-recipe-planning-completion",
+  "upstream_ids": [
+    "NFR1",
+    "NFR2",
+    "NFR3",
+    "NFR4",
+    "NFR5"
+  ],
+  "coverage": [
+    {
+      "id": "NFR1",
+      "status": "OK",
+      "target": "NFR1.1, NFR1.2, NFR1.3",
+      "note": "Android-only on-device library unit; no server scalability targets; bounded MVP dataset/concurrency assumptions."
+    },
+    {
+      "id": "NFR2",
+      "status": "OK",
+      "target": "NFR2.1, NFR2.2, NFR2.3, NFR2.4, NFR2.5",
+      "note": "Explicit fallback/typed states, no fabrication, R-06/ADR-006 stale integrity, deterministic normalization for C2/C3/A1."
+    },
+    {
+      "id": "NFR3",
+      "status": "OK",
+      "target": "NFR3.1, NFR3.2, NFR3.3, NFR3.4, NFR3.5, NFR3.6",
+      "note": "Minimal data/GDPR-aware handling, no secrets, default-off auditable A1 gate (FQ1=A/OQ1), mapped adapter/contract boundaries, input validation/sanitization, no U2 location permission."
+    },
+    {
+      "id": "NFR4",
+      "status": "OK",
+      "target": "NFR4.1, NFR4.2, NFR4.3",
+      "note": "U2-specific testability/quality-gate decomposition in tech-stack-decisions.md: automated BR2.* and fallback/adapter tests with fakes, CI-safe default-off live gate, preserved quality posture (existing tests green, no weakened targets)."
+    },
+    {
+      "id": "NFR5",
+      "status": "OK",
+      "target": "NFR5.1, NFR5.2, NFR5.3, NFR5.4, NFR5.5, NFR5.6",
+      "note": "MVP responsiveness for on-device C2/C3 operations, bounded non-blocking A1, typed observability hooks, no external telemetry required."
+    }
+  ],
+  "reverse": [
+    {
+      "id": "FQ1=A",
+      "status": "N/A",
+      "target": "Sydänmerkki live execution gated by confirmed feasibility/terms/allowed access (OQ1); mandatory curated fallback. Reflected in NFR2.1/NFR3.2/NFR5.2."
+    },
+    {
+      "id": "ADR-006/BR1.9",
+      "status": "N/A",
+      "target": "Preserved by NFR2.3 (exact stale warning semantics, no auto-regeneration, no U2 regeneration trigger)."
+    }
+  ]
+}

@@ -1,0 +1,102 @@
+{
+  "stage": "code-generation",
+  "unit": "u3-grocery-store-export-completion",
+  "upstream_ids": [
+    "AC3.1.1", "AC3.1.2", "AC3.1.3", "AC3.1.4",
+    "AC3.2.1", "AC3.2.2", "AC3.2.3",
+    "AC3.3.1", "AC3.3.2", "AC3.3.3", "AC3.3.4",
+    "AC4.1.1", "AC4.1.2", "AC4.1.3",
+    "AC4.2.1", "AC4.2.2", "AC4.2.3",
+    "AC5.2.1", "AC5.2.2", "AC5.2.3",
+    "AC5.3.1", "AC5.3.2", "AC5.3.3",
+    "AC5.5.1", "AC5.5.2", "AC5.5.3",
+    "AC5.6.1", "AC5.6.2", "AC5.6.3",
+    "NFR5.1", "NFR5.2", "NFR5.3", "NFR5.4", "NFR5.5",
+    "NFR3.1", "NFR3.2", "NFR3.3", "NFR3.4", "NFR3.5", "NFR3.6",
+    "NFR1.1", "NFR1.2", "NFR1.3",
+    "NFR2.1", "NFR2.2", "NFR2.3", "NFR2.4", "NFR2.5", "NFR2.6",
+    "BR1.6", "BR1.12", "BR3.1", "BR1.7", "BR3.2", "BR3.3", "BR3.5", "BR1.8", "BR3.4", "BR1.9", "BR2.8",
+    "BR3.6", "BR3.7", "BR3.8", "BR3.9", "BR3.10", "BR1.13"
+  ],
+  "coverage": [
+    {"id":"AC3.1.1","status":"OK","target":"app/src/main/java/com/mealplanner/domain/shopping/ShoppingListService.kt","note":"Generate/regenerate from locked snapshot via explicit action; re-resolves ingredients through RecipeSourceBoundary port (ADR-006/R-01). Tested in ShoppingListServiceTest."},
+    {"id":"AC3.1.2","status":"OK","target":"app/src/main/java/com/mealplanner/domain/shopping/ShoppingListRules.kt","note":"Deterministic merge by normalized name + compatible unit/amount; incompatible/uncertain kept separate with reason. Tested in ShoppingListGenerationRulesTest/ShoppingListC4CompletionTest."},
+    {"id":"AC3.1.3","status":"OK","target":"app/src/main/java/com/mealplanner/domain/model/ShoppingModels.kt","note":"Editable/check/add/remove state modeled (ShoppingItem/patch/aggregate semantics); C4 owns projection and edit markers. Tests cover edit behavior; UI wiring deferred to U4."},
+    {"id":"AC3.1.4","status":"OK","target":"app/src/main/java/com/mealplanner/domain/shopping/ShoppingListService.kt","note":"Missing/changed source data returns typed partial/notes; no fabrication. Tested in ShoppingListServiceTest and existing generation rules tests."},
+
+    {"id":"AC3.2.1","status":"OK","target":"app/src/main/java/com/mealplanner/domain/shopping/ShoppingListRules.kt","note":"User edits/check/add/remove set hasUserEdits/edit state; evaluateRegenerationRequest/applyItemPatch behavior implemented. Tested in ShoppingListC4CompletionTest."},
+    {"id":"AC3.2.2","status":"OK","target":"app/src/main/java/com/mealplanner/domain/model/ShoppingModels.kt","note":"Exact stale warning constant preserved: \"Meal plan modified. Grocery list not up-to-date. Press the Regenerate button.\" Stale status reflected without auto-regeneration. Tested in C4 completion tests."},
+    {"id":"AC3.2.3","status":"OK","target":"app/src/main/java/com/mealplanner/domain/shopping/ShoppingListService.kt","note":"Regeneration with edits requires explicit confirmation (CONFIRMATION_REQUIRED when not confirmed), preserves current edited list; no auto-regeneration. Tested in ShoppingListServiceTest/C4 tests."},
+
+    {"id":"AC3.3.1","status":"OK","target":"app/src/main/java/com/mealplanner/domain/availability/StoreSelectionUseCase.kt","note":"Manual store selection always available; nearest suggestion best-effort via port with typed unavailable/denied/unknown fallback. No raw GPS in domain. Tested in StoreAvailabilityContractsTest."},
+    {"id":"AC3.3.2","status":"OK","target":"app/src/main/java/com/mealplanner/domain/availability/StorePresenceUseCase.kt","note":"PRISMA name/presence mapping only (PRESENT|NOT_FOUND|UNKNOWN), batch outcomes typed (OK|PARTIAL|UNAVAILABLE|DENIED|FAILED_MAPPED). Never stock/guaranteed availability. Tested in StoreAvailabilityContractsTest."},
+    {"id":"AC3.3.3","status":"OK","target":"app/src/main/java/com/mealplanner/domain/shopping/ShoppingListRules.kt","note":"ShoppingList owns applyPresenceCheckBatch/projection; ambiguous identity remaps to UNKNOWN/NOT_CHECKED with reason; C5 never mutates items. Tested in ApplyBatchPresenceToListTest and C4 completion tests."},
+    {"id":"AC3.3.4","status":"OK","target":"app/src/main/java/com/mealplanner/domain/availability/StorePresenceUseCase.kt","note":"Presence check failures/unavailable/denied/inconclusive map to typed fallback outcomes with reasons; manual checklist remains usable by contract. Tested in StoreAvailabilityContractsTest."},
+
+    {"id":"AC4.1.1","status":"OK","target":"app/src/main/java/com/mealplanner/domain/export/ExportSeam.kt","note":"Export uses current edited ShoppingListExportDto/state via DefaultExportShoppingListUseCase; builds from current aggregate/edited list. Tested in ExportShoppingListUseCaseTest."},
+    {"id":"AC4.1.2","status":"OK","target":"app/src/main/java/com/mealplanner/domain/export/ExportSeam.kt","note":"Mandatory share/copy fallback path preserved with instructions; fallback always available. Legacy ExportFallbackUseCase compatibility kept. Tested in ExportShoppingListUseCaseTest and existing ExportFallbackTest."},
+    {"id":"AC4.1.3","status":"OK","target":"app/src/main/java/com/mealplanner/domain/model/ExportModels.kt","note":"Export DTO/request/result model current edited state; no pre-edit copy. Tested in ExportShoppingListUseCaseTest."},
+
+    {"id":"AC4.2.1","status":"OK","target":"app/src/main/java/com/mealplanner/domain/export/ExportSeam.kt","note":"S-ostoslista official attempt behind SostoslistaOfficialExportPort (investigational OQ4); only attempted when requested/supported by port. Tested in ExportShoppingListUseCaseTest."},
+    {"id":"AC4.2.2","status":"OK","target":"app/src/main/java/com/mealplanner/domain/export/ExportSeam.kt","note":"Official outcome mapping explicit: SUCCESS=>USED, NOT_SUPPORTED=>NOT_FEASIBLE_CONFIRMED fallback, UNAVAILABLE/FAILED_MAPPED=>PARTIALLY_USED fallback; no fabricated success. Tested in ExportShoppingListUseCaseTest."},
+    {"id":"AC4.2.3","status":"OK","target":"app/src/main/java/com/mealplanner/domain/export/ExportSeam.kt","note":"Official not feasible/unavailable/failure degrades to mandatory share/copy fallback with instructions and investigation outcome; core export not blocked. Tested in ExportShoppingListUseCaseTest."},
+
+    {"id":"AC5.2.1","status":"OK","target":"app/src/main/java/com/mealplanner/domain/availability/StoreSelectionUseCase.kt","note":"U3 integration: nearest suggestion best-effort contract with manual fallback; permission/UX presentation deferred to U4. Tested in StoreAvailabilityContractsTest."},
+    {"id":"AC5.2.2","status":"OK","target":"app/src/main/java/com/mealplanner/domain/availability/StoreSelectionUseCase.kt","note":"Manual store selection always available regardless of suggestion outcome. Tested in StoreAvailabilityContractsTest."},
+    {"id":"AC5.2.3","status":"OK","target":"app/src/main/java/com/mealplanner/domain/model/PresenceModels.kt","note":"Store selection/presence states typed for UI-safe consumption; UI rendering deferred to U4."},
+
+    {"id":"AC5.3.1","status":"OK","target":"app/src/main/java/com/mealplanner/domain/availability/StorePresenceUseCase.kt","note":"Presence check integration returns name/presence only with explicit unknown reasons; manual checklist remains fallback. Tested in StoreAvailabilityContractsTest."},
+    {"id":"AC5.3.2","status":"OK","target":"app/src/main/java/com/mealplanner/domain/availability/StorePresenceUseCase.kt","note":"Unavailable/denied/failed adapter outcomes mapped to typed batch statuses/reasons, not blocking. Tested in StoreAvailabilityContractsTest."},
+    {"id":"AC5.3.3","status":"OK","target":"app/src/main/java/com/mealplanner/domain/shopping/ShoppingListRules.kt","note":"Projection of batch results owned by ShoppingList; ambiguous/unmapped handled as UNKNOWN. Tested in presence application tests."},
+
+    {"id":"AC5.5.1","status":"OK","target":"app/src/main/java/com/mealplanner/domain/export/ExportSeam.kt","note":"U3 contributes reliability: mandatory fallback export/share/copy path; typed outcomes; no fabricated success. End-to-end reliability UX deferred to U4."},
+    {"id":"AC5.5.2","status":"OK","target":"app/src/main/java/com/mealplanner/domain/availability/StorePresenceUseCase.kt","note":"Integration failures mapped to explicit typed fallback states (UNAVAILABLE/DENIED/FAILED_MAPPED/UNKNOWN) with reasons; core list operations remain usable."},
+    {"id":"AC5.5.3","status":"OK","target":"app/src/main/java/com/mealplanner/domain/shopping/ShoppingListService.kt","note":"Local/domain generation/edit/export preparation works from snapshot/current state with injected ports/fakes; no live external dependency required."},
+
+    {"id":"AC5.6.1","status":"OK","target":"app/src/main/java/com/mealplanner/domain/availability/StoreSelectionUseCase.kt","note":"No raw GPS coordinates stored/required in U3 domain; location handled as typed suggestion states/manual selection. Permission prompt UX deferred to U4."},
+    {"id":"AC5.6.2","status":"OK","target":"app/src/main/java/com/mealplanner/domain/export/ExportSeam.kt","note":"Export/share uses user-chosen payload/current list; no MealPlanner account/secrets; privacy-safe diagnostics. Platform consent/UX deferred to U4."},
+    {"id":"AC5.6.3","status":"OK","target":"aidlc/spaces/default/intents/261107-weekly-meal-planner/construction/u3-grocery-store-export-completion/code-generation/code-summary.md","note":"Minimal data posture documented; U3 domain stores only necessary list/store/availability/export state. No secrets/PII/raw coords added."},
+
+    {"id":"NFR5.1","status":"OK","target":"app/src/main/java/com/mealplanner/domain/shopping/ShoppingListService.kt","note":"C4 re-resolves ingredients at generation via port; no frozen ingredient fabrication from snapshot."},
+    {"id":"NFR5.2","status":"OK","target":"app/src/main/java/com/mealplanner/domain/shopping/ShoppingListRules.kt","note":"Deterministic merge/no fabrication; ambiguous cases kept separate/explicit."},
+    {"id":"NFR5.3","status":"OK","target":"app/src/main/java/com/mealplanner/domain/availability/StorePresenceUseCase.kt","note":"Presence results limited to PRESENT|NOT_FOUND|UNKNOWN; no stock/guaranteed availability claims."},
+    {"id":"NFR5.4","status":"OK","target":"app/src/main/java/com/mealplanner/domain/export/ExportSeam.kt","note":"Export outcomes/investigation mapping do not fabricate official success; fallback states explicit."},
+    {"id":"NFR5.5","status":"OK","target":"app/src/test/java/com/mealplanner/domain/shopping/ShoppingListGenerationRulesTest.kt","note":"Existing and new tests assert no fabrication/explicit unknown/missing behavior; U3-scoped tests executed successfully."},
+
+    {"id":"NFR3.1","status":"OK","target":"app/src/main/java/com/mealplanner/domain/model/ExportModels.kt","note":"No MealPlanner account/auth/identity added in U3 domain contracts."},
+    {"id":"NFR3.2","status":"OK","target":"app/src/main/java/com/mealplanner/domain/model/ShoppingModels.kt","note":"Domain state limited to necessary shopping/store/availability/export data; minimal MVP posture."},
+    {"id":"NFR3.3","status":"OK","target":"app/src/main/java/com/mealplanner/domain/availability/StoreSelectionUseCase.kt","note":"Location treated as optional typed signal; no raw GPS coordinates in domain; manual store always available."},
+    {"id":"NFR3.4","status":"OK","target":"app/src/main/java/com/mealplanner/domain/export/ExportSeam.kt","note":"No secrets/API keys/hardcoded private endpoints in U3 implementation; ports/adapters injectable."},
+    {"id":"NFR3.5","status":"OK","target":"app/src/main/java/com/mealplanner/domain/availability/StorePresenceUseCase.kt","note":"Privacy-safe typed reasons/messages; no raw coords/secrets/PII in mapped diagnostics."},
+    {"id":"NFR3.6","status":"OK","target":"app/src/main/java/com/mealplanner/domain/export/ExportSeam.kt","note":"Untrusted adapter boundaries mapped to typed outcomes; export uses current DTO only; inward dependency seam preserved."},
+
+    {"id":"NFR1.1","status":"Deferred","target":"aidlc/spaces/default/intents/261107-weekly-meal-planner/inception/requirements-analysis/requirements.md","note":"Android platform/performance baseline and full UI responsiveness primarily owned by U1/U4; U3 domain changes keep operations local/fake-backed."},
+    {"id":"NFR1.2","status":"Deferred","target":"aidlc/spaces/default/intents/261107-weekly-meal-planner/inception/requirements-analysis/requirements.md","note":"App startup/UI performance not in U3 domain scope; no blocking network introduced."},
+    {"id":"NFR1.3","status":"OK","target":"app/src/main/java/com/mealplanner/domain/availability/StorePresenceUseCase.kt","note":"Adapter boundaries typed and fake-backed; no live PRISMA/S-ostoslista network in U3; bounded/fallback behavior by contract."},
+
+    {"id":"NFR2.1","status":"OK","target":"app/src/main/java/com/mealplanner/domain/model/CoreTypes.kt","note":"Typed statuses/enums for generation/presence/export/fallback outcomes support explicit states."},
+    {"id":"NFR2.2","status":"OK","target":"app/src/main/java/com/mealplanner/domain/shopping/ShoppingListService.kt","note":"Missing/changed/partial states returned explicitly; no silent fabrication."},
+    {"id":"NFR2.3","status":"OK","target":"app/src/main/java/com/mealplanner/domain/availability/StorePresenceUseCase.kt","note":"Unknown/unavailable/denied presence outcomes include typed reasons and allow fallback/checklist by contract."},
+    {"id":"NFR2.4","status":"OK","target":"app/src/main/java/com/mealplanner/domain/model/ShoppingModels.kt","note":"Exact stale warning text preserved; stale status modeled without auto-regeneration."},
+    {"id":"NFR2.5","status":"OK","target":"app/src/main/java/com/mealplanner/domain/export/ExportSeam.kt","note":"Official export failures/not-supported map to mandatory fallback with instructions."},
+    {"id":"NFR2.6","status":"OK","target":"app/src/main/java/com/mealplanner/domain/availability/StoreSelectionUseCase.kt","note":"Manual store selection and typed fallback states ensure no dead-end on store/presence lookup failures."},
+
+    {"id":"BR1.6","status":"OK","target":"app/src/main/java/com/mealplanner/domain/shopping/ShoppingListService.kt","note":"U3 preserves/extends baseline lock-snapshot generation/regeneration semantics (ADR-006/R-01/R-03)."},
+    {"id":"BR1.12","status":"OK","target":"app/src/main/java/com/mealplanner/domain/export/ExportSeam.kt","note":"Mandatory share/copy fallback and current edited list export semantics preserved/extended with inward seam."},
+    {"id":"BR3.1","status":"OK","target":"app/src/main/java/com/mealplanner/domain/shopping/ShoppingListService.kt","note":"Locked snapshot generation with ingredient re-resolution via port; invalid/partial/missing handled explicitly. Tested."},
+    {"id":"BR1.7","status":"OK","target":"app/src/main/java/com/mealplanner/domain/shopping/ShoppingListRules.kt","note":"Deterministic merge/no fabrication baseline preserved by U3 rules."},
+    {"id":"BR3.2","status":"OK","target":"app/src/main/java/com/mealplanner/domain/shopping/ShoppingListRules.kt","note":"Deterministic merge by normalized name + compatible unit/amount; unsafe/uncertain kept separate with reason. Tested."},
+    {"id":"BR3.3","status":"OK","target":"app/src/main/java/com/mealplanner/domain/shopping/ShoppingListRules.kt","note":"Edits set hasUserEdits; regenerate requires confirmation when edited; export uses current edited state. Tested."},
+    {"id":"BR3.5","status":"OK","target":"app/src/main/java/com/mealplanner/domain/shopping/ShoppingListRules.kt","note":"ShoppingList owns explicit applyPresenceCheckBatch; scoped identity/remap to UNKNOWN/NOT_CHECKED on ambiguity; C5 never mutates items. Tested."},
+    {"id":"BR1.8","status":"OK","target":"app/src/main/java/com/mealplanner/domain/shopping/ShoppingListRules.kt","note":"No fabrication of quantities/merge/presence; explicit unresolved states preserved."},
+    {"id":"BR3.4","status":"OK","target":"app/src/main/java/com/mealplanner/domain/model/ShoppingModels.kt","note":"Exact ADR-006 stale warning text and no auto-regeneration semantics preserved. Tested."},
+    {"id":"BR1.9","status":"OK","target":"app/src/main/java/com/mealplanner/domain/model/ShoppingModels.kt","note":"Stale warning semantics preserved in U3 models/service integration points."},
+    {"id":"BR2.8","status":"OK","target":"app/src/main/java/com/mealplanner/domain/shopping/ShoppingListService.kt","note":"C4 respects stale status/lock context from upstream; reflects stale state without auto-regeneration (C3 slot-change ownership remains U2)."},
+    {"id":"BR3.6","status":"OK","target":"app/src/main/java/com/mealplanner/domain/availability/StoreSelectionUseCase.kt","note":"Nearest suggestion best effort; manual store selection always available. Tested."},
+    {"id":"BR3.7","status":"OK","target":"app/src/main/java/com/mealplanner/domain/availability/StorePresenceUseCase.kt","note":"Name/presence only (PRESENT|NOT_FOUND|UNKNOWN); never stock/guaranteed availability; UNKNOWN with reason. Tested."},
+    {"id":"BR3.8","status":"OK","target":"app/src/main/java/com/mealplanner/domain/export/ExportSeam.kt","note":"Export uses current edited list; S-ostoslista behind adapter (OQ4 investigational); mandatory share/copy fallback with instructions. Tested."},
+    {"id":"BR3.9","status":"OK","target":"app/src/main/java/com/mealplanner/domain/export/ExportSeam.kt","note":"Stable inward grocery/export extraction seam: export use-case interface, ShoppingListExportDto/ExportLineItem, share/official-attempt ports; no Android intent types in domain. Tested."},
+    {"id":"BR3.10","status":"OK","target":"app/src/main/java/com/mealplanner/domain/availability/StorePresenceUseCase.kt","note":"Typed reliability/privacy-safe outcomes; no secrets/raw GPS/PII in diagnostics; no fabrication of presence/export success. Complemented by shopping/export implementations."},
+    {"id":"BR1.13","status":"OK","target":"app/src/main/java/com/mealplanner/domain/export/ExportSeam.kt","note":"Fallback-first reliability baseline preserved across export/availability flows; explicit next actions/instructions by contract."}
+  ]
+}

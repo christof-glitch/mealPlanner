@@ -3,6 +3,7 @@
 
 ## Interpretations
 <!-- example: 2026-05-29T10:14:32Z — chose REST over GraphQL; the consuming team only needs CRUD, revisit if subscriptions land -->
+- 2026-11-09T15:55Z — U2 Code Generation plan + unit-test-instructions written (custom/test-first for key BR2.*/NFR behaviors, Standard, layout-explicit scoped command). Awaiting engine-presented plan approval before generation. Plan preserves FQ1=A, ADR-006/R-06, no fabrication, canonical PlanSlotRef.
 
 ## Deviations
 <!-- example: 2026-05-29T10:14:32Z — skipped the optional caching layer the stage prose suggested; the dataset is small enough that it adds risk -->

@@ -38,7 +38,7 @@ object SimpleContinuityMappers {
         lockState = runCatching { PlanLockState.valueOf(entity.lockState) }.getOrDefault(PlanLockState.UNLOCKED),
         activeLockSnapshotId = entity.activeLockSnapshotId,
         staleWarning = entity.staleWarning,
-        slots = if (entity.slotsJson.isBlank()) emptyList() else entity.slotsJson.lines().filter { it.isNotBlank() }.map { decodeSlot(it) },
+        slots = if (entity.slotsJson.isBlank()) emptyList() else entity.slotsJson.lines().filter { it.isNotBlank() }.map { decodeSlot(entity.planId, it) },
         lockedRecipeIds = if (entity.lockedRecipeIdsJson.isBlank()) emptyList() else entity.lockedRecipeIdsJson.split(",").filter { it.isNotBlank() },
     )
 
@@ -127,9 +127,9 @@ object SimpleContinuityMappers {
         slot.dataSource?.fallbackUsed?.toString().orEmpty(),
     ).joinToString("|")
 
-    private fun decodeSlot(line: String): PlanSlotState {
+    private fun decodeSlot(planId: String, line: String): PlanSlotState {
         val p = line.split("|")
-        val slotRef = PlanSlotRef(planId = "decoded", dayOfWeek = enumValueOf(p[0]), mealType = enumValueOf(p[1]))
+        val slotRef = PlanSlotRef(planId = planId, dayOfWeek = enumValueOf(p[0]), mealType = enumValueOf(p[1]))
         val source = p.getOrNull(5)?.takeIf { it.isNotBlank() }?.let { runCatching { SourceName.valueOf(it) }.getOrNull() }
         val freshness = p.getOrNull(6)?.takeIf { it.isNotBlank() }?.let { runCatching { Freshness.valueOf(it) }.getOrNull() }
         return PlanSlotState(

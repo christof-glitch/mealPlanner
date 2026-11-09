@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.mealplanner.domain.recipe.AlternativeRecipesServiceTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-09T20:30:40.597Z" hostname="jyu-mac-20260120.local" time="0.027">
+  <properties/>
+  <testcase name="season fit context excludes out of season and keeps in season and unknown evidence" classname="com.mealplanner.domain.recipe.AlternativeRecipesServiceTest" time="0.009"/>
+  <testcase name="alternatives filter weekday ineligible and return typed result" classname="com.mealplanner.domain.recipe.AlternativeRecipesServiceTest" time="0.005"/>
+  <testcase name="includeFallbackSources false returns typed unavailable when only fallback source exists" classname="com.mealplanner.domain.recipe.AlternativeRecipesServiceTest" time="0.005"/>
+  <testcase name="empty alternatives return explicit reason" classname="com.mealplanner.domain.recipe.AlternativeRecipesServiceTest" time="0.008"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

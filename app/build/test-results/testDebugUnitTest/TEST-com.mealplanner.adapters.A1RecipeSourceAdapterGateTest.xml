@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.mealplanner.adapters.A1RecipeSourceAdapterGateTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-09T20:30:40.355Z" hostname="jyu-mac-20260120.local" time="0.098">
+  <properties/>
+  <testcase name="default-off gate never invokes live client and returns curated fallback with typed reason" classname="com.mealplanner.adapters.A1RecipeSourceAdapterGateTest" time="0.057"/>
+  <testcase name="approved gate maps live success without fabrication" classname="com.mealplanner.adapters.A1RecipeSourceAdapterGateTest" time="0.012"/>
+  <testcase name="timeout and restricted outcomes map to typed statuses and fallback when available" classname="com.mealplanner.adapters.A1RecipeSourceAdapterGateTest" time="0.007"/>
+  <testcase name="parse error mapped with safe partial data uses explicit status and may fill from fallback" classname="com.mealplanner.adapters.A1RecipeSourceAdapterGateTest" time="0.009"/>
+  <testcase name="live enabled but OQ1 not approved still uses curated fallback and never invokes live" classname="com.mealplanner.adapters.A1RecipeSourceAdapterGateTest" time="0.011"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

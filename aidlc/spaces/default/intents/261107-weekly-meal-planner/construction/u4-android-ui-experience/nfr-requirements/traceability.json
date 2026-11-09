@@ -1,0 +1,38 @@
+{
+  "stage": "nfr-requirements",
+  "unit": "u4-android-ui-experience",
+  "upstream_ids": [
+    "NFR1",
+    "NFR2",
+    "NFR3",
+    "NFR4",
+    "NFR5"
+  ],
+  "coverage": [
+    {
+      "id": "NFR1",
+      "status": "OK",
+      "target": "NFR1.1-U4, NFR1.2-U4, NFR1.3-U4, NFR1.4-U4 (performance-requirements.md)"
+    },
+    {
+      "id": "NFR2",
+      "status": "OK",
+      "target": "UI fallback/loading/error/partial states and next actions in functional-spec.md; verified by NFR1.3-U4/NFR3.6-U4 and planned UI state tests"
+    },
+    {
+      "id": "NFR3",
+      "status": "OK",
+      "target": "NFR3.1-U4..NFR3.6-U4 (security-requirements.md)"
+    },
+    {
+      "id": "NFR4",
+      "status": "N/A",
+      "target": "Maintainability/modularity NFR4 is primarily codebase/domain-structure concern; U4 applies thin-UI separation (ADR-005) and brownfield module structure documented in tech-stack-decisions.md"
+    },
+    {
+      "id": "NFR5",
+      "status": "OK",
+      "target": "UI must render domain truthfulness constraints (no fabrication, exact stale warning, presence name-only, export current edited list) per functional-spec.md and NFR3.5-U4; enforcement owned by U1-U3/domain"
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "stage": "infrastructure-design",
+  "unit": "u4-android-ui-experience",
+  "upstream_ids": [
+    "NFR1.1",
+    "NFR1.4",
+    "NFR1.2",
+    "NFR1.3",
+    "NFR3.1",
+    "NFR3.6",
+    "NFR3.2",
+    "NFR3.3",
+    "NFR3.4",
+    "NFR3.5"
+  ],
+  "coverage": [
+    {"id":"NFR1.1","status":"N/A","target":"No cloud infrastructure; UI responsiveness achieved by Android/Compose app runtime and coroutine-off-main-thread design. Verified by :app:testDebugUnitTest and debug smoke/ANR observation (cicd-pipeline.md, monitoring-design.md)."},
+    {"id":"NFR1.4","status":"N/A","target":"No cloud infrastructure; grocery list performance handled by Compose LazyColumn/state design and Gradle app build. Verified by representative fixture sanity/manual test and unit tests (cicd-pipeline.md)."},
+    {"id":"NFR1.2","status":"N/A","target":"No cloud infrastructure; navigation/context/focus preserved in app navigation/state. Verified by navigation/state tests and manual focus/TalkBack checks (cicd-pipeline.md, monitoring-design.md)."},
+    {"id":"NFR1.3","status":"OK","target":"App-level loading/empty/error/fallback/R-05 states required; CI/manual smoke gates verify next actions; no cloud monitoring stack provisioned (monitoring-design.md, cicd-pipeline.md)."},
+    {"id":"NFR3.1","status":"OK","target":"No backend/account/cloud identity infrastructure provisioned; app routes/state contain no auth/account. Verified by review/tests (infrastructure-specification.md, cicd-pipeline.md)."},
+    {"id":"NFR3.6","status":"OK","target":"Accessibility/missing-data/non-medical/privacy-safe label checks included in CI/manual smoke and review gates (monitoring-design.md, cicd-pipeline.md)."},
+    {"id":"NFR3.2","status":"OK","target":"Android runtime permission platform boundary used; no cloud permission service. Manual store selection always available; verified by fake permission tests/manual checks (infrastructure-specification.md, cicd-pipeline.md)."},
+    {"id":"NFR3.3","status":"OK","target":"No secrets/raw GPS/PII in source, UI state, or diagnostics hooks; secrets kept outside VCS/CI secure stores if ever needed. Verified by review/tests (infrastructure-specification.md, monitoring-design.md, cicd-pipeline.md)."},
+    {"id":"NFR3.4","status":"OK","target":"Export uses Android share/copy platform boundaries with explicit user action and mandatory fallback; official S-ostoslista investigational, no cloud export infra provisioned (infrastructure-specification.md, cicd-pipeline.md)."},
+    {"id":"NFR3.5","status":"OK","target":"Presence UI constrained to name/presence only via app/domain contracts; no PRISMA stock infrastructure provisioned. Verified by state/copy tests and review (monitoring-design.md, cicd-pipeline.md)."}
+  ]
+}

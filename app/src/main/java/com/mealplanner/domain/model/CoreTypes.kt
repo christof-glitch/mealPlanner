@@ -29,9 +29,14 @@ enum class SelectionSource { USER_SELECTED, SUGGESTED_ACCEPTED, FALLBACK }
 
 enum class GenerationStatus { GENERATED, REGENERATED, FAILED, CANCELLED, NEEDS_CONFIRMATION }
 
-enum class StorePresenceStatus { PRESENT, NOT_FOUND, UNKNOWN }
+/** C5 raw/name-presence result states (FR8). `NOT_CHECKED` is a C4 projection pre-check state. */
+enum class StorePresenceStatus { PRESENT, NOT_FOUND, UNKNOWN, NOT_CHECKED }
 
+/** Legacy U1 batch status; U3 adds [PresenceBatchStatus] with C5/A2 mapped outcomes. */
 enum class PresenceBatchOverallStatus { COMPLETE, PARTIAL, FAILED }
+
+/** U3/C5 batch mapped outcomes (BR3.7): name/presence only, typed fallback reasons. */
+enum class PresenceBatchStatus { OK, PARTIAL, UNAVAILABLE, DENIED, FAILED_MAPPED }
 
 enum class ApplyPresenceStatus { APPLIED, PARTIAL, FAILED }
 

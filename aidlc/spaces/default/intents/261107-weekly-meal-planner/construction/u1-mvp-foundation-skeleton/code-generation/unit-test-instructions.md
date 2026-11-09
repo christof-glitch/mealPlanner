@@ -66,7 +66,7 @@ If a selected test run exits non-zero only because a project-wide coverage thres
 - Do not include secrets, tokens, precise coordinates, or personal identifiers.
 
 ## Final test inventory (U1)
-| Component | Test class | Tests (approx.) | Key behavior |
+| Component | Test class | Tests (actual) | Key behavior |
 |---|---|---:|---|
 | Planning/lock/schedule | `com.mealplanner.domain.planning.WeeklyPlanStateTest` | 7 | BR1.1–BR1.2 slot structure, empty visibility, weekday time eligibility/exclusions |
 | ADR-006 lock/stale | `com.mealplanner.domain.planning.LockAndStaleStateTest` | 8 | BR1.6–BR1.9 snapshot IDs+context only, exact stale warning, no auto-regenerate, explicit confirmation |
@@ -74,14 +74,15 @@ If a selected test run exits non-zero only because a project-wide coverage thres
 | Presence split (R-02) | `com.mealplanner.domain.shopping.ApplyBatchPresenceToListTest` | 6 | BR1.12 C5 projections name/presence only, C4 apply/remap/unknown, no fabricated presence |
 | Export fallback | `com.mealplanner.domain.export.ExportFallbackTest` | 7 | BR1.11 current edited list, share/copy/fallback states, official path absent |
 | Persistence mapping | `com.mealplanner.data.persistence.PlanPersistenceMapperTest` | 3 | Continuity metadata, snapshot context, list edits/presence/unresolved round-trip |
-| Persistence boundary stubs | `ContinuityRepositoryBoundaryTest`, `SnapshotPersistenceBoundaryTest`, `ShoppingListPersistenceBoundaryTest` | 3 | Room/DataStore boundary intent, explicit null/no fabrication, ADR-006 continuity |
+| Continuity boundary stub | `com.mealplanner.data.persistence.ContinuityRepositoryBoundaryTest` | 2 | Room/DataStore boundary intent, explicit null/no fabrication |
+| Snapshot boundary stub | `com.mealplanner.data.persistence.SnapshotPersistenceBoundaryTest` | 1 | ADR-006 continuity/snapshot context boundary |
+| Shopping boundary stub | `com.mealplanner.data.persistence.ShoppingListPersistenceBoundaryTest` | 1 | Edits/presence/unresolved continuity boundary |
 
-**Total:** 40 tests across 8 test classes (includes 3 integration/boundary stubs runnable in local JVM with in-memory fakes).
+**Total:** 41 tests across 9 test classes (includes 3 persistence boundary stub classes / 4 stub tests runnable in local JVM with in-memory fakes). All selected tests passed.
 
-## Tests written but not executed / environment limits (to record in code-summary.md)
-- Instrumented/Compose UI tests requiring emulator/device were deferred (U4 owns full UX; no device/emulator in this execution).
-- Performance benchmarks and full CI 80% line-coverage floor are verified by Build and Test/CI, not by unit-scoped runs.
-- **Execution environment limit:** `./gradlew` is present but `gradle/wrapper/gradle-wrapper.jar` is not available in this workspace and Android SDK/Gradle distribution were not configured in the environment. Tests were **written but not executed**. Exact commands remain valid once wrapper JAR and Android SDK are available:
-  - `./gradlew :app:testDebugUnitTest --tests "com.mealplanner.domain.*" --tests "com.mealplanner.data.persistence.*" --console=plain`
-  - Per-class filters listed above under "Exact unit-scoped commands".
-  Do not claim execution. Record any project-wide coverage-threshold failure separately from test failures per unit-test instructions.
+## Execution evidence (2026-11-09 rebuild verification)
+- **Executed (unit-scoped):** `cd /Users/christfm/opencode/meal-planner && ./gradlew :app:testDebugUnitTest --tests 'com.mealplanner.domain.*' --tests 'com.mealplanner.data.persistence.*' --console=plain`
+- **Result:** `BUILD SUCCESSFUL` (27 actionable tasks at first run; rerun UP-TO-DATE). XML results in `app/build/test-results/testDebugUnitTest/` report **9 suites, 41 tests, 0 failures, 0 errors, 0 skipped**: `ContinuityRepositoryBoundaryTest` (2), `PlanPersistenceMapperTest` (3), `ShoppingListPersistenceBoundaryTest` (1), `SnapshotPersistenceBoundaryTest` (1), `ExportFallbackTest` (7), `LockAndStaleStateTest` (8), `WeeklyPlanStateTest` (7), `ApplyBatchPresenceToListTest` (6), `ShoppingListGenerationRulesTest` (6).
+- **Environment:** Gradle 8.14.6 wrapper present (including `gradle/wrapper/gradle-wrapper.jar`), macOS aarch64, JBR 21.0.11, Android SDK configured (`local.properties`). No project-wide coverage-threshold failure observed in this unit-scoped run.
+- **Custom ordering evidence:** tests and satisfying implementation already existed in this rebuild context; tests were executed and passed. **Red/failing-before-Green evidence was not produced in this session** and is not claimed.
+- **Not executed (expected/deferred):** instrumented/Compose UI device tests (U4), performance benchmarks, full CI 80% line-coverage/CI-before-merge gate. Do not claim those executed. Quality/coverage targets were not weakened.

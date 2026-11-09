@@ -1,0 +1,20 @@
+{
+  "stage": "code-generation",
+  "unit": "u3-grocery-store-export-completion",
+  "version": 1,
+  "writes": [
+    {"path": "app/src/main/java/com/mealplanner/domain/availability/StorePresenceUseCase.kt"},
+    {"path": "app/src/main/java/com/mealplanner/domain/availability/StoreSelectionUseCase.kt"},
+    {"path": "app/src/main/java/com/mealplanner/domain/export/ExportSeam.kt"},
+    {"path": "app/src/main/java/com/mealplanner/domain/model/CoreTypes.kt"},
+    {"path": "app/src/main/java/com/mealplanner/domain/model/ExportModels.kt"},
+    {"path": "app/src/main/java/com/mealplanner/domain/model/PresenceModels.kt"},
+    {"path": "app/src/main/java/com/mealplanner/domain/model/ShoppingModels.kt"},
+    {"path": "app/src/main/java/com/mealplanner/domain/shopping/ShoppingListRules.kt"},
+    {"path": "app/src/main/java/com/mealplanner/domain/shopping/ShoppingListService.kt"},
+    {"path": "app/src/test/java/com/mealplanner/domain/availability/StoreAvailabilityContractsTest.kt"},
+    {"path": "app/src/test/java/com/mealplanner/domain/export/ExportShoppingListUseCaseTest.kt"},
+    {"path": "app/src/test/java/com/mealplanner/domain/shopping/ShoppingListC4CompletionTest.kt"},
+    {"path": "app/src/test/java/com/mealplanner/domain/shopping/ShoppingListServiceTest.kt"}
+  ]
+}

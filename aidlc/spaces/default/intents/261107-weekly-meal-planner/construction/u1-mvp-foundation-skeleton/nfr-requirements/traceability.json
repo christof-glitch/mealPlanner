@@ -8,7 +8,7 @@
     "NFR4",
     "NFR5"
   ],
-  "notes": "Derived requirement IDs in U1 NFR artifacts use local namespaces (e.g., NFR1.1 local continuity, NFR2.1 explicit states, NFR3.1 performance, NFR4.1 security/privacy, NFR5.1 medical scope). This intentional local numbering differs from inception NFR IDs; each inception NFR below is mapped semantically to the correct derived requirement(s)/artifact coverage.",
+  "notes": "Derived requirement IDs in U1 NFR artifacts use local namespaces (e.g., NFR1.1 local continuity, NFR2.1 explicit states, NFR3.1 performance, NFR4.1 security/privacy, NFR5.1 medical scope). This intentional local numbering differs from inception NFR IDs; each inception NFR below is mapped semantically to the correct derived requirement(s)/artifact coverage. `NFR5.1` is a local medical-scope requirement (not inception NFR5 Performance) and is traced explicitly under `medical_scope_coverage` to FR6/BR1.14.",
   "coverage": [
     {
       "id": "NFR1",
@@ -39,6 +39,14 @@
       "status": "OK",
       "target": "NFR3.1, NFR3.2, NFR3.3, NFR3.5 (local performance artifact IDs)",
       "note": "Inception NFR5 — Performance and responsiveness. Mapped to local responsiveness target, bounded external adapters with fallback/non-blocking core flows, first useful local view, and deferred diagnosability/measurement method."
+    }
+  ],
+  "medical_scope_coverage": [
+    {
+      "id": "FR6",
+      "status": "OK",
+      "target": "NFR5.1 (local medical-scope requirement; not inception NFR5 Performance), BR1.14",
+      "note": "Nutrition/health-related information is view-only and non-medical: no diagnoses, treatment recommendations, or personalized medical dosing. Missing nutrition data labeled `Nutrition information unavailable`. No fabricated data. U1 contracts allow missing nutrition data without blocking core flows (BR1.14)."
     }
   ]
 }

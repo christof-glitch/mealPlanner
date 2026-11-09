@@ -1,0 +1,36 @@
+{
+  "stage": "nfr-design",
+  "unit": "u4-android-ui-experience",
+  "upstream_ids": [
+    "NFR1.1",
+    "NFR1.2",
+    "NFR1.3",
+    "NFR2.1",
+    "NFR1.4",
+    "NFR3.1",
+    "NFR3.2",
+    "NFR3.3",
+    "NFR3.4",
+    "NFR3.5",
+    "NFR5.3",
+    "NFR3.6",
+    "NFR2.3",
+    "NFR2.4"
+  ],
+  "coverage": [
+    {"id":"NFR1.1","status":"OK","target":"NFR1.1-U4: Compose unidirectional state, off-main-thread domain calls (performance-design.md)"},
+    {"id":"NFR1.2","status":"OK","target":"NFR1.2-U4: navigation/slot context, stable keys, shared state scope, focus restore (performance-design.md)"},
+    {"id":"NFR1.3","status":"OK","target":"NFR1.3-U4: explicit loading/empty/error/fallback/partial states and R-05 actions (performance-design.md, logical-components.md)"},
+    {"id":"NFR2.1","status":"OK","target":"StatusBanner/ErrorRetryPanel, no blank blocking primary screens, typed fallback states (performance-design.md, functional-spec.md)"},
+    {"id":"NFR1.4","status":"OK","target":"NFR1.4-U4: LazyColumn/stable keys, off-main generate/regenerate/export with status/confirmation (performance-design.md)"},
+    {"id":"NFR3.1","status":"OK","target":"NFR3.1-U4: no auth/account routes or identity fields (security-design.md)"},
+    {"id":"NFR3.2","status":"OK","target":"NFR3.2-U4: PermissionStatusProvider boundary, purpose text, manual store always available (security-design.md, logical-components.md)"},
+    {"id":"NFR3.3","status":"OK","target":"NFR3.3-U4: DiagnosticsUiMapper/user-safe typed messages, no raw GPS/secrets/endpoints/PII (security-design.md)"},
+    {"id":"NFR3.4","status":"OK","target":"NFR3.4-U4: explicit export of current edited list, official investigational + mandatory share/copy fallback, BR3.9 boundary (security-design.md)"},
+    {"id":"NFR3.5","status":"OK","target":"NFR3.5-U4: name/presence only PRESENT/NOT_FOUND/UNKNOWN+reason, no stock/guaranteed availability (security-design.md)"},
+    {"id":"NFR5.3","status":"OK","target":"UI renders presence name/presence-only semantics from domain; no stock/availability fabrication (security-design.md, functional-spec.md)"},
+    {"id":"NFR3.6","status":"OK","target":"NFR3.6-U4: explicit missing-data labels, non-medical cues, WCAG 2.2 AA practical baseline (security-design.md)"},
+    {"id":"NFR2.3","status":"OK","target":"Unknown/unavailable/season-fit/nutrition labels explicit with reasons where applicable (security-design.md, functional-spec.md)"},
+    {"id":"NFR2.4","status":"OK","target":"Exact ADR-006 stale warning preserved in grocery flow; no auto-regeneration (functional-spec.md, GroceryExperienceFacade design)"}
+  ]
+}

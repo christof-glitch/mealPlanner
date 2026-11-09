@@ -45,6 +45,7 @@
     {"path": "build.gradle.kts"},
     {"path": "gradle.properties"},
     {"path": "gradle/libs.versions.toml"},
+    {"path": "gradle/wrapper/gradle-wrapper.jar"},
     {"path": "gradle/wrapper/gradle-wrapper.properties"},
     {"path": "gradlew"},
     {"path": "gradlew.bat"},

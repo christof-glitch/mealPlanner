@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.mealplanner.domain.shopping.ShoppingListC4CompletionTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-11-09T20:30:40.655Z" hostname="jyu-mac-20260120.local" time="0.001">
+  <properties/>
+  <testcase name="generation request carries locked snapshot and confirmation semantics" classname="com.mealplanner.domain.shopping.ShoppingListC4CompletionTest" time="0.0"/>
+  <testcase name="edited aggregate requires confirmation before destructive rebuild intent" classname="com.mealplanner.domain.shopping.ShoppingListC4CompletionTest" time="0.0"/>
+  <testcase name="applyPresenceCheckBatch remaps ambiguous identity to UNKNOWN with reason and preserves unrelated edits" classname="com.mealplanner.domain.shopping.ShoppingListC4CompletionTest" time="0.001"/>
+  <testcase name="patch operations mark aggregate as user edited" classname="com.mealplanner.domain.shopping.ShoppingListC4CompletionTest" time="0.0"/>
+  <testcase name="missing or changed source data is explicit and never fabricated" classname="com.mealplanner.domain.shopping.ShoppingListC4CompletionTest" time="0.0"/>
+  <testcase name="exact stale warning constant matches ADR-006" classname="com.mealplanner.domain.shopping.ShoppingListC4CompletionTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
