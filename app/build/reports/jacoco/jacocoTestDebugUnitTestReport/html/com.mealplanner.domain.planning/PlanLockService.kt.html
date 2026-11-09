@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PlanLockService.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">com.mealplanner.domain.planning</a> &gt; <span class="el_source">PlanLockService.kt</span></div><h1>PlanLockService.kt</h1><pre class="source lang-java linenums">package com.mealplanner.domain.planning
+
+import com.mealplanner.domain.model.GenerationStatus
+import com.mealplanner.domain.model.LockSnapshot
+import com.mealplanner.domain.model.LockedRecipeSelection
+import com.mealplanner.domain.model.PlanLockState
+import com.mealplanner.domain.model.PlanSnapshotContext
+import com.mealplanner.domain.model.ShoppingListGenerationResult
+import com.mealplanner.domain.model.SlotStatus
+import com.mealplanner.domain.model.WeeklyPlanState
+import java.time.Instant
+import java.util.UUID
+
+/**
+ * C1/C3/C4 baseline lock and explicit generate/regenerate semantics (ADR-006).
+ * U1 provides domain logic baseline; orchestration/UI owned by later units.
+ */
+<span class="fc" id="L18">class PlanLockService {</span>
+<span class="fc" id="L19">    fun lockPlan(</span>
+        plan: WeeklyPlanState,
+<span class="fc" id="L21">        now: Instant = Instant.now(),</span>
+<span class="fc" id="L22">        planContext: PlanSnapshotContext = PlanSnapshotContext(),</span>
+<span class="fc" id="L23">        snapshotId: String = UUID.randomUUID().toString(),</span>
+    ): Pair&lt;WeeklyPlanState, LockSnapshot&gt; {
+<span class="fc" id="L25">        val selections = plan.slots</span>
+<span class="pc bpc" id="L26" title="1 of 6 branches missed.">            .filter { !it.assignedRecipeId.isNullOrBlank() }</span>
+<span class="fc" id="L27">            .map { slot -&gt;</span>
+<span class="fc" id="L28">                LockedRecipeSelection(</span>
+<span class="fc" id="L29">                    slotRef = slot.slotRef,</span>
+<span class="fc" id="L30">                    recipeId = slot.assignedRecipeId!!,</span>
+<span class="fc" id="L31">                    selectionSource = com.mealplanner.domain.model.SelectionSource.USER_SELECTED,</span>
+<span class="fc" id="L32">                )</span>
+            }
+<span class="fc" id="L34">        val snapshot = LockSnapshot(</span>
+<span class="fc" id="L35">            snapshotId = snapshotId,</span>
+<span class="fc" id="L36">            planId = plan.planId,</span>
+<span class="fc" id="L37">            lockedRecipeSelections = selections,</span>
+<span class="fc" id="L38">            planContext = planContext,</span>
+<span class="fc" id="L39">            createdAt = now,</span>
+        )
+<span class="fc" id="L41">        val updated = plan.copy(</span>
+<span class="fc" id="L42">            lockState = PlanLockState.LOCKED,</span>
+<span class="fc" id="L43">            activeLockSnapshotId = snapshot.snapshotId,</span>
+<span class="fc" id="L44">            lockedRecipeIds = selections.map { it.recipeId }.distinct(),</span>
+<span class="fc" id="L45">            staleWarning = null,</span>
+<span class="fc" id="L46">            slots = plan.slots.map { slot -&gt;</span>
+<span class="fc bfc" id="L47" title="All 2 branches covered.">                if (slot.assignedRecipeId != null) slot.copy(slotStatus = SlotStatus.LOCKED) else slot</span>
+            },
+        )
+<span class="fc" id="L50">        return updated to snapshot</span>
+    }
+
+    fun markPlanChanged(plan: WeeklyPlanState): WeeklyPlanState {
+<span class="pc bpc" id="L54" title="1 of 4 branches missed.">        if (plan.lockState == PlanLockState.UNLOCKED &amp;&amp; plan.activeLockSnapshotId == null) return plan</span>
+<span class="fc" id="L55">        return Adr006LockRules.markPlanStale(plan)</span>
+    }
+
+<span class="fc" id="L58">    fun generateShoppingList(</span>
+        plan: WeeklyPlanState,
+        snapshot: LockSnapshot?,
+        hasExistingUserEdits: Boolean,
+        confirmedReplaceEdits: Boolean,
+        isRegenerate: Boolean,
+        resolvedItems: List&lt;com.mealplanner.domain.model.ShoppingListItem&gt;,
+<span class="fc" id="L65">        unresolved: List&lt;com.mealplanner.domain.model.IngredientLine&gt; = emptyList(),</span>
+<span class="fc" id="L66">        shoppingListId: String = UUID.randomUUID().toString(),</span>
+    ): ShoppingListGenerationResult {
+<span class="pc bpc" id="L68" title="1 of 4 branches missed.">        if (plan.lockState == PlanLockState.UNLOCKED || snapshot == null) {</span>
+<span class="fc" id="L69">            return ShoppingListGenerationResult(</span>
+<span class="fc" id="L70">                status = GenerationStatus.FAILED,</span>
+<span class="fc" id="L71">                userActionRequired = &quot;LOCK_AND_EXPLICIT_GENERATE_REQUIRED&quot;,</span>
+<span class="fc" id="L72">                fallbackReason = com.mealplanner.domain.model.FallbackReason(&quot;LOCK_REQUIRED&quot;, &quot;Lock/finalize recipes before generating.&quot;),</span>
+            )
+        }
+<span class="pc bpc" id="L75" title="1 of 6 branches missed.">        if (isRegenerate &amp;&amp; hasExistingUserEdits &amp;&amp; !confirmedReplaceEdits) {</span>
+<span class="fc" id="L76">            return ShoppingListGenerationResult(</span>
+<span class="fc" id="L77">                status = GenerationStatus.NEEDS_CONFIRMATION,</span>
+<span class="fc" id="L78">                snapshotId = snapshot.snapshotId,</span>
+<span class="fc" id="L79">                userActionRequired = &quot;CONFIRM_REPLACE_EDITED_LIST&quot;,</span>
+<span class="fc" id="L80">                fallbackReason = com.mealplanner.domain.model.FallbackReason(</span>
+<span class="fc" id="L81">                    code = &quot;REGENERATION_CONFIRMATION_REQUIRED&quot;,</span>
+<span class="fc" id="L82">                    message = &quot;Regeneration can replace edited shopping list items. Explicit confirmation is required.&quot;,</span>
+                ),
+            )
+        }
+<span class="fc" id="L86">        return ShoppingListGenerationResult(</span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">            status = if (isRegenerate) GenerationStatus.REGENERATED else GenerationStatus.GENERATED,</span>
+<span class="fc" id="L88">            snapshotId = snapshot.snapshotId,</span>
+<span class="fc" id="L89">            shoppingListId = shoppingListId,</span>
+<span class="fc" id="L90">            items = resolvedItems,</span>
+<span class="fc" id="L91">            unresolvedIngredients = unresolved,</span>
+        )
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

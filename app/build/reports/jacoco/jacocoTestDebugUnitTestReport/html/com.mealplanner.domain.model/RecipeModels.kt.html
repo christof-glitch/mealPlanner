@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RecipeModels.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">com.mealplanner.domain.model</a> &gt; <span class="el_source">RecipeModels.kt</span></div><h1>RecipeModels.kt</h1><pre class="source lang-java linenums">package com.mealplanner.domain.model
+
+/** ENT-U1-016 */
+<span class="fc" id="L4">data class RecipeSummary(</span>
+<span class="fc" id="L5">    val recipeId: RecipeId,</span>
+<span class="fc" id="L6">    val title: String,</span>
+<span class="pc" id="L7">    val totalTimeMinutes: Int? = null,</span>
+<span class="pc" id="L8">    val timeConfidence: TimeConfidence = TimeConfidence.MISSING,</span>
+<span class="pc" id="L9">    val sydanmerkkiStatus: SydanmerkkiStatus = SydanmerkkiStatus.UNAVAILABLE,</span>
+<span class="fc" id="L10">    val sourceStatus: RecipeSourceStatus,</span>
+<span class="pc" id="L11">    val seasonFit: SeasonFit? = null,</span>
+<span class="pc" id="L12">    val nutritionAvailability: NutritionAvailability? = null,</span>
+<span class="fc" id="L13">)</span>
+
+/** ENT-U1-017 */
+<span class="fc" id="L16">data class IngredientLine(</span>
+<span class="fc" id="L17">    val ingredientRef: IngredientRefId? = null,</span>
+<span class="fc" id="L18">    val name: String,</span>
+<span class="pc" id="L19">    val normalizedName: String? = null,</span>
+<span class="fc" id="L20">    val amount: Double? = null,</span>
+<span class="fc" id="L21">    val unit: String? = null,</span>
+<span class="fc" id="L22">    val amountText: String? = null,</span>
+<span class="fc" id="L23">    val availabilityStatus: IngredientAvailabilityStatus = IngredientAvailabilityStatus.KNOWN,</span>
+<span class="fc" id="L24">    val sourceRecipeId: RecipeId,</span>
+<span class="fc" id="L25">)</span>
+
+/** ENT-U1-023 */
+<span class="pc" id="L28">data class ExcludedRecipeCandidate(</span>
+<span class="pc" id="L29">    val recipeSummary: RecipeSummary? = null,</span>
+<span class="pc" id="L30">    val recipeOrCandidateRef: String? = null,</span>
+<span class="pc" id="L31">    val exclusionReason: ExclusionReason,</span>
+<span class="nc" id="L32">)</span>
+
+/** ENT-U1-018 */
+<span class="fc" id="L35">data class RecipeCandidateResult(</span>
+<span class="pc" id="L36">    val queryContext: Map&lt;String, String&gt; = emptyMap(),</span>
+<span class="pc" id="L37">    val candidates: List&lt;RecipeSummary&gt; = emptyList(),</span>
+<span class="pc" id="L38">    val excludedCandidates: List&lt;ExcludedRecipeCandidate&gt; = emptyList(),</span>
+<span class="pc" id="L39">    val status: RecipeQueryStatus = RecipeQueryStatus.UNAVAILABLE,</span>
+<span class="fc" id="L40">    val sourceStatus: RecipeSourceStatus,</span>
+<span class="fc" id="L41">    val fallbackReason: FallbackReason? = null,</span>
+<span class="fc" id="L42">)</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

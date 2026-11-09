@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DefaultPlanExperienceFacade.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">com.mealplanner.ui.facades</a> &gt; <span class="el_source">DefaultPlanExperienceFacade.kt</span></div><h1>DefaultPlanExperienceFacade.kt</h1><pre class="source lang-java linenums">package com.mealplanner.ui.facades
+
+import com.mealplanner.domain.model.DayOfWeek
+import com.mealplanner.domain.model.DayKind
+import com.mealplanner.domain.model.PlanLockState
+import com.mealplanner.domain.model.PlanSlotRef
+import com.mealplanner.domain.model.SlotSelectionChangeRequest
+import com.mealplanner.domain.model.SlotSelectionOperation
+import com.mealplanner.domain.model.WeeklyPlanState
+import com.mealplanner.domain.model.dayKind
+import com.mealplanner.domain.planning.C3SlotSelectionService
+import com.mealplanner.domain.planning.WeekdayEligibilityEvaluator
+import com.mealplanner.ui.state.MealSlotUiModel
+import com.mealplanner.ui.state.PlanIntent
+import com.mealplanner.ui.state.PlanScreenState
+import com.mealplanner.ui.state.R05NextAction
+import com.mealplanner.ui.state.SlotActionContext
+import com.mealplanner.ui.state.SlotOrigin
+import com.mealplanner.ui.state.TodayScreenState
+import java.time.LocalDate
+
+/**
+ * Thin UI orchestration (ADR-005): shared Today/Plan slot state over C3 domain rules (R-06).
+ * Unfilled slots remain empty; no auto-fill/hide. Target-slot updates only via domain.
+ */
+<span class="fc" id="L26">class DefaultPlanExperienceFacade(</span>
+<span class="nc" id="L27">    initialPlan: WeeklyPlanState = WeekdayEligibilityEvaluator.createEmptyPlan(&quot;plan-1&quot;),</span>
+<span class="fc" id="L28">    private val c3: C3SlotSelectionService = C3SlotSelectionService(),</span>
+<span class="pc" id="L29">    private val todayDayProvider: () -&gt; DayOfWeek = {</span>
+<span class="nc bnc" id="L30" title="All 9 branches missed.">        when (LocalDate.now().dayOfWeek) {</span>
+<span class="nc" id="L31">            java.time.DayOfWeek.MONDAY -&gt; DayOfWeek.MONDAY</span>
+<span class="nc" id="L32">            java.time.DayOfWeek.TUESDAY -&gt; DayOfWeek.TUESDAY</span>
+<span class="nc" id="L33">            java.time.DayOfWeek.WEDNESDAY -&gt; DayOfWeek.WEDNESDAY</span>
+<span class="nc" id="L34">            java.time.DayOfWeek.THURSDAY -&gt; DayOfWeek.THURSDAY</span>
+<span class="nc" id="L35">            java.time.DayOfWeek.FRIDAY -&gt; DayOfWeek.FRIDAY</span>
+<span class="nc" id="L36">            java.time.DayOfWeek.SATURDAY -&gt; DayOfWeek.SATURDAY</span>
+<span class="nc" id="L37">            java.time.DayOfWeek.SUNDAY -&gt; DayOfWeek.SUNDAY</span>
+<span class="nc" id="L38">        }</span>
+    },
+<span class="fc" id="L40">    private val planId: String = initialPlan.planId,</span>
+<span class="fc" id="L41">) : PlanExperienceFacade {</span>
+<span class="fc" id="L42">    private var plan: WeeklyPlanState = initialPlan</span>
+    private var lastFocusedSlotId: String? = null
+    private var statusMessage: String? = null
+    private var r05Visible: Boolean = false
+<span class="fc" id="L46">    private var bundledFallbackAvailable: Boolean = true</span>
+
+<span class="nc" id="L48">    internal fun setPlanState(next: WeeklyPlanState) { plan = next }</span>
+
+<span class="fc" id="L50">    override fun currentPlanState(): PlanScreenState = toPlanScreenState()</span>
+
+<span class="fc" id="L52">    override fun currentTodayState(): TodayScreenState = toTodayScreenState()</span>
+
+<span class="nc" id="L54">    override fun handle(intent: PlanIntent): PlanScreenState = when (intent) {</span>
+<span class="nc bnc" id="L55" title="All 2 branches missed.">        is PlanIntent.SelectOrReplace -&gt; {</span>
+<span class="nc bnc" id="L56" title="All 6 branches missed.">            if (intent.recipeId.isNullOrBlank()) clearSlot(intent.context) else selectRecipe(intent.context, intent.recipeId)</span>
+        }
+<span class="nc bnc" id="L58" title="All 2 branches missed.">        is PlanIntent.ViewRecipe -&gt; { lastFocusedSlotId = intent.context.slotId; toPlanScreenState() }</span>
+<span class="nc bnc" id="L59" title="All 2 branches missed.">        is PlanIntent.ChooseRecipe -&gt; { lastFocusedSlotId = intent.context.slotId; toPlanScreenState() }</span>
+<span class="nc bnc" id="L60" title="All 2 branches missed.">        PlanIntent.LockRecipesForShopping -&gt; lockRecipes()</span>
+<span class="nc bnc" id="L61" title="All 2 branches missed.">        PlanIntent.Retry -&gt; { statusMessage = &quot;Retry requested.&quot;; r05Visible = false; toPlanScreenState() }</span>
+<span class="nc bnc" id="L62" title="All 2 branches missed.">        PlanIntent.UseBundledFallbackCatalog -&gt; { statusMessage = &quot;Bundled fallback catalog selected.&quot;; r05Visible = false; toPlanScreenState() }</span>
+<span class="nc" id="L63">        PlanIntent.ContinueWithManualPlanning -&gt; { statusMessage = &quot;Continuing with manual planning.&quot;; r05Visible = false; toPlanScreenState() }</span>
+<span class="nc" id="L64">    }</span>
+
+    override fun selectRecipe(context: SlotActionContext, recipeId: String): PlanScreenState {
+<span class="fc" id="L67">        val result = c3.apply(</span>
+<span class="fc" id="L68">            plan = plan,</span>
+<span class="fc" id="L69">            request = SlotSelectionChangeRequest(</span>
+<span class="fc" id="L70">                slotRef = context.slotRef,</span>
+<span class="fc" id="L71">                operation = SlotSelectionOperation.SET_SELECTION,</span>
+<span class="fc" id="L72">                recipeId = recipeId,</span>
+            ),
+<span class="pc bpc" id="L74" title="2 of 4 branches missed.">            lockOrListActive = plan.lockState != PlanLockState.UNLOCKED || plan.activeLockSnapshotId != null,</span>
+        )
+<span class="fc" id="L76">        plan = result.weeklyPlanState</span>
+<span class="fc" id="L77">        lastFocusedSlotId = context.slotId</span>
+<span class="pc bpc" id="L78" title="1 of 2 branches missed.">        statusMessage = if (result.status.name == &quot;APPLIED&quot;) &quot;Recipe selected for ${context.dayOfWeek} ${context.mealType}.&quot; else result.rejectionReason</span>
+<span class="fc" id="L79">        return toPlanScreenState()</span>
+    }
+
+    override fun clearSlot(context: SlotActionContext): PlanScreenState {
+<span class="fc" id="L83">        val result = c3.apply(</span>
+<span class="fc" id="L84">            plan = plan,</span>
+<span class="fc" id="L85">            request = SlotSelectionChangeRequest(</span>
+<span class="fc" id="L86">                slotRef = context.slotRef,</span>
+<span class="fc" id="L87">                operation = SlotSelectionOperation.CLEAR_SELECTION,</span>
+            ),
+<span class="pc bpc" id="L89" title="2 of 4 branches missed.">            lockOrListActive = plan.lockState != PlanLockState.UNLOCKED || plan.activeLockSnapshotId != null,</span>
+        )
+<span class="fc" id="L91">        plan = result.weeklyPlanState</span>
+<span class="fc" id="L92">        lastFocusedSlotId = context.slotId</span>
+<span class="fc" id="L93">        statusMessage = &quot;Slot cleared for ${context.dayOfWeek} ${context.mealType}.&quot;</span>
+<span class="fc" id="L94">        return toPlanScreenState()</span>
+    }
+
+    private fun lockRecipes(): PlanScreenState {
+<span class="nc" id="L98">        val selectedIds = plan.slots.mapNotNull { it.assignedRecipeId }.distinct()</span>
+<span class="nc" id="L99">        plan = plan.copy(</span>
+<span class="nc" id="L100">            lockState = PlanLockState.LOCKED,</span>
+<span class="nc" id="L101">            lockedRecipeIds = selectedIds,</span>
+<span class="nc" id="L102">            staleWarning = null,</span>
+        )
+<span class="nc" id="L104">        statusMessage = &quot;Recipes locked for shopping list.&quot;</span>
+<span class="nc" id="L105">        return toPlanScreenState()</span>
+    }
+
+<span class="fc" id="L108">    private fun toPlanScreenState(): PlanScreenState = PlanScreenState(</span>
+<span class="fc" id="L109">        planId = planId,</span>
+<span class="fc" id="L110">        weekSlots = plan.slots.map { slotToUiModel(it.slotRef, it.assignedRecipeId, SlotOrigin.PLAN) },</span>
+<span class="pc bpc" id="L111" title="2 of 3 branches missed.">        lockStateLabel = when (plan.lockState) {</span>
+<span class="nc" id="L112">            PlanLockState.LOCKED -&gt; &quot;Recipes locked&quot;</span>
+<span class="nc" id="L113">            PlanLockState.STALE_LOCK -&gt; &quot;Recipes locked (changes detected)&quot;</span>
+<span class="fc" id="L114">            PlanLockState.UNLOCKED -&gt; &quot;Recipes not locked&quot;</span>
+        },
+<span class="fc" id="L116">        lockSummary = &quot;Recipes locked: ${plan.lockedRecipeIds.size}&quot;,</span>
+<span class="pc bpc" id="L117" title="1 of 2 branches missed.">        isLocked = plan.lockState != PlanLockState.UNLOCKED,</span>
+<span class="fc" id="L118">        loading = false,</span>
+<span class="pc bpc" id="L119" title="1 of 2 branches missed.">        r05State = if (r05Visible) com.mealplanner.ui.mappers.DiagnosticsUiMapper.r05NoLocalDataRemoteUnavailable(bundledFallbackAvailable) else null,</span>
+<span class="fc" id="L120">        lastFocusedSlotId = lastFocusedSlotId,</span>
+<span class="fc" id="L121">        statusMessage = statusMessage,</span>
+<span class="fc" id="L122">    )</span>
+
+    private fun toTodayScreenState(): TodayScreenState {
+<span class="fc" id="L125">        val today = todayDayProvider()</span>
+<span class="fc bfc" id="L126" title="All 2 branches covered.">        val todaySlots = plan.slots.filter { it.slotRef.dayOfWeek == today }</span>
+<span class="fc" id="L127">            .map { slotToUiModel(it.slotRef, it.assignedRecipeId, SlotOrigin.TODAY) }</span>
+<span class="fc" id="L128">        return TodayScreenState(</span>
+<span class="fc" id="L129">            dateLabel = today.name,</span>
+<span class="fc" id="L130">            todaySlots = todaySlots,</span>
+<span class="fc" id="L131">            seasonContextLabel = &quot;Using device date and location&quot;,</span>
+<span class="fc" id="L132">            loading = false,</span>
+<span class="pc bpc" id="L133" title="1 of 2 branches missed.">            r05State = if (r05Visible) com.mealplanner.ui.mappers.DiagnosticsUiMapper.r05NoLocalDataRemoteUnavailable(bundledFallbackAvailable) else null,</span>
+<span class="fc" id="L134">            lastFocusedSlotId = lastFocusedSlotId,</span>
+<span class="fc" id="L135">            statusMessage = statusMessage,</span>
+        )
+    }
+
+    private fun slotToUiModel(slotRef: PlanSlotRef, recipeId: String?, origin: SlotOrigin): MealSlotUiModel {
+<span class="fc" id="L140">        val ctx = SlotActionContext(slotRef = slotRef, currentRecipeId = recipeId, origin = origin)</span>
+<span class="fc" id="L141">        return MealSlotUiModel(</span>
+<span class="fc" id="L142">            context = ctx,</span>
+<span class="fc bfc" id="L143" title="All 2 branches covered.">            recipeTitle = recipeId?.let { &quot;Recipe $it&quot; },</span>
+<span class="pc bpc" id="L144" title="1 of 4 branches missed.">            isEmpty = recipeId.isNullOrBlank(),</span>
+<span class="pc bpc" id="L145" title="1 of 6 branches missed.">            statusLabels = if (recipeId.isNullOrBlank()) listOf(&quot;No recipe selected&quot;) else emptyList(),</span>
+        )
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

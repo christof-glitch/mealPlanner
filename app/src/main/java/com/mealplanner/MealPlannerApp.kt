@@ -3,7 +3,7 @@ package com.mealplanner
 import android.app.Application
 
 /**
- * U1 foundation application entry point.
- * DI and runtime wiring are intentionally minimal in this slice.
+ * Application entry point (Step 10). DI/runtime wiring is intentionally minimal for MVP brownfield slice.
+ * Platform boundaries (permission/share/copy) are confined to ui/platform; domain receives typed outcomes only.
  */
 class MealPlannerApp : Application()

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OnboardingScreen.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">com.mealplanner.ui.screens.onboarding</a> &gt; <span class="el_source">OnboardingScreen.kt</span></div><h1>OnboardingScreen.kt</h1><pre class="source lang-java linenums">package com.mealplanner.ui.screens.onboarding
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.dp
+import com.mealplanner.ui.components.R05FallbackPanel
+import com.mealplanner.ui.state.LocationPermissionUiState
+import com.mealplanner.ui.state.R05State
+
+/** RM-01 Onboarding / Permissions (Step 7). FR7/FR12/NFR3: location purpose + manual alternative always available. */
+@Composable
+fun OnboardingScreen(
+    permission: LocationPermissionUiState,
+    r05State: R05State?,
+    onAllowLocation: () -&gt; Unit,
+    onChooseManuallyLater: () -&gt; Unit,
+    onContinue: () -&gt; Unit,
+    onRetry: () -&gt; Unit,
+    onUseBundledFallback: () -&gt; Unit,
+    onContinueManualPlanning: () -&gt; Unit,
+<span class="nc bnc" id="L38" title="All 2 branches missed.">    modifier: Modifier = Modifier,</span>
+<span class="nc bnc" id="L39" title="All 62 branches missed.">) {</span>
+<span class="nc" id="L40">    Column(</span>
+<span class="nc" id="L41">        modifier = modifier</span>
+<span class="nc" id="L42">            .fillMaxSize()</span>
+<span class="nc" id="L43">            .verticalScroll(rememberScrollState())</span>
+<span class="nc" id="L44">            .padding(16.dp)</span>
+<span class="nc" id="L45">            .testTag(&quot;onboarding-screen&quot;),</span>
+<span class="nc" id="L46">        verticalArrangement = Arrangement.spacedBy(12.dp),</span>
+    ) {
+<span class="nc" id="L48">        Text(</span>
+<span class="nc" id="L49">            text = &quot;Weekly Meal Planner&quot;,</span>
+<span class="nc" id="L50">            style = MaterialTheme.typography.headlineSmall,</span>
+<span class="nc" id="L51">            modifier = Modifier.semantics { heading() },</span>
+        )
+<span class="nc" id="L53">        Card(modifier = Modifier.fillMaxWidth()) {</span>
+<span class="nc bnc" id="L54" title="All 6 branches missed.">            Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {</span>
+<span class="nc" id="L55">                Text(&quot;Plan meals and shopping&quot;, style = MaterialTheme.typography.titleMedium)</span>
+<span class="nc" id="L56">                Text(&quot;Build a weekly plan, generate a shopping list from locked recipes, and use the current edited list for export/share.&quot;)</span>
+<span class="nc" id="L57">            }</span>
+<span class="nc" id="L58">        }</span>
+<span class="nc" id="L59">        Card(modifier = Modifier.fillMaxWidth().testTag(&quot;location-purpose-card&quot;)) {</span>
+<span class="nc bnc" id="L60" title="All 6 branches missed.">            Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {</span>
+<span class="nc" id="L61">                Text(&quot;Location (optional)&quot;, style = MaterialTheme.typography.titleMedium)</span>
+<span class="nc" id="L62">                Text(&quot;Location is used only to suggest a nearby PRISMA store when you choose to check store presence. It is not required.&quot;)</span>
+<span class="nc" id="L63">                Text(&quot;Permission status: ${permission.name}&quot;)</span>
+<span class="nc" id="L64">            }</span>
+<span class="nc" id="L65">        }</span>
+<span class="nc" id="L66">        Card(modifier = Modifier.fillMaxWidth()) {</span>
+<span class="nc bnc" id="L67" title="All 6 branches missed.">            Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {</span>
+<span class="nc" id="L68">                Text(&quot;Privacy&quot;, style = MaterialTheme.typography.titleMedium)</span>
+<span class="nc" id="L69">                Text(&quot;On-device MVP. Minimal data. No MealPlanner account. Location is optional and purpose-limited.&quot;)</span>
+<span class="nc" id="L70">            }</span>
+<span class="nc" id="L71">        }</span>
+<span class="nc bnc" id="L72" title="All 2 branches missed.">        if (r05State != null) {</span>
+<span class="nc" id="L73">            R05FallbackPanel(</span>
+<span class="nc" id="L74">                state = r05State,</span>
+<span class="nc" id="L75">                onRetry = onRetry,</span>
+<span class="nc" id="L76">                onBundledFallback = onUseBundledFallback,</span>
+<span class="nc" id="L77">                onManualPlanning = onContinueManualPlanning,</span>
+            )
+        }
+<span class="nc" id="L80">        Button(</span>
+<span class="nc" id="L81">            onClick = onAllowLocation,</span>
+<span class="nc" id="L82">            modifier = Modifier.fillMaxWidth().testTag(&quot;allow-location-action&quot;),</span>
+<span class="nc bnc" id="L83" title="All 8 branches missed.">        ) { Text(&quot;Allow location&quot;) }</span>
+<span class="nc" id="L84">        OutlinedButton(</span>
+<span class="nc" id="L85">            onClick = onChooseManuallyLater,</span>
+<span class="nc" id="L86">            modifier = Modifier.fillMaxWidth().testTag(&quot;choose-manually-later-action&quot;),</span>
+<span class="nc bnc" id="L87" title="All 8 branches missed.">        ) { Text(&quot;Choose store manually later&quot;) }</span>
+<span class="nc" id="L88">        Spacer(Modifier.height(4.dp))</span>
+<span class="nc" id="L89">        Button(</span>
+<span class="nc" id="L90">            onClick = onContinue,</span>
+<span class="nc" id="L91">            modifier = Modifier.fillMaxWidth().testTag(&quot;onboarding-continue-action&quot;),</span>
+<span class="nc bnc" id="L92" title="All 8 branches missed.">        ) { Text(&quot;Continue&quot;) }</span>
+<span class="nc" id="L93">    }</span>
+<span class="nc bnc" id="L94" title="All 2 branches missed.">}</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

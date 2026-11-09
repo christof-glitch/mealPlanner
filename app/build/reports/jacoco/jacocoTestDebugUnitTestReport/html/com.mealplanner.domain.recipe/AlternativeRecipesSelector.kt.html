@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AlternativeRecipesSelector.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">com.mealplanner.domain.recipe</a> &gt; <span class="el_source">AlternativeRecipesSelector.kt</span></div><h1>AlternativeRecipesSelector.kt</h1><pre class="source lang-java linenums">package com.mealplanner.domain.recipe
+
+import com.mealplanner.domain.model.AlternativeRecipesRequest
+import com.mealplanner.domain.model.AlternativeRecipesResult
+import com.mealplanner.domain.model.AlternativeRecipesStatus
+import com.mealplanner.domain.model.DayKind
+import com.mealplanner.domain.model.ExcludedRecipeCandidate
+import com.mealplanner.domain.model.ExclusionReason
+import com.mealplanner.domain.model.ExclusionReasonCode
+import com.mealplanner.domain.model.ExclusionSourceMarker
+import com.mealplanner.domain.model.RecipeCandidateResult
+import com.mealplanner.domain.model.RecipeDetail
+import com.mealplanner.domain.model.RecipeQueryStatus
+import com.mealplanner.domain.model.RecipeSummary
+import com.mealplanner.domain.model.SeasonFitLabel
+import com.mealplanner.domain.model.dayKind
+
+/** Narrow port so alternatives can be tested without full catalog service. */
+interface RecipeCatalogPort {
+    suspend fun catalogCandidates(): RecipeCandidateResult
+<span class="nc" id="L21">    suspend fun detailsByIds(ids: List&lt;String&gt;): List&lt;RecipeDetail&gt; = emptyList()</span>
+}
+
+/** BR2.6: alternatives respect eligibility, season fit context, source/fallback status; no fabrication. */
+<span class="fc" id="L25">class AlternativeRecipesSelector(private val catalog: RecipeCatalogPort) {</span>
+<span class="fc" id="L26">    suspend fun getAlternatives(request: AlternativeRecipesRequest): AlternativeRecipesResult {</span>
+<span class="fc" id="L27">        val candidates = catalog.catalogCandidates()</span>
+<span class="pc bpc" id="L28" title="1 of 4 branches missed.">        if (!request.includeFallbackSources &amp;&amp; candidates.sourceStatus.fallbackUsed) {</span>
+<span class="fc" id="L29">            return AlternativeRecipesResult(</span>
+<span class="fc" id="L30">                status = AlternativeRecipesStatus.UNAVAILABLE,</span>
+<span class="fc" id="L31">                alternatives = emptyList(),</span>
+<span class="fc" id="L32">                sourceStatus = candidates.sourceStatus,</span>
+<span class="fc" id="L33">                emptyReason = &quot;FALLBACK_SOURCES_EXCLUDED&quot;,</span>
+            )
+        }
+<span class="fc" id="L36">        val details = catalog.detailsByIds(candidates.candidates.map { it.recipeId }).associateBy { it.recipeId }</span>
+<span class="fc" id="L37">        val (eligible, excluded) = partitionEligible(request, candidates.candidates, details)</span>
+<span class="fc" id="L38">        val filtered = eligible</span>
+<span class="fc" id="L39">            .filterNot { it.recipeId == request.currentRecipeId }</span>
+<span class="pc bpc" id="L40" title="3 of 4 branches missed.">            .let { list -&gt; request.limit?.let { list.take(it.coerceAtLeast(0)) } ?: list }</span>
+<span class="fc" id="L41">        val status = when {</span>
+<span class="pc bpc" id="L42" title="3 of 4 branches missed.">            candidates.status == RecipeQueryStatus.UNAVAILABLE &amp;&amp; filtered.isEmpty() -&gt; AlternativeRecipesStatus.UNAVAILABLE</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">            filtered.isEmpty() -&gt; AlternativeRecipesStatus.EMPTY</span>
+<span class="pc bpc" id="L44" title="1 of 4 branches missed.">            candidates.sourceStatus.fallbackUsed || candidates.status == RecipeQueryStatus.FALLBACK -&gt; AlternativeRecipesStatus.FALLBACK</span>
+<span class="fc" id="L45">            else -&gt; AlternativeRecipesStatus.OK</span>
+        }
+<span class="fc" id="L47">        return AlternativeRecipesResult(</span>
+<span class="fc" id="L48">            status = status,</span>
+<span class="fc" id="L49">            alternatives = filtered,</span>
+<span class="pc bpc" id="L50" title="2 of 4 branches missed.">            excludedCandidates = excluded.takeIf { it.isNotEmpty() },</span>
+<span class="fc" id="L51">            sourceStatus = candidates.sourceStatus,</span>
+<span class="pc bpc" id="L52" title="3 of 6 branches missed.">            emptyReason = if (filtered.isEmpty()) candidates.fallbackReason?.message ?: &quot;NO_ELIGIBLE_ALTERNATIVES&quot; else null,</span>
+        )
+    }
+
+    private fun partitionEligible(
+        request: AlternativeRecipesRequest,
+        candidates: List&lt;RecipeSummary&gt;,
+        details: Map&lt;String, RecipeDetail&gt;,
+    ): Pair&lt;List&lt;RecipeSummary&gt;, List&lt;ExcludedRecipeCandidate&gt;&gt; {
+<span class="fc" id="L61">        val eligible = mutableListOf&lt;RecipeSummary&gt;()</span>
+<span class="fc" id="L62">        val excluded = mutableListOf&lt;ExcludedRecipeCandidate&gt;()</span>
+<span class="fc bfc" id="L63" title="All 2 branches covered.">        for (c in candidates) {</span>
+<span class="fc" id="L64">            val norm = RecipeTimeNormalizationEvaluator.normalize(request.slotRef.dayOfWeek, request.slotRef.mealType, c)</span>
+<span class="pc bpc" id="L65" title="1 of 4 branches missed.">            if (request.slotRef.dayOfWeek.dayKind() == DayKind.WEEKDAY &amp;&amp; norm.weekdayEligible != true) {</span>
+<span class="pc bpc" id="L66" title="1 of 2 branches missed.">                val reason = norm.exclusionReason ?: ExclusionReason(</span>
+<span class="nc" id="L67">                    reasonCode = ExclusionReasonCode.WEEKDAY_TIME_AMBIGUOUS,</span>
+<span class="nc" id="L68">                    messageKeyOrTextSource = &quot;WEEKDAY_TIME_AMBIGUOUS&quot;,</span>
+<span class="nc" id="L69">                    recipeOrCandidateRef = c.recipeId,</span>
+<span class="nc" id="L70">                    sourceMarker = ExclusionSourceMarker.RULE,</span>
+                )
+<span class="fc" id="L72">                excluded += ExcludedRecipeCandidate(recipeSummary = c, recipeOrCandidateRef = c.recipeId, exclusionReason = reason)</span>
+<span class="fc" id="L73">                continue</span>
+            }
+<span class="fc" id="L75">            val detail = details[c.recipeId]</span>
+<span class="pc bpc" id="L76" title="1 of 4 branches missed.">            if (detail != null &amp;&amp; request.effectiveSeasonResolution != null) {</span>
+<span class="fc" id="L77">                val fit = SeasonFitEvaluator.evaluate(detail, request.effectiveSeasonResolution)</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">                if (fit.seasonFitLabel == SeasonFitLabel.OUT_OF_SEASON) {</span>
+<span class="fc" id="L79">                    excluded += ExcludedRecipeCandidate(</span>
+<span class="fc" id="L80">                        recipeSummary = c,</span>
+<span class="fc" id="L81">                        recipeOrCandidateRef = c.recipeId,</span>
+<span class="fc" id="L82">                        exclusionReason = ExclusionReason(</span>
+<span class="fc" id="L83">                            reasonCode = ExclusionReasonCode.OTHER,</span>
+<span class="fc" id="L84">                            messageKeyOrTextSource = &quot;SEASON_FIT_OUT_OF_SEASON&quot;,</span>
+<span class="fc" id="L85">                            recipeOrCandidateRef = c.recipeId,</span>
+<span class="fc" id="L86">                            sourceMarker = ExclusionSourceMarker.RULE,</span>
+                        ),
+                    )
+<span class="fc" id="L89">                    continue</span>
+                }
+            }
+<span class="fc" id="L92">            eligible += c</span>
+        }
+<span class="fc" id="L94">        return eligible to excluded</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

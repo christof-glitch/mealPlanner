@@ -28,6 +28,11 @@ Targeted runs (examples, exact file/package scope):
 
 These commands are scoped to U4 UI tests only. Build and Test executes every unit's commands; unscoped project-wide commands are intentionally omitted here.
 
+## Execution evidence (2026-11-09)
+- Unit-scoped command executed repeatedly during Steps 2–12: `./gradlew :app:testDebugUnitTest --tests "com.mealplanner.ui.*" --console=plain` — **BUILD SUCCESSFUL** (latest run UP-TO-DATE/SUCCESSFUL).
+- Key behavior test-first cycles recorded in plan: PlanExperienceFacade (Red 4 failed stub -> Green 5/5), GroceryExperienceFacade (Red 5 failed stub -> Green 5/5), StoreAvailabilityAndDiagnostics (Red facade cases -> Green 5/5). Supporting tests added in Step 11.
+- Full-project 80% line-coverage floor and CI-before-merge are additive project obligations checked by Build and Test on the full assembled test suite. This unit-scoped run does not judge that floor. No coverage thresholds were weakened.
+
 ## Expected coverage targets
 - **Standard scope:** ~5–8 tests per meaningful U4 component/facade/state area, covering key boundaries (plan slot sync/R-06, grocery ADR-006 generate/regenerate confirmation/exact stale warning/export current edited list, store presence FR8/manual fallback, permission/privacy-safe diagnostics, export/share fallback).
 - **MVP/Standard floor:** 80% line-coverage floor and CI execution before merge are project obligations (additive). **Build and Test checks the project coverage floor on the full test suite of the assembled project.** A unit-scoped run does not judge that whole-project floor. If a whole-project coverage-threshold setting causes a non-zero exit while every selected U4 test passes, record that outcome with U4 test results; it is not a failed test. Do not relax/lower/disable the threshold.

@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GroceryScreen.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">com.mealplanner.ui.screens.grocery</a> &gt; <span class="el_source">GroceryScreen.kt</span></div><h1>GroceryScreen.kt</h1><pre class="source lang-java linenums">package com.mealplanner.ui.screens.grocery
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.dp
+import com.mealplanner.ui.components.GroceryChecklistRow
+import com.mealplanner.ui.components.RegenerateEditedListConfirmationDialog
+import com.mealplanner.ui.components.StatusBanner
+import com.mealplanner.ui.state.GroceryIntent
+import com.mealplanner.ui.state.GroceryScreenState
+
+/** RM-06 Grocery (Step 9). ADR-006/R-01-R-03, FR8, FR10/OQ4, BR3.5/BR3.8/BR3.9. */
+@Composable
+fun GroceryScreen(
+    state: GroceryScreenState,
+    onIntent: (GroceryIntent) -&gt; Unit,
+    onNavigatePlan: () -&gt; Unit,
+    onSelectStore: () -&gt; Unit,
+<span class="nc bnc" id="L43" title="All 2 branches missed.">    modifier: Modifier = Modifier,</span>
+<span class="nc bnc" id="L44" title="All 38 branches missed.">) {</span>
+<span class="nc" id="L45">    var newItemText by rememberSaveable { mutableStateOf(&quot;&quot;) }</span>
+<span class="nc" id="L46">    var newItemQty by rememberSaveable { mutableStateOf(&quot;&quot;) }</span>
+<span class="nc" id="L47">    var editingItemId by rememberSaveable { mutableStateOf&lt;String?&gt;(null) }</span>
+<span class="nc" id="L48">    var editingText by rememberSaveable { mutableStateOf(&quot;&quot;) }</span>
+<span class="nc" id="L49">    var editingQty by rememberSaveable { mutableStateOf(&quot;&quot;) }</span>
+
+<span class="nc bnc" id="L51" title="All 4 branches missed.">    if (state.showRegenerateConfirmation) {</span>
+<span class="nc" id="L52">        RegenerateEditedListConfirmationDialog(</span>
+<span class="nc bnc" id="L53" title="All 2 branches missed.">            onConfirm = { onIntent(GroceryIntent.ConfirmRegenerateAndReplace) },</span>
+<span class="nc" id="L54">            onDismiss = { onIntent(GroceryIntent.CancelRegenerate) },</span>
+        )
+    }
+
+<span class="nc" id="L58">    Column(</span>
+<span class="nc" id="L59">        modifier = modifier</span>
+<span class="nc" id="L60">            .fillMaxSize()</span>
+<span class="nc" id="L61">            .verticalScroll(rememberScrollState())</span>
+<span class="nc" id="L62">            .padding(16.dp)</span>
+<span class="nc" id="L63">            .testTag(&quot;grocery-screen&quot;),</span>
+<span class="nc" id="L64">        verticalArrangement = Arrangement.spacedBy(12.dp),</span>
+    ) {
+<span class="nc" id="L66">        Text(&quot;Grocery&quot;, style = MaterialTheme.typography.headlineSmall, modifier = Modifier.semantics { heading() })</span>
+
+<span class="nc" id="L68">        Card(modifier = Modifier.fillMaxWidth().testTag(&quot;grocery-readiness-card&quot;)) {</span>
+<span class="nc bnc" id="L69" title="All 6 branches missed.">            Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {</span>
+<span class="nc" id="L70">                Text(&quot;Plan readiness&quot;, style = MaterialTheme.typography.titleMedium)</span>
+<span class="nc" id="L71">                Text(state.lockSummary)</span>
+<span class="nc bnc" id="L72" title="All 2 branches missed.">                if (!state.recipesLocked) {</span>
+<span class="nc" id="L73">                    StatusBanner(GroceryScreenState.LOCK_REQUIRED_MESSAGE)</span>
+<span class="nc" id="L74">                    OutlinedButton(onClick = onNavigatePlan, modifier = Modifier.testTag(&quot;grocery-go-to-plan&quot;)) {</span>
+<span class="nc bnc" id="L75" title="All 8 branches missed.">                        Text(&quot;Go to Plan to lock recipes&quot;)</span>
+<span class="nc" id="L76">                    }</span>
+                }
+<span class="nc" id="L78">                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {</span>
+<span class="nc" id="L79">                    Button(</span>
+<span class="nc" id="L80">                        onClick = { onIntent(GroceryIntent.Generate) },</span>
+<span class="nc bnc" id="L81" title="All 4 branches missed.">                        enabled = state.recipesLocked &amp;&amp; !state.hasList,</span>
+<span class="nc" id="L82">                        modifier = Modifier.testTag(&quot;generate-shopping-list-action&quot;).semantics { contentDescription = &quot;Generate shopping list&quot; },</span>
+<span class="nc bnc" id="L83" title="All 8 branches missed.">                    ) { Text(&quot;Generate shopping list&quot;) }</span>
+<span class="nc bnc" id="L84" title="All 2 branches missed.">                    if (state.hasList) {</span>
+<span class="nc" id="L85">                        OutlinedButton(</span>
+<span class="nc" id="L86">                            onClick = { onIntent(GroceryIntent.RequestRegenerate) },</span>
+<span class="nc" id="L87">                            modifier = Modifier.testTag(&quot;regenerate-shopping-list-action&quot;).semantics { contentDescription = &quot;Regenerate shopping list&quot; },</span>
+<span class="nc bnc" id="L88" title="All 8 branches missed.">                        ) { Text(&quot;Regenerate&quot;) }</span>
+                    }
+<span class="nc" id="L90">                }</span>
+<span class="nc" id="L91">            }</span>
+<span class="nc" id="L92">        }</span>
+
+<span class="nc bnc" id="L94" title="All 2 branches missed.">        if (state.isStale) {</span>
+<span class="nc" id="L95">            StatusBanner(GroceryScreenState.LOCKED_RECIPES_CHANGED_STATUS)</span>
+<span class="nc bnc" id="L96" title="All 2 branches missed.">            state.staleWarningText?.let {</span>
+<span class="nc" id="L97">                StatusBanner(it) // exact ADR-006 warning when applicable; no auto-regeneration</span>
+<span class="nc" id="L98">            }</span>
+        }
+<span class="nc bnc" id="L100" title="All 2 branches missed.">        state.errorMessage?.let { StatusBanner(it) }</span>
+<span class="nc bnc" id="L101" title="All 2 branches missed.">        state.exportMessage?.let { StatusBanner(it) }</span>
+<span class="nc bnc" id="L102" title="All 2 branches missed.">        state.exportInstructions?.let { StatusBanner(it) }</span>
+
+<span class="nc" id="L104">        Card(modifier = Modifier.fillMaxWidth().testTag(&quot;store-presence-card&quot;)) {</span>
+<span class="nc bnc" id="L105" title="All 6 branches missed.">            Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {</span>
+<span class="nc" id="L106">                Text(&quot;PRISMA store and presence&quot;, style = MaterialTheme.typography.titleMedium)</span>
+<span class="nc bnc" id="L107" title="All 8 branches missed.">                Text(&quot;Selected store: ${state.selectedStore?.displayName ?: state.selectedStore?.storeId ?: &quot;None selected&quot;}&quot;)</span>
+<span class="nc bnc" id="L108" title="All 2 branches missed.">                Text(state.presenceStatusLabel ?: &quot;Name/presence only: PRESENT, NOT_FOUND, or UNKNOWN. Never stock or guaranteed availability.&quot;)</span>
+<span class="nc" id="L109">                OutlinedButton(onClick = onSelectStore, modifier = Modifier.testTag(&quot;select-prisma-store-action&quot;)) {</span>
+<span class="nc bnc" id="L110" title="All 8 branches missed.">                    Text(&quot;Choose or change PRISMA store&quot;)</span>
+<span class="nc" id="L111">                }</span>
+<span class="nc" id="L112">            }</span>
+<span class="nc" id="L113">        }</span>
+
+<span class="nc" id="L115">        Card(modifier = Modifier.fillMaxWidth().testTag(&quot;shopping-list-card&quot;)) {</span>
+<span class="nc bnc" id="L116" title="All 6 branches missed.">            Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {</span>
+<span class="nc" id="L117">                Text(&quot;Shopping list&quot;, style = MaterialTheme.typography.titleMedium)</span>
+<span class="nc bnc" id="L118" title="All 2 branches missed.">                if (!state.hasList) {</span>
+<span class="nc" id="L119">                    Text(&quot;No shopping list yet. Lock recipes in Plan and generate explicitly.&quot;)</span>
+<span class="nc" id="L120">                } else {</span>
+<span class="nc" id="L121">                    Text(&quot;Current edited list is used for export. Edits/check-offs are preserved until you explicitly regenerate.&quot;)</span>
+<span class="nc bnc" id="L122" title="All 2 branches missed.">                    if (state.items.isEmpty()) {</span>
+<span class="nc" id="L123">                        Text(&quot;The list is empty. Add items manually if needed.&quot;)</span>
+                    }
+<span class="nc" id="L125">                    state.items.forEach { item -&gt;</span>
+<span class="nc bnc" id="L126" title="All 2 branches missed.">                        if (editingItemId == item.itemId) {</span>
+<span class="nc" id="L127">                            OutlinedTextField(</span>
+<span class="nc" id="L128">                                value = editingText,</span>
+<span class="nc" id="L129">                                onValueChange = { editingText = it },</span>
+<span class="nc bnc" id="L130" title="All 8 branches missed.">                                label = { Text(&quot;Item&quot;) },</span>
+<span class="nc" id="L131">                                modifier = Modifier.fillMaxWidth().testTag(&quot;edit-item-text-${item.itemId}&quot;),</span>
+<span class="nc" id="L132">                                singleLine = true,</span>
+                            )
+<span class="nc" id="L134">                            OutlinedTextField(</span>
+<span class="nc" id="L135">                                value = editingQty,</span>
+<span class="nc" id="L136">                                onValueChange = { editingQty = it },</span>
+<span class="nc bnc" id="L137" title="All 8 branches missed.">                                label = { Text(&quot;Quantity (optional)&quot;) },</span>
+<span class="nc" id="L138">                                modifier = Modifier.fillMaxWidth().testTag(&quot;edit-item-qty-${item.itemId}&quot;),</span>
+<span class="nc" id="L139">                                singleLine = true,</span>
+                            )
+<span class="nc" id="L141">                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {</span>
+<span class="nc" id="L142">                                Button(onClick = {</span>
+<span class="nc bnc" id="L143" title="All 2 branches missed.">                                    onIntent(GroceryIntent.EditItem(item.itemId, editingText, editingQty.ifBlank { null }))</span>
+<span class="nc" id="L144">                                    editingItemId = null</span>
+<span class="nc bnc" id="L145" title="All 8 branches missed.">                                }, modifier = Modifier.testTag(&quot;save-edit-${item.itemId}&quot;)) { Text(&quot;Save&quot;) }</span>
+<span class="nc bnc" id="L146" title="All 8 branches missed.">                                OutlinedButton(onClick = { editingItemId = null }) { Text(&quot;Cancel&quot;) }</span>
+<span class="nc" id="L147">                            }</span>
+<span class="nc" id="L148">                        } else {</span>
+<span class="nc" id="L149">                            GroceryChecklistRow(</span>
+<span class="nc" id="L150">                                item = item,</span>
+<span class="nc" id="L151">                                onToggle = { onIntent(GroceryIntent.ToggleChecked(item.itemId)) },</span>
+<span class="nc" id="L152">                                onRemove = { onIntent(GroceryIntent.RemoveItem(item.itemId)) },</span>
+                            )
+<span class="nc" id="L154">                            OutlinedButton(</span>
+<span class="nc" id="L155">                                onClick = {</span>
+<span class="nc" id="L156">                                    editingItemId = item.itemId</span>
+<span class="nc" id="L157">                                    editingText = item.displayText</span>
+<span class="nc bnc" id="L158" title="All 2 branches missed.">                                    editingQty = item.quantityText.orEmpty()</span>
+<span class="nc" id="L159">                                },</span>
+<span class="nc" id="L160">                                modifier = Modifier.testTag(&quot;edit-item-${item.itemId}&quot;).semantics { contentDescription = &quot;Edit ${item.displayText}&quot; },</span>
+<span class="nc bnc" id="L161" title="All 8 branches missed.">                            ) { Text(&quot;Edit&quot;) }</span>
+                        }
+<span class="nc" id="L163">                    }</span>
+<span class="nc" id="L164">                    Card(modifier = Modifier.fillMaxWidth()) {</span>
+<span class="nc bnc" id="L165" title="All 6 branches missed.">                        Column(modifier = Modifier.padding(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {</span>
+<span class="nc" id="L166">                            Text(&quot;Add item&quot;, style = MaterialTheme.typography.titleSmall)</span>
+<span class="nc" id="L167">                            OutlinedTextField(</span>
+<span class="nc" id="L168">                                value = newItemText,</span>
+<span class="nc" id="L169">                                onValueChange = { newItemText = it },</span>
+<span class="nc bnc" id="L170" title="All 8 branches missed.">                                label = { Text(&quot;Item name&quot;) },</span>
+<span class="nc" id="L171">                                modifier = Modifier.fillMaxWidth().testTag(&quot;add-item-text&quot;),</span>
+<span class="nc" id="L172">                                singleLine = true,</span>
+                            )
+<span class="nc" id="L174">                            OutlinedTextField(</span>
+<span class="nc" id="L175">                                value = newItemQty,</span>
+<span class="nc" id="L176">                                onValueChange = { newItemQty = it },</span>
+<span class="nc bnc" id="L177" title="All 8 branches missed.">                                label = { Text(&quot;Quantity (optional)&quot;) },</span>
+<span class="nc" id="L178">                                modifier = Modifier.fillMaxWidth().testTag(&quot;add-item-qty&quot;),</span>
+<span class="nc" id="L179">                                singleLine = true,</span>
+                            )
+<span class="nc" id="L181">                            Button(</span>
+<span class="nc" id="L182">                                onClick = {</span>
+<span class="nc bnc" id="L183" title="All 4 branches missed.">                                    if (newItemText.isNotBlank()) {</span>
+<span class="nc bnc" id="L184" title="All 2 branches missed.">                                        onIntent(GroceryIntent.AddItem(newItemText, newItemQty.ifBlank { null }))</span>
+<span class="nc" id="L185">                                        newItemText = &quot;&quot;</span>
+<span class="nc" id="L186">                                        newItemQty = &quot;&quot;</span>
+                                    }
+<span class="nc" id="L188">                                },</span>
+<span class="nc" id="L189">                                modifier = Modifier.testTag(&quot;add-item-action&quot;).semantics { contentDescription = &quot;Add item to shopping list&quot; },</span>
+<span class="nc bnc" id="L190" title="All 8 branches missed.">                            ) { Text(&quot;Add item&quot;) }</span>
+<span class="nc" id="L191">                        }</span>
+<span class="nc" id="L192">                    }</span>
+                }
+<span class="nc" id="L194">            }</span>
+<span class="nc" id="L195">        }</span>
+
+<span class="nc" id="L197">        Card(modifier = Modifier.fillMaxWidth().testTag(&quot;export-card&quot;)) {</span>
+<span class="nc bnc" id="L198" title="All 6 branches missed.">            Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {</span>
+<span class="nc" id="L199">                Text(&quot;Export / share (RM-08)&quot;, style = MaterialTheme.typography.titleMedium)</span>
+<span class="nc" id="L200">                Text(&quot;Exports use the current edited shopping list. Official S-ostoslista integration is investigational; share/copy fallback is always available.&quot;)</span>
+<span class="nc" id="L201">                OutlinedButton(</span>
+<span class="nc" id="L202">                    onClick = { onIntent(GroceryIntent.ExportOfficialSostoslista) },</span>
+<span class="nc" id="L203">                    modifier = Modifier.fillMaxWidth().testTag(&quot;export-official-sostoslista-action&quot;)</span>
+<span class="nc" id="L204">                        .semantics { contentDescription = &quot;Try official S-ostoslista export&quot; },</span>
+<span class="nc bnc" id="L205" title="All 8 branches missed.">                ) { Text(&quot;Try official S-ostoslista export (if available)&quot;) }</span>
+<span class="nc" id="L206">                Button(</span>
+<span class="nc" id="L207">                    onClick = { onIntent(GroceryIntent.ShareFallback) },</span>
+<span class="nc" id="L208">                    modifier = Modifier.fillMaxWidth().testTag(&quot;share-fallback-action&quot;)</span>
+<span class="nc" id="L209">                        .semantics { contentDescription = &quot;Share shopping list&quot; },</span>
+<span class="nc bnc" id="L210" title="All 8 branches missed.">                ) { Text(&quot;Share shopping list&quot;) }</span>
+<span class="nc" id="L211">                OutlinedButton(</span>
+<span class="nc" id="L212">                    onClick = { onIntent(GroceryIntent.CopyTextFallback) },</span>
+<span class="nc" id="L213">                    modifier = Modifier.fillMaxWidth().testTag(&quot;copy-fallback-action&quot;)</span>
+<span class="nc" id="L214">                        .semantics { contentDescription = &quot;Copy shopping list text&quot; },</span>
+<span class="nc bnc" id="L215" title="All 8 branches missed.">                ) { Text(&quot;Copy text&quot;) }</span>
+<span class="nc" id="L216">                Text(&quot;If official export is unavailable, use Share or Copy and follow the app's S-ostoslista instructions.&quot;)</span>
+<span class="nc" id="L217">            }</span>
+<span class="nc" id="L218">        }</span>
+<span class="nc" id="L219">    }</span>
+<span class="nc bnc" id="L220" title="All 2 branches missed.">}</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

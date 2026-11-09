@@ -1,0 +1,665 @@
+{
+  "stage": "code-generation",
+  "unit": "u4-android-ui-experience",
+  "intent": "261107-weekly-meal-planner",
+  "date": "2026-11-09",
+  "mappings": [
+    {
+      "id": "US1.1",
+      "acs": [
+        "AC1.1.1",
+        "AC1.1.2",
+        "AC1.1.3",
+        "AC1.1.4"
+      ],
+      "rm": [
+        "RM-02",
+        "RM-03"
+      ],
+      "status": "OK",
+      "targets": [
+        "aidlc/spaces/default/intents/261107-weekly-meal-planner/inception/user-stories/stories.md",
+        "app/src/main/java/com/mealplanner/ui/screens/today/TodayScreen.kt",
+        "app/src/main/java/com/mealplanner/ui/screens/plan/PlanScreen.kt",
+        "app/src/main/java/com/mealplanner/ui/facades/DefaultPlanExperienceFacade.kt",
+        "app/src/test/java/com/mealplanner/ui/facades/PlanExperienceFacadeTest.kt"
+      ],
+      "notes": "Shared slot state, unfilled slots remain empty (R-06)."
+    },
+    {
+      "id": "US1.2",
+      "acs": [
+        "AC1.2.1",
+        "AC1.2.2",
+        "AC1.2.3"
+      ],
+      "rm": [
+        "RM-03",
+        "RM-04",
+        "RM-05"
+      ],
+      "status": "OK",
+      "targets": [
+        "aidlc/spaces/default/intents/261107-weekly-meal-planner/inception/user-stories/stories.md",
+        "app/src/main/java/com/mealplanner/ui/screens/recipe/RecipeDetailScreen.kt",
+        "app/src/main/java/com/mealplanner/ui/screens/recipe/ReplaceAlternativesScreen.kt",
+        "app/src/main/java/com/mealplanner/ui/navigation/SlotContextNav.kt"
+      ],
+      "notes": "Slot-context actions, back-stack preserved by navigation."
+    },
+    {
+      "id": "US2.1-US2.5",
+      "fr": [
+        "FR3",
+        "FR4",
+        "FR5",
+        "FR6"
+      ],
+      "rm": [
+        "RM-04",
+        "RM-05",
+        "RM-09"
+      ],
+      "status": "OK",
+      "targets": [
+        "aidlc/spaces/default/intents/261107-weekly-meal-planner/inception/requirements-analysis/requirements.md",
+        "app/src/main/java/com/mealplanner/ui/screens/recipe/RecipeDetailScreen.kt",
+        "app/src/main/java/com/mealplanner/ui/screens/recipe/ReplaceAlternativesScreen.kt",
+        "app/src/main/java/com/mealplanner/ui/screens/user/UserScreen.kt"
+      ],
+      "notes": "UI renders domain-provided eligibility/explanations/labels only (ADR-005); no FR3 re-evaluation in UI."
+    },
+    {
+      "id": "US3.1",
+      "acs": [
+        "AC3.1.1",
+        "AC3.1.2",
+        "AC3.1.3",
+        "AC3.1.4"
+      ],
+      "rm": [
+        "RM-03",
+        "RM-06"
+      ],
+      "fr": [
+        "FR9"
+      ],
+      "adr": [
+        "ADR-006"
+      ],
+      "status": "OK",
+      "targets": [
+        "aidlc/spaces/default/intents/261107-weekly-meal-planner/inception/user-stories/stories.md",
+        "app/src/main/java/com/mealplanner/ui/screens/plan/PlanScreen.kt",
+        "app/src/main/java/com/mealplanner/ui/screens/grocery/GroceryScreen.kt",
+        "app/src/main/java/com/mealplanner/ui/facades/DefaultGroceryExperienceFacade.kt",
+        "app/src/test/java/com/mealplanner/ui/facades/GroceryExperienceFacadeTest.kt"
+      ],
+      "notes": "Explicit lock/generate; merge/stale rules owned by domain/C4."
+    },
+    {
+      "id": "US3.2",
+      "acs": [
+        "AC3.2.1",
+        "AC3.2.2",
+        "AC3.2.3"
+      ],
+      "rm": [
+        "RM-06"
+      ],
+      "fr": [
+        "FR9",
+        "FR10"
+      ],
+      "adr": [
+        "ADR-006",
+        "R-01",
+        "R-02",
+        "R-03"
+      ],
+      "status": "OK",
+      "targets": [
+        "aidlc/spaces/default/intents/261107-weekly-meal-planner/construction/u4-android-ui-experience/functional-design/functional-spec.md",
+        "app/src/main/java/com/mealplanner/ui/screens/grocery/GroceryScreen.kt",
+        "app/src/main/java/com/mealplanner/ui/components/UiPrimitives.kt",
+        "app/src/main/java/com/mealplanner/ui/facades/DefaultGroceryExperienceFacade.kt",
+        "app/src/test/java/com/mealplanner/ui/facades/GroceryExperienceFacadeTest.kt"
+      ],
+      "notes": "Exact stale warning via Adr006LockRules.STALE_WARNING_TEXT; regenerate confirmation when hasUserEdits; export current edited list; no auto-regeneration."
+    },
+    {
+      "id": "US3.3",
+      "acs": [
+        "AC3.3.1",
+        "AC3.3.2",
+        "AC3.3.3",
+        "AC3.3.4"
+      ],
+      "rm": [
+        "RM-06",
+        "RM-07"
+      ],
+      "fr": [
+        "FR7",
+        "FR8"
+      ],
+      "status": "OK",
+      "targets": [
+        "aidlc/spaces/default/intents/261107-weekly-meal-planner/inception/user-stories/stories.md",
+        "app/src/main/java/com/mealplanner/ui/screens/store/SelectPrismaStoreScreen.kt",
+        "app/src/main/java/com/mealplanner/ui/facades/DefaultStoreAvailabilityFacade.kt",
+        "app/src/main/java/com/mealplanner/ui/mappers/DiagnosticsUiMapper.kt",
+        "app/src/test/java/com/mealplanner/ui/facades/StoreAvailabilityAndDiagnosticsTest.kt"
+      ],
+      "notes": "Manual always available; name/presence only PRESENT/NOT_FOUND/UNKNOWN; never stock/guaranteed availability."
+    },
+    {
+      "id": "US4.1-US4.2",
+      "acs": [
+        "AC4.1.1",
+        "AC4.1.2",
+        "AC4.1.3",
+        "AC4.2.1",
+        "AC4.2.2",
+        "AC4.2.3"
+      ],
+      "rm": [
+        "RM-06",
+        "RM-08"
+      ],
+      "fr": [
+        "FR10"
+      ],
+      "status": "OK",
+      "targets": [
+        "aidlc/spaces/default/intents/261107-weekly-meal-planner/inception/user-stories/stories.md",
+        "app/src/main/java/com/mealplanner/ui/screens/grocery/GroceryScreen.kt",
+        "app/src/main/java/com/mealplanner/domain/export/ExportSeam.kt",
+        "app/src/main/java/com/mealplanner/ui/platform/ShareCopyPlatformBoundary.kt"
+      ],
+      "notes": "Official S-ostoslista investigational (OQ4); share/copy fallback always available with instructions; exports current edited list."
+    },
+    {
+      "id": "US5.1-US5.6",
+      "fr": [
+        "FR11",
+        "FR12"
+      ],
+      "rm": [
+        "RM-01",
+        "RM-02",
+        "RM-03",
+        "RM-07",
+        "RM-09"
+      ],
+      "r": [
+        "R-05",
+        "R-06"
+      ],
+      "status": "OK",
+      "targets": [
+        "aidlc/spaces/default/intents/261107-weekly-meal-planner/inception/refined-mockups/interaction-spec.md",
+        "app/src/main/java/com/mealplanner/ui/screens/onboarding/OnboardingScreen.kt",
+        "app/src/main/java/com/mealplanner/ui/screens/today/TodayScreen.kt",
+        "app/src/main/java/com/mealplanner/ui/screens/plan/PlanScreen.kt",
+        "app/src/main/java/com/mealplanner/ui/screens/user/UserScreen.kt",
+        "app/src/main/java/com/mealplanner/ui/platform/DefaultPermissionStatusProvider.kt"
+      ],
+      "notes": "R-05 fallback next actions, R-06 sync/context, purpose-limited location with manual alternative."
+    },
+    {
+      "id": "ADR-005",
+      "status": "OK",
+      "targets": [
+        "app/src/main/java/com/mealplanner/ui/facades/",
+        "aidlc/spaces/default/intents/261107-weekly-meal-planner/inception/contract-design/adr/ADR-005-snapshot-aggregate-boundaries.md"
+      ],
+      "notes": "UI orchestrates domain contracts; no rule duplication."
+    },
+    {
+      "id": "ADR-006",
+      "status": "OK",
+      "targets": [
+        "app/src/main/java/com/mealplanner/domain/planning/Adr006LockRules.kt",
+        "app/src/main/java/com/mealplanner/ui/state/GroceryUiModels.kt",
+        "app/src/main/java/com/mealplanner/ui/facades/DefaultGroceryExperienceFacade.kt",
+        "app/src/test/java/com/mealplanner/ui/facades/GroceryExperienceFacadeTest.kt"
+      ],
+      "notes": "Exact stale warning text and regenerate confirmation semantics preserved."
+    },
+    {
+      "id": "NFR1-NFR5",
+      "status": "OK",
+      "targets": [
+        "aidlc/spaces/default/intents/261107-weekly-meal-planner/inception/requirements-analysis/requirements.md",
+        "app/src/main/java/com/mealplanner/ui/mappers/DiagnosticsUiMapper.kt",
+        "app/src/main/java/com/mealplanner/ui/navigation/MealPlannerScaffold.kt"
+      ],
+      "notes": "Responsive/coroutine-friendly UI structure, explicit fallback actions, privacy-safe diagnostics, modular packages; accessibility labels/testTag added pragmatically."
+    }
+  ],
+  "upstream_ids": [
+    "AC1.1.1",
+    "AC1.1.2",
+    "AC1.1.3",
+    "AC1.1.4",
+    "AC1.2.1",
+    "AC1.2.2",
+    "AC1.2.3",
+    "AC2.1.1",
+    "AC2.1.2",
+    "AC2.1.3",
+    "AC2.3.1",
+    "AC2.3.2",
+    "AC2.3.3",
+    "AC2.3.4",
+    "AC2.4.1",
+    "AC2.4.2",
+    "AC2.4.3",
+    "AC2.4.4",
+    "AC2.5.1",
+    "AC2.5.2",
+    "AC2.5.3",
+    "AC3.1.1",
+    "AC3.1.2",
+    "AC3.1.3",
+    "AC3.1.4",
+    "AC3.2.1",
+    "AC3.2.2",
+    "AC3.2.3",
+    "AC3.3.1",
+    "AC3.3.2",
+    "AC3.3.3",
+    "AC3.3.4",
+    "AC4.1.1",
+    "AC4.1.2",
+    "AC4.1.3",
+    "AC4.2.1",
+    "AC4.2.2",
+    "AC4.2.3",
+    "AC5.1.1",
+    "AC5.1.2",
+    "AC5.1.3",
+    "AC5.2.1",
+    "AC5.2.2",
+    "AC5.2.3",
+    "AC5.3.1",
+    "AC5.3.2",
+    "AC5.3.3",
+    "AC5.4.1",
+    "AC5.4.2",
+    "AC5.4.3",
+    "AC5.5.1",
+    "AC5.5.2",
+    "AC5.5.3",
+    "AC5.6.1",
+    "AC5.6.2",
+    "AC5.6.3",
+    "NFR1.1",
+    "NFR1.2",
+    "NFR1.3",
+    "NFR2.1",
+    "NFR1.4",
+    "NFR3.1",
+    "NFR3.2",
+    "NFR3.3",
+    "NFR3.4",
+    "NFR3.5",
+    "NFR5.3",
+    "NFR3.6",
+    "NFR2.3",
+    "NFR2.4"
+  ],
+  "coverage": [
+    {
+      "id": "AC1.1.1",
+      "status": "OK",
+      "target": "aidlc/spaces/default/intents/261107-weekly-meal-planner/inception/user-stories/stories.md"
+    },
+    {
+      "id": "AC1.1.2",
+      "status": "OK",
+      "target": "aidlc/spaces/default/intents/261107-weekly-meal-planner/inception/user-stories/stories.md"
+    },
+    {
+      "id": "AC1.1.3",
+      "status": "OK",
+      "target": "aidlc/spaces/default/intents/261107-weekly-meal-planner/inception/user-stories/stories.md"
+    },
+    {
+      "id": "AC1.1.4",
+      "status": "OK",
+      "target": "aidlc/spaces/default/intents/261107-weekly-meal-planner/inception/user-stories/stories.md"
+    },
+    {
+      "id": "AC1.2.1",
+      "status": "OK",
+      "target": "aidlc/spaces/default/intents/261107-weekly-meal-planner/inception/user-stories/stories.md"
+    },
+    {
+      "id": "AC1.2.2",
+      "status": "OK",
+      "target": "aidlc/spaces/default/intents/261107-weekly-meal-planner/inception/user-stories/stories.md"
+    },
+    {
+      "id": "AC1.2.3",
+      "status": "OK",
+      "target": "aidlc/spaces/default/intents/261107-weekly-meal-planner/inception/user-stories/stories.md"
+    },
+    {
+      "id": "AC2.1.1",
+      "status": "OK",
+      "target": "app/src/main/java/com/mealplanner/ui/screens/recipe/RecipeDetailScreen.kt"
+    },
+    {
+      "id": "AC2.1.2",
+      "status": "OK",
+      "target": "app/src/main/java/com/mealplanner/ui/screens/recipe/RecipeDetailScreen.kt"
+    },
+    {
+      "id": "AC2.1.3",
+      "status": "OK",
+      "target": "app/src/main/java/com/mealplanner/ui/screens/recipe/RecipeDetailScreen.kt"
+    },
+    {
+      "id": "AC2.3.1",
+      "status": "OK",
+      "target": "app/src/main/java/com/mealplanner/ui/screens/recipe/RecipeDetailScreen.kt"
+    },
+    {
+      "id": "AC2.3.2",
+      "status": "OK",
+      "target": "app/src/main/java/com/mealplanner/ui/screens/recipe/RecipeDetailScreen.kt"
+    },
+    {
+      "id": "AC2.3.3",
+      "status": "OK",
+      "target": "app/src/main/java/com/mealplanner/ui/screens/recipe/RecipeDetailScreen.kt"
+    },
+    {
+      "id": "AC2.3.4",
+      "status": "OK",
+      "target": "app/src/main/java/com/mealplanner/ui/screens/recipe/RecipeDetailScreen.kt"
+    },
+    {
+      "id": "AC2.4.1",
+      "status": "OK",
+      "target": "app/src/main/java/com/mealplanner/ui/screens/recipe/RecipeDetailScreen.kt"
+    },
+    {
+      "id": "AC2.4.2",
+      "status": "OK",
+      "target": "app/src/main/java/com/mealplanner/ui/screens/recipe/RecipeDetailScreen.kt"
+    },
+    {
+      "id": "AC2.4.3",
+      "status": "OK",
+      "target": "app/src/main/java/com/mealplanner/ui/screens/recipe/RecipeDetailScreen.kt"
+    },
+    {
+      "id": "AC2.4.4",
+      "status": "OK",
+      "target": "app/src/main/java/com/mealplanner/ui/screens/recipe/RecipeDetailScreen.kt"
+    },
+    {
+      "id": "AC2.5.1",
+      "status": "OK",
+      "target": "app/src/main/java/com/mealplanner/ui/screens/recipe/RecipeDetailScreen.kt"
+    },
+    {
+      "id": "AC2.5.2",
+      "status": "OK",
+      "target": "app/src/main/java/com/mealplanner/ui/screens/recipe/RecipeDetailScreen.kt"
+    },
+    {
+      "id": "AC2.5.3",
+      "status": "OK",
+      "target": "app/src/main/java/com/mealplanner/ui/screens/recipe/RecipeDetailScreen.kt"
+    },
+    {
+      "id": "AC3.1.1",
+      "status": "OK",
+      "target": "aidlc/spaces/default/intents/261107-weekly-meal-planner/inception/user-stories/stories.md"
+    },
+    {
+      "id": "AC3.1.2",
+      "status": "OK",
+      "target": "aidlc/spaces/default/intents/261107-weekly-meal-planner/inception/user-stories/stories.md"
+    },
+    {
+      "id": "AC3.1.3",
+      "status": "OK",
+      "target": "aidlc/spaces/default/intents/261107-weekly-meal-planner/inception/user-stories/stories.md"
+    },
+    {
+      "id": "AC3.1.4",
+      "status": "OK",
+      "target": "aidlc/spaces/default/intents/261107-weekly-meal-planner/inception/user-stories/stories.md"
+    },
+    {
+      "id": "AC3.2.1",
+      "status": "OK",
+      "target": "aidlc/spaces/default/intents/261107-weekly-meal-planner/construction/u4-android-ui-experience/functional-design/functional-spec.md"
+    },
+    {
+      "id": "AC3.2.2",
+      "status": "OK",
+      "target": "aidlc/spaces/default/intents/261107-weekly-meal-planner/construction/u4-android-ui-experience/functional-design/functional-spec.md"
+    },
+    {
+      "id": "AC3.2.3",
+      "status": "OK",
+      "target": "aidlc/spaces/default/intents/261107-weekly-meal-planner/construction/u4-android-ui-experience/functional-design/functional-spec.md"
+    },
+    {
+      "id": "AC3.3.1",
+      "status": "OK",
+      "target": "aidlc/spaces/default/intents/261107-weekly-meal-planner/inception/user-stories/stories.md"
+    },
+    {
+      "id": "AC3.3.2",
+      "status": "OK",
+      "target": "aidlc/spaces/default/intents/261107-weekly-meal-planner/inception/user-stories/stories.md"
+    },
+    {
+      "id": "AC3.3.3",
+      "status": "OK",
+      "target": "aidlc/spaces/default/intents/261107-weekly-meal-planner/inception/user-stories/stories.md"
+    },
+    {
+      "id": "AC3.3.4",
+      "status": "OK",
+      "target": "aidlc/spaces/default/intents/261107-weekly-meal-planner/inception/user-stories/stories.md"
+    },
+    {
+      "id": "AC4.1.1",
+      "status": "OK",
+      "target": "aidlc/spaces/default/intents/261107-weekly-meal-planner/inception/user-stories/stories.md"
+    },
+    {
+      "id": "AC4.1.2",
+      "status": "OK",
+      "target": "aidlc/spaces/default/intents/261107-weekly-meal-planner/inception/user-stories/stories.md"
+    },
+    {
+      "id": "AC4.1.3",
+      "status": "OK",
+      "target": "aidlc/spaces/default/intents/261107-weekly-meal-planner/inception/user-stories/stories.md"
+    },
+    {
+      "id": "AC4.2.1",
+      "status": "OK",
+      "target": "aidlc/spaces/default/intents/261107-weekly-meal-planner/inception/user-stories/stories.md"
+    },
+    {
+      "id": "AC4.2.2",
+      "status": "OK",
+      "target": "aidlc/spaces/default/intents/261107-weekly-meal-planner/inception/user-stories/stories.md"
+    },
+    {
+      "id": "AC4.2.3",
+      "status": "OK",
+      "target": "aidlc/spaces/default/intents/261107-weekly-meal-planner/inception/user-stories/stories.md"
+    },
+    {
+      "id": "AC5.1.1",
+      "status": "OK",
+      "target": "app/src/main/java/com/mealplanner/ui/screens/user/UserScreen.kt"
+    },
+    {
+      "id": "AC5.1.2",
+      "status": "OK",
+      "target": "app/src/main/java/com/mealplanner/ui/screens/user/UserScreen.kt"
+    },
+    {
+      "id": "AC5.1.3",
+      "status": "OK",
+      "target": "app/src/main/java/com/mealplanner/ui/screens/user/UserScreen.kt"
+    },
+    {
+      "id": "AC5.2.1",
+      "status": "OK",
+      "target": "app/src/main/java/com/mealplanner/ui/screens/user/UserScreen.kt"
+    },
+    {
+      "id": "AC5.2.2",
+      "status": "OK",
+      "target": "app/src/main/java/com/mealplanner/ui/screens/user/UserScreen.kt"
+    },
+    {
+      "id": "AC5.2.3",
+      "status": "OK",
+      "target": "app/src/main/java/com/mealplanner/ui/screens/user/UserScreen.kt"
+    },
+    {
+      "id": "AC5.3.1",
+      "status": "OK",
+      "target": "app/src/main/java/com/mealplanner/ui/screens/user/UserScreen.kt"
+    },
+    {
+      "id": "AC5.3.2",
+      "status": "OK",
+      "target": "app/src/main/java/com/mealplanner/ui/screens/user/UserScreen.kt"
+    },
+    {
+      "id": "AC5.3.3",
+      "status": "OK",
+      "target": "app/src/main/java/com/mealplanner/ui/screens/user/UserScreen.kt"
+    },
+    {
+      "id": "AC5.4.1",
+      "status": "OK",
+      "target": "app/src/main/java/com/mealplanner/ui/screens/user/UserScreen.kt"
+    },
+    {
+      "id": "AC5.4.2",
+      "status": "OK",
+      "target": "app/src/main/java/com/mealplanner/ui/screens/user/UserScreen.kt"
+    },
+    {
+      "id": "AC5.4.3",
+      "status": "OK",
+      "target": "app/src/main/java/com/mealplanner/ui/screens/user/UserScreen.kt"
+    },
+    {
+      "id": "AC5.5.1",
+      "status": "OK",
+      "target": "app/src/main/java/com/mealplanner/ui/screens/user/UserScreen.kt"
+    },
+    {
+      "id": "AC5.5.2",
+      "status": "OK",
+      "target": "app/src/main/java/com/mealplanner/ui/screens/user/UserScreen.kt"
+    },
+    {
+      "id": "AC5.5.3",
+      "status": "OK",
+      "target": "app/src/main/java/com/mealplanner/ui/screens/user/UserScreen.kt"
+    },
+    {
+      "id": "AC5.6.1",
+      "status": "OK",
+      "target": "app/src/main/java/com/mealplanner/ui/screens/user/UserScreen.kt"
+    },
+    {
+      "id": "AC5.6.2",
+      "status": "OK",
+      "target": "app/src/main/java/com/mealplanner/ui/screens/user/UserScreen.kt"
+    },
+    {
+      "id": "AC5.6.3",
+      "status": "OK",
+      "target": "app/src/main/java/com/mealplanner/ui/screens/user/UserScreen.kt"
+    },
+    {
+      "id": "NFR1.1",
+      "status": "OK",
+      "target": "aidlc/spaces/default/intents/261107-weekly-meal-planner/construction/u4-android-ui-experience/nfr-requirements/nfr-summary.md"
+    },
+    {
+      "id": "NFR1.2",
+      "status": "OK",
+      "target": "aidlc/spaces/default/intents/261107-weekly-meal-planner/construction/u4-android-ui-experience/nfr-requirements/nfr-summary.md"
+    },
+    {
+      "id": "NFR1.3",
+      "status": "OK",
+      "target": "aidlc/spaces/default/intents/261107-weekly-meal-planner/construction/u4-android-ui-experience/nfr-requirements/nfr-summary.md"
+    },
+    {
+      "id": "NFR2.1",
+      "status": "OK",
+      "target": "aidlc/spaces/default/intents/261107-weekly-meal-planner/construction/u4-android-ui-experience/nfr-requirements/nfr-summary.md"
+    },
+    {
+      "id": "NFR1.4",
+      "status": "OK",
+      "target": "aidlc/spaces/default/intents/261107-weekly-meal-planner/construction/u4-android-ui-experience/nfr-requirements/nfr-summary.md"
+    },
+    {
+      "id": "NFR3.1",
+      "status": "OK",
+      "target": "aidlc/spaces/default/intents/261107-weekly-meal-planner/construction/u4-android-ui-experience/nfr-requirements/nfr-summary.md"
+    },
+    {
+      "id": "NFR3.2",
+      "status": "OK",
+      "target": "aidlc/spaces/default/intents/261107-weekly-meal-planner/construction/u4-android-ui-experience/nfr-requirements/nfr-summary.md"
+    },
+    {
+      "id": "NFR3.3",
+      "status": "OK",
+      "target": "aidlc/spaces/default/intents/261107-weekly-meal-planner/construction/u4-android-ui-experience/nfr-requirements/nfr-summary.md"
+    },
+    {
+      "id": "NFR3.4",
+      "status": "OK",
+      "target": "aidlc/spaces/default/intents/261107-weekly-meal-planner/construction/u4-android-ui-experience/nfr-requirements/nfr-summary.md"
+    },
+    {
+      "id": "NFR3.5",
+      "status": "OK",
+      "target": "aidlc/spaces/default/intents/261107-weekly-meal-planner/construction/u4-android-ui-experience/nfr-requirements/nfr-summary.md"
+    },
+    {
+      "id": "NFR5.3",
+      "status": "OK",
+      "target": "aidlc/spaces/default/intents/261107-weekly-meal-planner/construction/u4-android-ui-experience/nfr-requirements/nfr-summary.md"
+    },
+    {
+      "id": "NFR3.6",
+      "status": "OK",
+      "target": "aidlc/spaces/default/intents/261107-weekly-meal-planner/construction/u4-android-ui-experience/nfr-requirements/nfr-summary.md"
+    },
+    {
+      "id": "NFR2.3",
+      "status": "OK",
+      "target": "aidlc/spaces/default/intents/261107-weekly-meal-planner/construction/u4-android-ui-experience/nfr-requirements/nfr-summary.md"
+    },
+    {
+      "id": "NFR2.4",
+      "status": "OK",
+      "target": "aidlc/spaces/default/intents/261107-weekly-meal-planner/construction/u4-android-ui-experience/nfr-requirements/nfr-summary.md"
+    }
+  ]
+}

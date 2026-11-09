@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CoreTypes.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">com.mealplanner.domain.model</a> &gt; <span class="el_source">CoreTypes.kt</span></div><h1>CoreTypes.kt</h1><pre class="source lang-java linenums">package com.mealplanner.domain.model
+
+/** Logical ID aliases (ENT-U1 baseline). Concrete persistence IDs refined in later units. */
+typealias PlanId = String
+typealias RecipeId = String
+typealias IngredientRefId = String
+typealias ShoppingListId = String
+typealias LockSnapshotId = String
+typealias ShoppingListItemId = String
+
+enum class DayOfWeek {
+<span class="fc" id="L12">    MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY</span>
+<span class="fc" id="L13">}</span>
+
+<span class="pc" id="L15">enum class MealSlotType { BREAKFAST, LUNCH, DINNER }</span>
+
+<span class="pc" id="L17">enum class DayKind { WEEKDAY, WEEKEND }</span>
+
+<span class="fc bfc" id="L19" title="All 2 branches covered.">fun DayOfWeek.dayKind(): DayKind = when (this) {</span>
+<span class="fc" id="L20">    DayOfWeek.SATURDAY, DayOfWeek.SUNDAY -&gt; DayKind.WEEKEND</span>
+<span class="fc" id="L21">    else -&gt; DayKind.WEEKDAY</span>
+<span class="fc" id="L22">}</span>
+
+<span class="pc" id="L24">enum class SlotStatus { EMPTY, SUGGESTED, SELECTED, LOCKED }</span>
+
+<span class="pc" id="L26">enum class PlanLockState { UNLOCKED, LOCKED, STALE_LOCK }</span>
+
+<span class="pc" id="L28">enum class SelectionSource { USER_SELECTED, SUGGESTED_ACCEPTED, FALLBACK }</span>
+
+<span class="pc" id="L30">enum class GenerationStatus { GENERATED, REGENERATED, FAILED, CANCELLED, NEEDS_CONFIRMATION }</span>
+
+/** C5 raw/name-presence result states (FR8). `NOT_CHECKED` is a C4 projection pre-check state. */
+<span class="pc" id="L33">enum class StorePresenceStatus { PRESENT, NOT_FOUND, UNKNOWN, NOT_CHECKED }</span>
+
+/** Legacy U1 batch status; U3 adds [PresenceBatchStatus] with C5/A2 mapped outcomes. */
+<span class="pc" id="L36">enum class PresenceBatchOverallStatus { COMPLETE, PARTIAL, FAILED }</span>
+
+/** U3/C5 batch mapped outcomes (BR3.7): name/presence only, typed fallback reasons. */
+<span class="pc" id="L39">enum class PresenceBatchStatus { OK, PARTIAL, UNAVAILABLE, DENIED, FAILED_MAPPED }</span>
+
+<span class="pc" id="L41">enum class ApplyPresenceStatus { APPLIED, PARTIAL, FAILED }</span>
+
+<span class="pc" id="L43">enum class ShareStatus { SHARED, COPIED, CANCELLED, FAILED, FALLBACK_INSTRUCTIONS_SHOWN }</span>
+
+<span class="pc" id="L45">enum class ShareMethod { ANDROID_SHARE_SHEET, COPY_TEXT, MANUAL_INSTRUCTIONS }</span>
+
+<span class="pc" id="L47">enum class TimeConfidence { KNOWN, MISSING, AMBIGUOUS }</span>
+
+<span class="pc" id="L49">enum class SydanmerkkiStatus { VERIFIED, CURATED_FALLBACK, UNAVAILABLE }</span>
+
+<span class="nc" id="L51">enum class SeasonFit { IN_SEASON, OUT_OF_SEASON, SEASON_FIT_UNKNOWN }</span>
+
+<span class="pc" id="L53">enum class NutritionAvailability { AVAILABLE, UNAVAILABLE, PARTIAL }</span>
+
+<span class="pc" id="L55">enum class IngredientAvailabilityStatus { KNOWN, MISSING, CHANGED, UNAVAILABLE }</span>
+
+<span class="pc" id="L57">enum class RecipeQueryStatus { OK, PARTIAL, FALLBACK, UNAVAILABLE }</span>
+
+<span class="pc" id="L59">enum class StoreChain { PRISMA, OTHER }</span>
+
+<span class="pc" id="L61">enum class StoreSelectionSource { MANUAL, SUGGESTED, PREVIOUS }</span>
+
+<span class="pc" id="L63">enum class SeasonResolutionSource { DEVICE_DATE, DEVICE_LOCATION, DEFAULT, OVERRIDE, UNKNOWN }</span>
+
+<span class="nc" id="L65">enum class SeasonOverrideMode { DEFAULT, OVERRIDE, RESET }</span>
+
+<span class="pc" id="L67">enum class EffectiveSeasonStatus { RESOLVED, UNKNOWN, OVERRIDDEN }</span>
+
+enum class SourceName {
+<span class="nc" id="L70">    SYDANMERKKI_LIVE, SYDANMERKKI_FALLBACK, PRISMA, SEASON_LOCAL, LOCAL_CACHE, MANUAL, NONE</span>
+<span class="nc" id="L71">}</span>
+
+<span class="pc" id="L73">enum class Freshness { CURRENT, CACHED, STALE, UNKNOWN }</span>
+
+enum class RecipeSourceType {
+<span class="fc" id="L76">    SYDANMERKKI, CURATED_SYDANMERKKI_FALLBACK, LOCAL_CACHE, IMPORTED, NONE</span>
+<span class="nc" id="L77">}</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

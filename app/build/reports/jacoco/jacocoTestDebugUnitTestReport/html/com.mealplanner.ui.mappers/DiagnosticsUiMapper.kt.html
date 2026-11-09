@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DiagnosticsUiMapper.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">com.mealplanner.ui.mappers</a> &gt; <span class="el_source">DiagnosticsUiMapper.kt</span></div><h1>DiagnosticsUiMapper.kt</h1><pre class="source lang-java linenums">package com.mealplanner.ui.mappers
+
+import com.mealplanner.domain.model.FallbackReason
+import com.mealplanner.domain.model.PresenceBatchStatus
+import com.mealplanner.domain.model.StorePresenceStatus
+import com.mealplanner.domain.model.StoreSuggestionStatus
+import com.mealplanner.ui.state.DiagnosticsUiMessage
+import com.mealplanner.ui.state.LocationPermissionUiState
+import com.mealplanner.ui.state.PresenceRowUiModel
+import com.mealplanner.ui.state.R05NextAction
+import com.mealplanner.ui.state.R05State
+
+/**
+ * Maps typed domain outcomes to user-safe UI labels/actions (NFR3, NFR2).
+ * Never exposes raw secrets, GPS coordinates, PII, or internal endpoints.
+ */
+object DiagnosticsUiMapper {
+<span class="fc" id="L18">    private val SENSITIVE = listOf(&quot;lat&quot;, &quot;lon&quot;, &quot;latitude&quot;, &quot;longitude&quot;, &quot;gps&quot;, &quot;token&quot;, &quot;secret&quot;, &quot;api_key&quot;, &quot;apikey&quot;, &quot;password&quot;, &quot;endpoint&quot;, &quot;http://&quot;, &quot;https://&quot;)</span>
+
+    fun sanitizeUserText(text: String?): String? {
+<span class="fc bfc" id="L21" title="All 4 branches covered.">        val raw = text?.trim().orEmpty()</span>
+<span class="fc bfc" id="L22" title="All 4 branches covered.">        if (raw.isEmpty()) return null</span>
+<span class="fc" id="L23">        val lowered = raw.lowercase()</span>
+<span class="fc bfc" id="L24" title="All 2 branches covered.">        return if (SENSITIVE.any { lowered.contains(it) }) &quot;Details unavailable for privacy.&quot; else raw</span>
+    }
+
+<span class="nc" id="L27">    fun r05NoLocalDataRemoteUnavailable(bundledFallbackAvailable: Boolean = true): R05State = R05State(</span>
+<span class="nc" id="L28">        visible = true,</span>
+<span class="nc" id="L29">        message = &quot;No local data available and remote data is unavailable.&quot;,</span>
+<span class="nc" id="L30">        nextActions = buildList {</span>
+<span class="nc" id="L31">            add(R05NextAction.RETRY)</span>
+<span class="nc bnc" id="L32" title="All 2 branches missed.">            if (bundledFallbackAvailable) add(R05NextAction.USE_BUNDLED_FALLBACK_CATALOG)</span>
+<span class="nc" id="L33">            add(R05NextAction.CONTINUE_WITH_MANUAL_PLANNING)</span>
+<span class="nc" id="L34">        },</span>
+<span class="nc" id="L35">    )</span>
+
+<span class="pc bpc" id="L37" title="1 of 2 branches missed.">    fun fallbackMessage(reason: FallbackReason?): DiagnosticsUiMessage? = reason?.let {</span>
+<span class="pc bpc" id="L38" title="4 of 6 branches missed.">        val safe = sanitizeUserText(it.userActionRequired ?: it.message ?: it.code) ?: &quot;Fallback is active.&quot;</span>
+<span class="pc bpc" id="L39" title="3 of 6 branches missed.">        DiagnosticsUiMessage(userSafeText = safe, hasNextAction = !it.userActionRequired.isNullOrBlank())</span>
+<span class="fc" id="L40">    }</span>
+
+    fun presenceRow(itemId: String, queryName: String, status: StorePresenceStatus, reason: String?): PresenceRowUiModel {
+<span class="fc bfc" id="L43" title="All 3 branches covered.">        val safeStatus = when (status) {</span>
+<span class="fc" id="L44">            StorePresenceStatus.PRESENT -&gt; StorePresenceStatus.PRESENT</span>
+<span class="fc" id="L45">            StorePresenceStatus.NOT_FOUND -&gt; StorePresenceStatus.NOT_FOUND</span>
+<span class="fc" id="L46">            StorePresenceStatus.UNKNOWN, StorePresenceStatus.NOT_CHECKED -&gt; StorePresenceStatus.UNKNOWN</span>
+        }
+<span class="pc bpc" id="L48" title="1 of 4 branches missed.">        val reasonLabel = sanitizeUserText(reason)?.let { &quot;Reason: $it&quot; } ?: &quot;Reason: Unknown&quot;</span>
+<span class="fc" id="L49">        return PresenceRowUiModel(itemId = itemId, queryName = queryName, status = safeStatus, reasonLabel = reasonLabel)</span>
+    }
+
+<span class="fc" id="L52">    fun storeSuggestionLabel(status: StoreSuggestionStatus?, permission: LocationPermissionUiState): String = when {</span>
+<span class="fc bfc" id="L53" title="All 2 branches covered.">        permission == LocationPermissionUiState.DENIED -&gt; &quot;Location permission denied. Manual store selection is available.&quot;</span>
+<span class="pc bpc" id="L54" title="1 of 2 branches missed.">        status == StoreSuggestionStatus.DENIED -&gt; &quot;Suggestion denied. Manual store selection is available.&quot;</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">        status == StoreSuggestionStatus.UNAVAILABLE -&gt; &quot;Nearest store suggestion unavailable. Manual selection is always available.&quot;</span>
+<span class="pc bpc" id="L56" title="1 of 2 branches missed.">        status == StoreSuggestionStatus.NOT_FOUND -&gt; &quot;No nearby store found. Manual selection is available.&quot;</span>
+<span class="pc bpc" id="L57" title="1 of 2 branches missed.">        status == StoreSuggestionStatus.UNKNOWN -&gt; &quot;Store suggestion status unknown. Manual selection is available.&quot;</span>
+<span class="pc bpc" id="L58" title="1 of 2 branches missed.">        status == StoreSuggestionStatus.OK -&gt; &quot;Nearest store suggestion available.&quot;</span>
+<span class="pc bpc" id="L59" title="1 of 2 branches missed.">        permission == LocationPermissionUiState.NOT_ASKED -&gt; &quot;Location not requested. Manual store selection is available.&quot;</span>
+<span class="nc" id="L60">        else -&gt; &quot;Manual store selection is always available.&quot;</span>
+<span class="fc" id="L61">    }</span>
+
+<span class="pc bpc" id="L63" title="5 of 9 branches missed.">    fun presenceBatchLabel(status: PresenceBatchStatus?): String = when (status) {</span>
+<span class="nc" id="L64">        PresenceBatchStatus.OK -&gt; &quot;Presence check complete (name/presence only).&quot;</span>
+<span class="fc" id="L65">        PresenceBatchStatus.PARTIAL -&gt; &quot;Presence check partially complete. Unknown items remain.&quot;</span>
+<span class="fc" id="L66">        PresenceBatchStatus.UNAVAILABLE -&gt; &quot;Presence check unavailable. Manual checklist available.&quot;</span>
+<span class="nc" id="L67">        PresenceBatchStatus.DENIED -&gt; &quot;Presence check denied. Manual checklist available.&quot;</span>
+<span class="fc" id="L68">        PresenceBatchStatus.FAILED_MAPPED -&gt; &quot;Presence check failed safely. Manual checklist available.&quot;</span>
+<span class="nc" id="L69">        null -&gt; &quot;Presence not checked.&quot;</span>
+<span class="fc" id="L70">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

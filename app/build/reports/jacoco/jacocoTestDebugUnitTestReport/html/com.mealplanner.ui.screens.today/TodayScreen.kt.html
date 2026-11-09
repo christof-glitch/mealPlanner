@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TodayScreen.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">com.mealplanner.ui.screens.today</a> &gt; <span class="el_source">TodayScreen.kt</span></div><h1>TodayScreen.kt</h1><pre class="source lang-java linenums">package com.mealplanner.ui.screens.today
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.dp
+import com.mealplanner.ui.components.ErrorRetryPanel
+import com.mealplanner.ui.components.MealSlotCard
+import com.mealplanner.ui.components.NutritionBalanceCueCard
+import com.mealplanner.ui.components.R05FallbackPanel
+import com.mealplanner.ui.components.SeasonContextIndicator
+import com.mealplanner.ui.components.StatusBanner
+import com.mealplanner.ui.navigation.SlotContextNav
+import com.mealplanner.ui.state.SlotActionContext
+import com.mealplanner.ui.state.TodayScreenState
+
+/** RM-02 Today's meals (Step 7). R-06 shared slot state; unfilled slots remain empty. */
+@Composable
+fun TodayScreen(
+    state: TodayScreenState,
+    onViewRecipe: (SlotActionContext) -&gt; Unit,
+    onReplace: (SlotActionContext) -&gt; Unit,
+    onChooseRecipe: (SlotActionContext) -&gt; Unit,
+    onRetry: () -&gt; Unit,
+<span class="nc bnc" id="L38" title="All 2 branches missed.">    modifier: Modifier = Modifier,</span>
+<span class="nc bnc" id="L39" title="All 44 branches missed.">) {</span>
+<span class="nc" id="L40">    Column(modifier = modifier.fillMaxSize().padding(16.dp).testTag(&quot;today-screen&quot;)) {</span>
+<span class="nc" id="L41">        Text(</span>
+<span class="nc bnc" id="L42" title="All 4 branches missed.">            text = &quot;Today${if (state.dateLabel.isNotBlank()) &quot; — ${state.dateLabel}&quot; else &quot;&quot;}&quot;,</span>
+<span class="nc" id="L43">            style = MaterialTheme.typography.headlineSmall,</span>
+<span class="nc" id="L44">            modifier = Modifier.semantics { heading() },</span>
+        )
+<span class="nc" id="L46">        SeasonContextIndicator(state.seasonContextLabel, modifier = Modifier.padding(vertical = 8.dp))</span>
+<span class="nc bnc" id="L47" title="All 2 branches missed.">        if (state.loading) {</span>
+<span class="nc" id="L48">            CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally).testTag(&quot;today-loading&quot;))</span>
+<span class="nc" id="L49">            return@Column</span>
+        }
+<span class="nc bnc" id="L51" title="All 2 branches missed.">        state.r05State?.let { r05 -&gt;</span>
+<span class="nc" id="L52">            R05FallbackPanel(state = r05, onRetry = onRetry, onBundledFallback = onRetry, onManualPlanning = onRetry)</span>
+<span class="nc" id="L53">            return@Column</span>
+        }
+<span class="nc bnc" id="L55" title="All 2 branches missed.">        state.errorMessage?.let { ErrorRetryPanel(message = it, onRetry = onRetry) }</span>
+<span class="nc bnc" id="L56" title="All 2 branches missed.">        state.fallbackMessage?.let { StatusBanner(it) }</span>
+<span class="nc bnc" id="L57" title="All 2 branches missed.">        state.statusMessage?.let { StatusBanner(it) }</span>
+<span class="nc" id="L58">        NutritionBalanceCueCard(</span>
+<span class="nc bnc" id="L59" title="All 2 branches missed.">            label = state.nutritionCueLabel.orEmpty(),</span>
+<span class="nc bnc" id="L60" title="All 4 branches missed.">            unavailable = state.nutritionCueLabel.isNullOrBlank(),</span>
+<span class="nc" id="L61">            modifier = Modifier.padding(vertical = 8.dp),</span>
+        )
+<span class="nc bnc" id="L63" title="All 2 branches missed.">        if (state.todaySlots.isEmpty()) {</span>
+<span class="nc" id="L64">            StatusBanner(&quot;No meals planned for today. Open Plan to choose recipes; unfilled slots remain empty until you select one.&quot;)</span>
+<span class="nc" id="L65">        } else {</span>
+<span class="nc bnc" id="L66" title="All 12 branches missed.">            LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.fillMaxWidth()) {</span>
+<span class="nc" id="L67">                items(state.todaySlots, key = { SlotContextNav.stableSlotKey(it.context) }) { slot -&gt;</span>
+                    MealSlotCard(
+                        model = slot,
+<span class="nc" id="L70">                        onViewRecipe = { onViewRecipe(slot.context) },</span>
+<span class="nc" id="L71">                        onReplace = { onReplace(slot.context) },</span>
+<span class="nc" id="L72">                        onChooseRecipe = { onChooseRecipe(slot.context) },</span>
+                    )
+                }
+<span class="nc" id="L75">            }</span>
+        }
+<span class="nc" id="L77">    }</span>
+<span class="nc bnc" id="L78" title="All 2 branches missed.">}</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

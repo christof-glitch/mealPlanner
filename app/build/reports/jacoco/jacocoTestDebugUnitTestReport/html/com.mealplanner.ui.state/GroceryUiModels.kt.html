@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GroceryUiModels.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">com.mealplanner.ui.state</a> &gt; <span class="el_source">GroceryUiModels.kt</span></div><h1>GroceryUiModels.kt</h1><pre class="source lang-java linenums">package com.mealplanner.ui.state
+
+import com.mealplanner.domain.model.ExportMethod
+import com.mealplanner.domain.model.ExportResult
+import com.mealplanner.domain.model.ShoppingListAggregate
+import com.mealplanner.domain.model.SostoslistaAttemptStatus
+import com.mealplanner.domain.model.StorePresenceStatus
+import com.mealplanner.domain.model.StoreRef
+import com.mealplanner.domain.planning.Adr006LockRules
+
+<span class="fc" id="L11">data class GroceryItemUiModel(</span>
+<span class="pc" id="L12">    val itemId: String,</span>
+<span class="fc" id="L13">    val displayText: String,</span>
+<span class="pc" id="L14">    val quantityText: String? = null,</span>
+<span class="pc" id="L15">    val checked: Boolean = false,</span>
+<span class="pc" id="L16">    val availabilityStatus: StorePresenceStatus = StorePresenceStatus.NOT_CHECKED,</span>
+<span class="pc" id="L17">    val availabilityReason: String? = null,</span>
+<span class="pc" id="L18">    val removable: Boolean = true,</span>
+<span class="fc" id="L19">)</span>
+
+<span class="fc" id="L21">data class GroceryScreenState(</span>
+<span class="pc" id="L22">    val recipesLocked: Boolean = false,</span>
+<span class="pc" id="L23">    val lockSummary: String = &quot;Recipes not locked&quot;,</span>
+<span class="pc" id="L24">    val canGenerate: Boolean = false,</span>
+<span class="pc" id="L25">    val hasList: Boolean = false,</span>
+<span class="pc" id="L26">    val shoppingListId: String? = null,</span>
+<span class="pc" id="L27">    val hasUserEdits: Boolean = false,</span>
+<span class="pc" id="L28">    val isStale: Boolean = false,</span>
+<span class="pc" id="L29">    val staleWarningText: String? = null,</span>
+<span class="pc" id="L30">    val items: List&lt;GroceryItemUiModel&gt; = emptyList(),</span>
+<span class="pc" id="L31">    val selectedStore: StoreRef? = null,</span>
+<span class="pc" id="L32">    val presenceStatusLabel: String? = null,</span>
+<span class="pc" id="L33">    val exportMessage: String? = null,</span>
+<span class="pc" id="L34">    val exportInstructions: String? = null,</span>
+<span class="pc" id="L35">    val loading: Boolean = false,</span>
+<span class="pc" id="L36">    val errorMessage: String? = null,</span>
+<span class="pc" id="L37">    val showRegenerateConfirmation: Boolean = false,</span>
+<span class="fc" id="L38">) {</span>
+    companion object {
+        const val LOCK_REQUIRED_MESSAGE = &quot;Lock recipes in Plan before generating your shopping list.&quot;
+<span class="pc" id="L41">        val EXACT_ADR006_STALE_WARNING: String = Adr006LockRules.STALE_WARNING_TEXT</span>
+        const val LOCKED_RECIPES_CHANGED_STATUS = &quot;Locked recipes changed — regenerate to update the shopping list.&quot;
+    }
+}
+
+sealed interface GroceryIntent {
+    data object Generate : GroceryIntent
+    data object RequestRegenerate : GroceryIntent
+    data object ConfirmRegenerateAndReplace : GroceryIntent
+    data object CancelRegenerate : GroceryIntent
+<span class="nc" id="L51">    data class ToggleChecked(val itemId: String) : GroceryIntent</span>
+<span class="nc" id="L52">    data class EditItem(val itemId: String, val displayText: String, val quantityText: String?) : GroceryIntent</span>
+<span class="nc" id="L53">    data class AddItem(val displayText: String, val quantityText: String?) : GroceryIntent</span>
+<span class="nc" id="L54">    data class RemoveItem(val itemId: String) : GroceryIntent</span>
+    data object ExportOfficialSostoslista : GroceryIntent
+    data object ShareFallback : GroceryIntent
+    data object CopyTextFallback : GroceryIntent
+}
+
+<span class="fc" id="L60">data class GroceryDomainSnapshot(</span>
+<span class="pc" id="L61">    val aggregate: ShoppingListAggregate? = null,</span>
+<span class="pc" id="L62">    val recipesLocked: Boolean = false,</span>
+<span class="fc" id="L63">    val lockSummary: String = &quot;Recipes not locked&quot;,</span>
+<span class="fc" id="L64">    val currentEditedList: ShoppingListAggregate? = aggregate,</span>
+<span class="fc" id="L65">)</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

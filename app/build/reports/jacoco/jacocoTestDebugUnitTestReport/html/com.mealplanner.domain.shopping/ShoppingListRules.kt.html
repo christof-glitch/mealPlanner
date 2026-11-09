@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ShoppingListRules.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">com.mealplanner.domain.shopping</a> &gt; <span class="el_source">ShoppingListRules.kt</span></div><h1>ShoppingListRules.kt</h1><pre class="source lang-java linenums">package com.mealplanner.domain.shopping
+
+import com.mealplanner.domain.model.ApplyBatchPresenceToListRequest
+import com.mealplanner.domain.model.ApplyBatchPresenceToListResult
+import com.mealplanner.domain.model.ApplyPresenceCheckBatchRequest
+import com.mealplanner.domain.model.ApplyPresenceCheckBatchResult
+import com.mealplanner.domain.model.ApplyPresenceStatus
+import com.mealplanner.domain.model.FallbackReason
+import com.mealplanner.domain.model.GenerationStatus
+import com.mealplanner.domain.model.IngredientAvailabilityStatus
+import com.mealplanner.domain.model.IngredientLine
+import com.mealplanner.domain.model.MergeDecision
+import com.mealplanner.domain.model.MergeDecisionType
+import com.mealplanner.domain.model.MergeReasonCode
+import com.mealplanner.domain.model.ShoppingItemIngredientDataStatus
+import com.mealplanner.domain.model.ShoppingItemPatch
+import com.mealplanner.domain.model.ShoppingItemPatchOperation
+import com.mealplanner.domain.model.ShoppingListAggregate
+import com.mealplanner.domain.model.ShoppingListGenerationOperation
+import com.mealplanner.domain.model.ShoppingListGenerationOutcome
+import com.mealplanner.domain.model.ShoppingListGenerationOutcomeResult
+import com.mealplanner.domain.model.ShoppingListGenerationRequest
+import com.mealplanner.domain.model.ShoppingListItem
+import com.mealplanner.domain.model.ShoppingListPatchRequest
+import com.mealplanner.domain.model.ShoppingListStateStatus
+import com.mealplanner.domain.model.ShoppingListStaleStatus
+import com.mealplanner.domain.model.StorePresenceResult
+import com.mealplanner.domain.model.StorePresenceStatus
+import com.mealplanner.domain.model.effectiveDisplayText
+import com.mealplanner.domain.model.effectiveQuantityText
+import java.time.Instant
+import java.util.Locale
+import java.util.UUID
+
+/**
+ * C4 shopping/merge/presence application (ADR-006/R-02/R-03, BR3.1-BR3.5).
+ * C4 never performs PRISMA lookup; C5 mapping is supplied as projections.
+ */
+object ShoppingListRules {
+    /** BR1.10/BR3.2: normalize for merge comparison; keep explicit ambiguity instead of guessing. */
+<span class="fc" id="L41">    fun normalizeName(name: String): String = name.trim().lowercase(Locale.ROOT).replace(Regex(&quot;\\s+&quot;), &quot; &quot;)</span>
+
+    fun resolveIngredientLines(lines: List&lt;IngredientLine&gt;): Pair&lt;List&lt;ShoppingListItem&gt;, List&lt;IngredientLine&gt;&gt; {
+<span class="fc" id="L44">        val unresolved = lines.filter {</span>
+<span class="fc bfc" id="L45" title="All 4 branches covered.">            it.availabilityStatus != IngredientAvailabilityStatus.KNOWN || it.name.isBlank()</span>
+<span class="fc" id="L46">        }.map { line -&gt;</span>
+            // BR1.8/R-03: never fabricate quantities/units; preserve explicit unknown/missing state.
+<span class="pc bpc" id="L48" title="1 of 4 branches missed.">            if (line.availabilityStatus == IngredientAvailabilityStatus.KNOWN &amp;&amp; line.name.isBlank()) {</span>
+<span class="fc" id="L49">                line.copy(availabilityStatus = IngredientAvailabilityStatus.MISSING)</span>
+<span class="fc" id="L50">            } else line</span>
+        }
+<span class="fc" id="L52">        val resolvable = lines.filter {</span>
+<span class="fc bfc" id="L53" title="All 6 branches covered.">            it.availabilityStatus == IngredientAvailabilityStatus.KNOWN &amp;&amp; it.name.isNotBlank()</span>
+        }
+<span class="fc" id="L55">        val merged = mergeCompatible(resolvable)</span>
+<span class="fc" id="L56">        return merged to unresolved</span>
+    }
+
+    private fun mergeCompatible(lines: List&lt;IngredientLine&gt;): List&lt;ShoppingListItem&gt; {
+<span class="pc" id="L60">        data class Key(val normalized: String, val unit: String?)</span>
+<span class="fc" id="L61">        val grouped = LinkedHashMap&lt;Key, MutableList&lt;IngredientLine&gt;&gt;()</span>
+<span class="fc" id="L62">        lines.forEach { line -&gt;</span>
+<span class="fc" id="L63">            val normalized = normalizeName(line.name)</span>
+<span class="pc bpc" id="L64" title="4 of 10 branches missed.">            val unit = line.unit?.trim()?.lowercase(Locale.ROOT)?.takeIf { it.isNotBlank() }</span>
+<span class="pc bpc" id="L65" title="1 of 4 branches missed.">            val canMergeByAmount = line.amount != null &amp;&amp; unit != null</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">            val key = if (canMergeByAmount) Key(normalized, unit) else Key(normalized, UUID.randomUUID().toString())</span>
+<span class="fc" id="L67">            grouped.getOrPut(key) { mutableListOf() }.add(line)</span>
+<span class="fc" id="L68">        }</span>
+<span class="fc" id="L69">        return grouped.values.map { group -&gt;</span>
+<span class="fc" id="L70">            val first = group.first()</span>
+<span class="pc bpc" id="L71" title="2 of 6 branches missed.">            val allSameUnit = group.map { it.unit?.trim()?.lowercase(Locale.ROOT) }.distinct().size == 1</span>
+<span class="fc" id="L72">            val amounts = group.mapNotNull { it.amount }</span>
+<span class="pc bpc" id="L73" title="3 of 8 branches missed.">            val canAggregate = allSameUnit &amp;&amp; amounts.size == group.size &amp;&amp; amounts.isNotEmpty()</span>
+<span class="fc" id="L74">            val ingredientDataStatus = when {</span>
+<span class="pc bpc" id="L75" title="2 of 4 branches missed.">                group.any { it.availabilityStatus != IngredientAvailabilityStatus.KNOWN } -&gt; ShoppingItemIngredientDataStatus.INCOMPLETE</span>
+<span class="fc" id="L76">                else -&gt; ShoppingItemIngredientDataStatus.COMPLETE</span>
+            }
+<span class="fc" id="L78">            ShoppingListItem(</span>
+<span class="fc" id="L79">                itemId = UUID.randomUUID().toString(),</span>
+<span class="fc" id="L80">                displayName = first.name.trim(),</span>
+<span class="fc" id="L81">                normalizedName = normalizeName(first.name),</span>
+<span class="pc bpc" id="L82" title="5 of 8 branches missed.">                amount = if (canAggregate) amounts.sum() else first.amount?.takeIf { group.size == 1 },</span>
+<span class="pc bpc" id="L83" title="1 of 4 branches missed.">                unit = if (canAggregate || group.size == 1) first.unit else null,</span>
+<span class="pc bpc" id="L84" title="13 of 16 branches missed.">                amountText = if (!canAggregate &amp;&amp; group.size &gt; 1) group.mapNotNull { it.amountText ?: it.amount?.toString()?.let { a -&gt; &quot;${a}${it.unit?.let { u -&gt; &quot; $u&quot; } ?: &quot;&quot;}&quot; } }.joinToString(&quot; + &quot;).ifBlank { null } else first.amountText,</span>
+<span class="fc" id="L85">                checked = false,</span>
+<span class="fc" id="L86">                sourceRecipeIds = group.map { it.sourceRecipeId }.distinct(),</span>
+<span class="fc" id="L87">                manuallyEdited = false,</span>
+<span class="fc" id="L88">                mergeGroupKey = normalizeName(first.name),</span>
+<span class="pc bpc" id="L89" title="3 of 6 branches missed.">                unresolved = !canAggregate &amp;&amp; group.size &gt; 1 &amp;&amp; amounts.size != group.size,</span>
+<span class="pc bpc" id="L90" title="3 of 6 branches missed.">                unresolvedReason = if (!canAggregate &amp;&amp; group.size &gt; 1 &amp;&amp; amounts.size != group.size) &quot;INCOMPATIBLE_OR_AMBIGUOUS_MERGE&quot; else null,</span>
+<span class="fc" id="L91">                displayText = first.name.trim(),</span>
+<span class="pc bpc" id="L92" title="13 of 16 branches missed.">                quantityText = if (!canAggregate &amp;&amp; group.size &gt; 1) group.mapNotNull { it.amountText ?: it.amount?.toString()?.let { a -&gt; &quot;${a}${it.unit?.let { u -&gt; &quot; $u&quot; } ?: &quot;&quot;}&quot; } }.joinToString(&quot; + &quot;).ifBlank { null } else first.amountText,</span>
+<span class="fc" id="L93">                sourceIngredientRefs = group.mapNotNull { it.ingredientRef },</span>
+<span class="fc" id="L94">                ingredientDataStatus = ingredientDataStatus,</span>
+<span class="fc" id="L95">                availabilityStatus = StorePresenceStatus.NOT_CHECKED,</span>
+<span class="fc" id="L96">                presenceQueryKey = normalizeName(first.name),</span>
+<span class="fc" id="L97">            )</span>
+        }
+    }
+
+    fun mergeDecisionFor(lines: List&lt;IngredientLine&gt;): MergeDecision {
+<span class="nc bnc" id="L102" title="All 2 branches missed.">        if (lines.size &lt;= 1) {</span>
+<span class="nc bnc" id="L103" title="All 4 branches missed.">            return MergeDecision(MergeDecisionType.MERGED, normalizeName(lines.firstOrNull()?.name.orEmpty()), MergeReasonCode.NAME_UNIT_COMPATIBLE)</span>
+        }
+<span class="nc bnc" id="L105" title="All 6 branches missed.">        val units = lines.map { it.unit?.trim()?.lowercase(Locale.ROOT).orEmpty() }.distinct()</span>
+<span class="nc" id="L106">        val amounts = lines.mapNotNull { it.amount }</span>
+<span class="nc" id="L107">        return when {</span>
+<span class="nc bnc" id="L108" title="All 4 branches missed.">            lines.any { it.availabilityStatus != IngredientAvailabilityStatus.KNOWN } -&gt;</span>
+<span class="nc" id="L109">                MergeDecision(MergeDecisionType.SEPARATE, normalizeName(lines.first().name), MergeReasonCode.MISSING_DATA, &quot;Source ingredient data missing/changed.&quot;)</span>
+<span class="nc bnc" id="L110" title="All 2 branches missed.">            units.size &gt; 1 -&gt;</span>
+<span class="nc" id="L111">                MergeDecision(MergeDecisionType.SEPARATE, normalizeName(lines.first().name), MergeReasonCode.UNIT_INCOMPATIBLE, &quot;Units incompatible; kept separate.&quot;)</span>
+<span class="nc bnc" id="L112" title="All 2 branches missed.">            amounts.size != lines.size -&gt;</span>
+<span class="nc" id="L113">                MergeDecision(MergeDecisionType.SEPARATE, normalizeName(lines.first().name), MergeReasonCode.AMOUNT_INCOMPATIBLE, &quot;Amounts not safely addable; kept separate.&quot;)</span>
+<span class="nc bnc" id="L114" title="All 2 branches missed.">            units.size == 1 -&gt; MergeDecision(MergeDecisionType.MERGED, normalizeName(lines.first().name), MergeReasonCode.NAME_UNIT_COMPATIBLE)</span>
+<span class="nc" id="L115">            else -&gt; MergeDecision(MergeDecisionType.SEPARATE, normalizeName(lines.first().name), MergeReasonCode.UNSAFE_TO_MERGE, &quot;Unsafe merge.&quot;)</span>
+        }
+    }
+
+    /** BR3.3: regeneration confirmation required when current list has user edits. */
+    fun evaluateRegenerationRequest(
+        current: ShoppingListAggregate?,
+        request: ShoppingListGenerationRequest,
+    ): ShoppingListGenerationOutcomeResult {
+<span class="pc bpc" id="L124" title="2 of 4 branches missed.">        if (current != null &amp;&amp; current.hasUserEdits &amp;&amp;</span>
+<span class="pc bpc" id="L125" title="1 of 2 branches missed.">            request.operation == ShoppingListGenerationOperation.REGENERATE &amp;&amp;</span>
+<span class="fc bfc" id="L126" title="All 2 branches covered.">            !request.confirmRegenerateIfEdited</span>
+        ) {
+<span class="fc" id="L128">            return ShoppingListGenerationOutcomeResult(</span>
+<span class="fc" id="L129">                status = ShoppingListGenerationOutcome.CONFIRMATION_REQUIRED,</span>
+<span class="fc" id="L130">                shoppingList = current,</span>
+<span class="fc" id="L131">                message = &quot;Regeneration replaces edited list items. Confirm to continue.&quot;,</span>
+<span class="fc" id="L132">                staleStatus = current.staleStatus,</span>
+<span class="fc" id="L133">                fallbackReason = FallbackReason(&quot;CONFIRM_REGENERATE_REQUIRED&quot;, &quot;User edits exist; explicit confirmation required.&quot;),</span>
+            )
+        }
+<span class="fc" id="L136">        return ShoppingListGenerationOutcomeResult(</span>
+<span class="fc" id="L137">            status = ShoppingListGenerationOutcome.GENERATED,</span>
+<span class="fc" id="L138">            shoppingList = current,</span>
+<span class="fc" id="L139">            staleStatus = request.staleStatus,</span>
+        )
+    }
+
+    /** BR3.3: apply patch and mark aggregate edited/export-current-state. */
+<span class="fc" id="L144">    fun applyItemPatch(aggregate: ShoppingListAggregate, request: ShoppingListPatchRequest, now: Instant = Instant.now()): ShoppingListAggregate {</span>
+<span class="fc" id="L145">        val patch = request.patch</span>
+<span class="pc bpc" id="L146" title="2 of 3 branches missed.">        val items = when (patch.operation) {</span>
+            ShoppingItemPatchOperation.ADD_ITEM -&gt; {
+<span class="nc bnc" id="L148" title="All 2 branches missed.">                val added = (patch.addedItem ?: ShoppingListItem(</span>
+<span class="nc bnc" id="L149" title="All 2 branches missed.">                    itemId = patch.itemId ?: &quot;manual-${UUID.randomUUID()}&quot;,</span>
+<span class="nc bnc" id="L150" title="All 2 branches missed.">                    displayName = patch.displayText ?: &quot;Manual item&quot;,</span>
+<span class="nc bnc" id="L151" title="All 2 branches missed.">                    displayText = patch.displayText ?: &quot;Manual item&quot;,</span>
+<span class="nc" id="L152">                    quantityText = patch.quantityText,</span>
+<span class="nc bnc" id="L153" title="All 2 branches missed.">                    checked = patch.checked ?: false,</span>
+<span class="nc" id="L154">                    manuallyEdited = true,</span>
+<span class="nc" id="L155">                    userEdited = true,</span>
+<span class="nc" id="L156">                    addedManually = true,</span>
+<span class="nc" id="L157">                    ingredientDataStatus = ShoppingItemIngredientDataStatus.MANUAL,</span>
+<span class="nc" id="L158">                    availabilityStatus = StorePresenceStatus.NOT_CHECKED,</span>
+<span class="nc bnc" id="L159" title="All 2 branches missed.">                    presenceQueryKey = normalizeName(patch.displayText ?: &quot;manual item&quot;),</span>
+                ))
+<span class="nc" id="L161">                aggregate.items + added.copy(</span>
+<span class="nc" id="L162">                    addedManually = true,</span>
+<span class="nc" id="L163">                    manuallyEdited = true,</span>
+<span class="nc" id="L164">                    userEdited = true,</span>
+<span class="nc" id="L165">                    availabilityStatus = StorePresenceStatus.NOT_CHECKED,</span>
+<span class="nc" id="L166">                    availabilityReason = &quot;MANUAL_ITEM_NOT_CHECKED&quot;,</span>
+                )
+            }
+<span class="nc" id="L169">            ShoppingItemPatchOperation.REMOVE_ITEM -&gt; aggregate.items.filterNot { it.itemId == patch.itemId }</span>
+<span class="fc" id="L170">            else -&gt; aggregate.items.map { item -&gt;</span>
+<span class="pc bpc" id="L171" title="1 of 2 branches missed.">                if (item.itemId != patch.itemId) return@map item</span>
+<span class="pc bpc" id="L172" title="3 of 4 branches missed.">                val changedIdentity = (patch.displayText != null &amp;&amp; normalizeName(patch.displayText) != normalizeName(item.effectiveDisplayText())) ||</span>
+<span class="pc bpc" id="L173" title="3 of 4 branches missed.">                    (patch.quantityText != null &amp;&amp; patch.quantityText != item.effectiveQuantityText())</span>
+<span class="pc bpc" id="L174" title="2 of 4 branches missed.">                val nextDisplay = patch.displayText ?: item.displayText.ifBlank { item.displayName }</span>
+<span class="fc" id="L175">                item.copy(</span>
+<span class="pc bpc" id="L176" title="2 of 4 branches missed.">                    checked = if (patch.operation == ShoppingItemPatchOperation.SET_CHECKED) patch.checked ?: item.checked else item.checked,</span>
+<span class="pc bpc" id="L177" title="1 of 2 branches missed.">                    displayName = if (patch.displayText != null) patch.displayText else item.displayName,</span>
+<span class="fc" id="L178">                    displayText = nextDisplay,</span>
+<span class="pc bpc" id="L179" title="1 of 2 branches missed.">                    amount = patch.quantity ?: item.amount,</span>
+<span class="pc bpc" id="L180" title="1 of 2 branches missed.">                    unit = patch.unit ?: item.unit,</span>
+<span class="pc bpc" id="L181" title="1 of 2 branches missed.">                    amountText = patch.quantityText ?: item.amountText,</span>
+<span class="pc bpc" id="L182" title="1 of 2 branches missed.">                    quantityText = patch.quantityText ?: item.quantityText,</span>
+<span class="fc" id="L183">                    manuallyEdited = true,</span>
+<span class="fc" id="L184">                    userEdited = true,</span>
+<span class="pc bpc" id="L185" title="1 of 2 branches missed.">                    normalizedName = if (patch.displayText != null) normalizeName(patch.displayText) else item.normalizedName,</span>
+<span class="pc bpc" id="L186" title="1 of 2 branches missed.">                    presenceQueryKey = if (patch.displayText != null) normalizeName(patch.displayText) else item.presenceQueryKey,</span>
+<span class="pc bpc" id="L187" title="1 of 2 branches missed.">                    availabilityStatus = if (changedIdentity) StorePresenceStatus.UNKNOWN else item.availabilityStatus,</span>
+<span class="pc bpc" id="L188" title="1 of 2 branches missed.">                    availabilityReason = if (changedIdentity) &quot;UNKNOWN_AFTER_EDIT_IDENTITY_CHANGED&quot; else item.availabilityReason,</span>
+<span class="pc bpc" id="L189" title="2 of 4 branches missed.">                    unresolved = changedIdentity || item.unresolved,</span>
+<span class="pc bpc" id="L190" title="1 of 2 branches missed.">                    unresolvedReason = if (changedIdentity) &quot;UNKNOWN_AFTER_EDIT_IDENTITY_CHANGED&quot; else item.unresolvedReason,</span>
+<span class="fc" id="L191">                )</span>
+            }
+        }
+<span class="fc" id="L194">        return aggregate.copy(</span>
+<span class="fc" id="L195">            items = items,</span>
+<span class="fc" id="L196">            hasUserEdits = true,</span>
+<span class="pc bpc" id="L197" title="1 of 2 branches missed.">            lastEditedAt = request.editedAt ?: now,</span>
+<span class="fc" id="L198">            staleStatus = aggregate.staleStatus,</span>
+        )
+    }
+
+    /**
+     * R-02 / BR3.5: explicit C4-owned batch presence application.
+     * Scoped by shoppingListId + selected storeId/scope + stable item/query key.
+     * Ambiguous identity/query changes remap to UNKNOWN with reason.
+     */
+    fun applyPresenceCheckBatch(request: ApplyPresenceCheckBatchRequest): ApplyPresenceCheckBatchResult {
+<span class="pc bpc" id="L208" title="1 of 2 branches missed.">        val aggregate = request.shoppingList ?: return ApplyPresenceCheckBatchResult(</span>
+<span class="nc" id="L209">            status = ApplyPresenceStatus.FAILED,</span>
+<span class="nc" id="L210">            fallbackReason = FallbackReason(&quot;MISSING_SHOPPING_LIST&quot;, &quot;Shopping list aggregate required for BR3.5 projection.&quot;),</span>
+        )
+<span class="pc bpc" id="L212" title="2 of 4 branches missed.">        val scopedList = request.shoppingListId == null || request.shoppingListId == aggregate.shoppingListId</span>
+<span class="pc bpc" id="L213" title="1 of 2 branches missed.">        if (!scopedList) {</span>
+<span class="nc" id="L214">            return ApplyPresenceCheckBatchResult(</span>
+<span class="nc" id="L215">                shoppingList = aggregate,</span>
+<span class="nc" id="L216">                items = aggregate.items,</span>
+<span class="nc" id="L217">                status = ApplyPresenceStatus.FAILED,</span>
+<span class="nc" id="L218">                fallbackReason = FallbackReason(&quot;LIST_SCOPE_MISMATCH&quot;, &quot;Batch list scope does not match shopping list.&quot;),</span>
+            )
+        }
+<span class="pc bpc" id="L221" title="9 of 10 branches missed.">        val batchStoreId = request.storeId ?: request.storeRef?.storeId ?: request.batch?.storeRef?.storeId</span>
+<span class="pc bpc" id="L222" title="1 of 2 branches missed.">        val selectedStoreId = aggregate.selectedStoreRef?.storeId</span>
+<span class="pc bpc" id="L223" title="3 of 6 branches missed.">        val storeScoped = batchStoreId == null || selectedStoreId == null || batchStoreId == selectedStoreId</span>
+<span class="pc bpc" id="L224" title="1 of 2 branches missed.">        if (!storeScoped) {</span>
+<span class="nc" id="L225">            return ApplyPresenceCheckBatchResult(</span>
+<span class="nc" id="L226">                shoppingList = aggregate.copy(items = aggregate.items.map { markUnknown(it, &quot;STORE_SCOPE_MISMATCH&quot;, &quot;Presence batch store scope differs from selected store.&quot;) }),</span>
+<span class="nc" id="L227">                status = ApplyPresenceStatus.PARTIAL,</span>
+<span class="nc" id="L228">                unknownOrRemapCount = aggregate.items.size,</span>
+<span class="nc" id="L229">                fallbackReason = FallbackReason(&quot;STORE_SCOPE_MISMATCH&quot;, &quot;Presence batch store scope differs from selected store.&quot;),</span>
+            )
+        }
+<span class="fc" id="L232">        val projections = request.projections</span>
+<span class="fc" id="L233">        var unknownCount = 0</span>
+<span class="fc" id="L234">        val reasons = mutableMapOf&lt;String, String&gt;()</span>
+<span class="fc" id="L235">        val updated = aggregate.items.map { item -&gt;</span>
+<span class="fc" id="L236">            val key = presenceKey(item)</span>
+<span class="fc" id="L237">            val matches = projections.filter { projectionMatches(item, it, key) }</span>
+<span class="fc" id="L238">            when {</span>
+                // Preserve legacy/U1 semantics: manually edited item with no mapping stays explicit unknown.
+<span class="fc bfc" id="L240" title="All 4 branches covered.">                item.manuallyEdited &amp;&amp; matches.isEmpty() -&gt; {</span>
+<span class="fc" id="L241">                    unknownCount++</span>
+<span class="fc" id="L242">                    reasons[item.itemId] = &quot;UNKNOWN_AFTER_EDIT_NO_MAPPING&quot;</span>
+<span class="fc" id="L243">                    item.copy(</span>
+<span class="fc" id="L244">                        presence = StorePresenceStatus.UNKNOWN,</span>
+<span class="fc" id="L245">                        presenceReason = com.mealplanner.domain.model.PresenceLookupReason(</span>
+<span class="fc" id="L246">                            code = &quot;UNKNOWN_AFTER_EDIT_NO_MAPPING&quot;,</span>
+<span class="fc" id="L247">                            message = &quot;No presence projection mapped for edited item.&quot;,</span>
+<span class="fc" id="L248">                            userActionRequired = &quot;Review item and recheck presence.&quot;,</span>
+                        ),
+<span class="fc" id="L250">                        availabilityStatus = StorePresenceStatus.UNKNOWN,</span>
+<span class="fc" id="L251">                        availabilityReason = &quot;No presence projection mapped for edited item.&quot;,</span>
+<span class="fc" id="L252">                        unresolved = true,</span>
+<span class="fc" id="L253">                        unresolvedReason = &quot;UNKNOWN_AFTER_EDIT_NO_MAPPING&quot;,</span>
+                    )
+                }
+<span class="fc bfc" id="L256" title="All 2 branches covered.">                matches.isEmpty() -&gt; {</span>
+<span class="fc" id="L257">                    unknownCount++</span>
+<span class="fc" id="L258">                    val reason = &quot;NO_PRESENCE_PROJECTION&quot;</span>
+<span class="fc" id="L259">                    reasons[item.itemId] = reason</span>
+<span class="fc" id="L260">                    markUnknown(item, reason, &quot;No presence projection mapped for item key '$key'.&quot;)</span>
+                }
+<span class="fc bfc" id="L262" title="All 2 branches covered.">                matches.size &gt; 1 -&gt; {</span>
+<span class="fc" id="L263">                    unknownCount++</span>
+<span class="fc" id="L264">                    val reason = &quot;AMBIGUOUS_PRESENCE_MAPPING&quot;</span>
+<span class="fc" id="L265">                    reasons[item.itemId] = reason</span>
+<span class="fc" id="L266">                    markUnknown(item, reason, &quot;Ambiguous presence projection after edit/merge/query mapping.&quot;)</span>
+                }
+                else -&gt; {
+<span class="fc" id="L269">                    val match = matches.first()</span>
+                    // Preserve legacy invariant: unresolved merged/ambiguous item must not be upgraded to fabricated PRESENT.
+<span class="pc bpc" id="L271" title="1 of 4 branches missed.">                    if (item.unresolved &amp;&amp; match.status == StorePresenceStatus.PRESENT) {</span>
+<span class="fc" id="L272">                        unknownCount++</span>
+<span class="fc" id="L273">                        reasons[item.itemId] = &quot;AMBIGUOUS_AFTER_MERGE_OR_EDIT&quot;</span>
+<span class="fc" id="L274">                        markUnknown(</span>
+<span class="fc" id="L275">                            item,</span>
+<span class="fc" id="L276">                            &quot;AMBIGUOUS_AFTER_MERGE_OR_EDIT&quot;,</span>
+<span class="pc bpc" id="L277" title="3 of 4 branches missed.">                            match.reason?.message ?: &quot;Presence mapping is ambiguous after edit/merge/regenerate context.&quot;,</span>
+<span class="pc bpc" id="L278" title="1 of 2 branches missed.">                        ).copy(presenceReason = match.reason ?: com.mealplanner.domain.model.PresenceLookupReason(&quot;AMBIGUOUS_AFTER_MERGE_OR_EDIT&quot;, &quot;Presence mapping is ambiguous after edit/merge/regenerate context.&quot;))</span>
+<span class="pc bpc" id="L279" title="5 of 6 branches missed.">                    } else if (!request.allowIdentityRemap &amp;&amp; item.userEdited &amp;&amp; normalizeName(match.queryText) != key) {</span>
+<span class="nc" id="L280">                        unknownCount++</span>
+<span class="nc" id="L281">                        reasons[item.itemId] = &quot;UNKNOWN_AFTER_EDIT_IDENTITY_CHANGED&quot;</span>
+<span class="nc" id="L282">                        markUnknown(item, &quot;UNKNOWN_AFTER_EDIT_IDENTITY_CHANGED&quot;, &quot;Identity changed after edit; remap not safe.&quot;)</span>
+<span class="fc" id="L283">                    } else projectItem(item, match, batchStoreId)</span>
+                }
+<span class="fc" id="L285">            }</span>
+        }
+<span class="fc" id="L287">        val status = when {</span>
+<span class="pc bpc" id="L288" title="1 of 2 branches missed.">            updated.isEmpty() -&gt; ApplyPresenceStatus.APPLIED</span>
+<span class="fc bfc" id="L289" title="All 2 branches covered.">            unknownCount == 0 -&gt; ApplyPresenceStatus.APPLIED</span>
+<span class="fc bfc" id="L290" title="All 2 branches covered.">            unknownCount == updated.size -&gt; ApplyPresenceStatus.FAILED</span>
+<span class="fc" id="L291">            else -&gt; ApplyPresenceStatus.PARTIAL</span>
+        }
+<span class="fc" id="L293">        return ApplyPresenceCheckBatchResult(</span>
+<span class="fc" id="L294">            shoppingList = aggregate.copy(items = updated),</span>
+<span class="fc" id="L295">            items = updated,</span>
+<span class="fc" id="L296">            status = status,</span>
+<span class="fc" id="L297">            unknownOrRemapCount = unknownCount,</span>
+<span class="fc bfc" id="L298" title="All 2 branches covered.">            fallbackReason = if (unknownCount &gt; 0) FallbackReason(&quot;PRESENCE_MAPPING_INCOMPLETE&quot;, &quot;Some items have unknown presence after mapping/edit/merge context.&quot;) else null,</span>
+<span class="fc" id="L299">            remapReasonsByItemId = reasons,</span>
+        )
+    }
+
+    /**
+     * Legacy R-02 API: C4 applies mapped presence projections to the current list.
+     * Preserved for existing callers/tests; uses BR3.5-compatible projection semantics.
+     */
+    fun applyBatchPresenceToList(request: ApplyBatchPresenceToListRequest): ApplyBatchPresenceToListResult {
+<span class="pc bpc" id="L308" title="1 of 2 branches missed.">        if (request.items.isEmpty()) {</span>
+<span class="nc" id="L309">            return ApplyBatchPresenceToListResult(emptyList(), ApplyPresenceStatus.APPLIED, 0)</span>
+        }
+<span class="fc" id="L311">        val aggregate = ShoppingListAggregate(</span>
+<span class="pc bpc" id="L312" title="1 of 2 branches missed.">            shoppingListId = request.shoppingListId ?: &quot;legacy-list&quot;,</span>
+<span class="fc" id="L313">            selectedStoreRef = request.storeRef,</span>
+<span class="fc" id="L314">            items = request.items,</span>
+        )
+<span class="fc" id="L316">        val result = applyPresenceCheckBatch(</span>
+<span class="fc" id="L317">            ApplyPresenceCheckBatchRequest(</span>
+<span class="fc" id="L318">                shoppingListId = aggregate.shoppingListId,</span>
+<span class="fc" id="L319">                storeId = request.storeRef.storeId,</span>
+<span class="fc" id="L320">                shoppingList = aggregate,</span>
+<span class="fc" id="L321">                projections = request.projections,</span>
+<span class="fc" id="L322">                storeRef = request.storeRef,</span>
+<span class="fc" id="L323">                allowIdentityRemap = true,</span>
+            ),
+        )
+<span class="pc bpc" id="L326" title="3 of 6 branches missed.">        val legacyItems = result.items.map { it.copy(presence = it.availabilityStatus.takeUnless { s -&gt; s == StorePresenceStatus.NOT_CHECKED } ?: StorePresenceStatus.UNKNOWN) }</span>
+<span class="fc" id="L327">        return ApplyBatchPresenceToListResult(</span>
+<span class="fc" id="L328">            items = legacyItems,</span>
+<span class="fc" id="L329">            status = result.status,</span>
+<span class="fc" id="L330">            unknownOrRemapCount = result.unknownOrRemapCount,</span>
+<span class="fc" id="L331">            fallbackReason = result.fallbackReason,</span>
+        )
+    }
+
+    private fun presenceKey(item: ShoppingListItem): String =
+<span class="pc bpc" id="L336" title="6 of 10 branches missed.">        item.presenceQueryKey?.takeIf { it.isNotBlank() } ?: item.normalizedName ?: normalizeName(item.effectiveDisplayText())</span>
+
+    private fun projectionMatches(item: ShoppingListItem, projection: StorePresenceResult, key: String): Boolean {
+<span class="fc" id="L339">        val projectionKey = normalizeName(projection.queryText)</span>
+<span class="fc bfc" id="L340" title="All 2 branches covered.">        if (projectionKey != key) return false</span>
+<span class="pc bpc" id="L341" title="4 of 6 branches missed.">        val ingredientRefMatch = item.sourceIngredientRefs.isNotEmpty() &amp;&amp; projection.ingredientRef != null &amp;&amp;</span>
+<span class="pc bnc" id="L342" title="All 2 branches missed.">            item.sourceIngredientRefs.contains(projection.ingredientRef)</span>
+        // Prefer explicit itemRef/ingredientRef when present; fall back to normalized query only when unambiguous by key.
+<span class="pc bpc" id="L344" title="7 of 8 branches missed.">        return projection.ingredientRef == null || item.sourceIngredientRefs.isEmpty() || ingredientRefMatch || projectionKey == key</span>
+    }
+
+    private fun projectItem(item: ShoppingListItem, match: StorePresenceResult, storeId: String?): ShoppingListItem {
+<span class="pc bpc" id="L348" title="1 of 2 branches missed.">        val status = when (match.status) {</span>
+<span class="fc" id="L349">            StorePresenceStatus.PRESENT, StorePresenceStatus.NOT_FOUND, StorePresenceStatus.UNKNOWN -&gt; match.status</span>
+<span class="nc" id="L350">            StorePresenceStatus.NOT_CHECKED -&gt; StorePresenceStatus.UNKNOWN</span>
+        }
+<span class="fc" id="L352">        return item.copy(</span>
+<span class="fc" id="L353">            presence = status,</span>
+<span class="fc" id="L354">            presenceReason = match.reason,</span>
+<span class="fc" id="L355">            availabilityStatus = status,</span>
+<span class="pc bpc" id="L356" title="4 of 6 branches missed.">            availabilityReason = match.reason?.message ?: match.reason?.code,</span>
+<span class="fc" id="L357">            availabilityCheckedAt = match.checkedAt,</span>
+<span class="pc bpc" id="L358" title="1 of 2 branches missed.">            selectedStoreId = storeId ?: item.selectedStoreId,</span>
+<span class="pc bpc" id="L359" title="3 of 4 branches missed.">            unresolved = item.unresolved &amp;&amp; status == StorePresenceStatus.UNKNOWN,</span>
+<span class="pc bpc" id="L360" title="5 of 6 branches missed.">            unresolvedReason = if (status == StorePresenceStatus.UNKNOWN) (item.unresolvedReason ?: match.reason?.code) else item.unresolvedReason,</span>
+        )
+    }
+
+<span class="fc" id="L364">    private fun markUnknown(item: ShoppingListItem, code: String, message: String): ShoppingListItem = item.copy(</span>
+<span class="fc" id="L365">        presence = StorePresenceStatus.UNKNOWN,</span>
+<span class="fc" id="L366">        presenceReason = com.mealplanner.domain.model.PresenceLookupReason(code = code, message = message),</span>
+<span class="fc" id="L367">        availabilityStatus = StorePresenceStatus.UNKNOWN,</span>
+<span class="fc" id="L368">        availabilityReason = message,</span>
+<span class="fc" id="L369">        unresolved = true,</span>
+<span class="fc" id="L370">        unresolvedReason = code,</span>
+<span class="fc" id="L371">    )</span>
+
+    @Deprecated(&quot;Use applyBatchPresenceToList for legacy callers or applyPresenceCheckBatch for BR3.5 aggregate scope.&quot;)
+    private fun findProjection(item: ShoppingListItem, projections: List&lt;StorePresenceResult&gt;): StorePresenceResult? {
+<span class="nc bnc" id="L375" title="All 2 branches missed.">        val itemNormalized = item.normalizedName ?: normalizeName(item.displayName)</span>
+<span class="nc" id="L376">        val exact = projections.filter { projection -&gt;</span>
+<span class="nc" id="L377">            val p = normalizeName(projection.queryText)</span>
+<span class="nc" id="L378">            p == itemNormalized</span>
+        }
+<span class="nc" id="L380">        return when (exact.size) {</span>
+<span class="nc bnc" id="L381" title="All 2 branches missed.">            1 -&gt; exact.first()</span>
+<span class="nc" id="L382">            else -&gt; null</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

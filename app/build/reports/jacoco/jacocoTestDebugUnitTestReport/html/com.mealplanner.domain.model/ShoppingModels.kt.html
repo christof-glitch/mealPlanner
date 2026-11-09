@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ShoppingModels.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">com.mealplanner.domain.model</a> &gt; <span class="el_source">ShoppingModels.kt</span></div><h1>ShoppingModels.kt</h1><pre class="source lang-java linenums">package com.mealplanner.domain.model
+
+import java.time.Instant
+
+/** ENT-U1-005 */
+<span class="fc" id="L6">data class LockedRecipeSelection(</span>
+<span class="fc" id="L7">    val slotRef: PlanSlotRef,</span>
+<span class="fc" id="L8">    val recipeId: RecipeId,</span>
+<span class="fc" id="L9">    val selectionSource: SelectionSource = SelectionSource.USER_SELECTED,</span>
+<span class="fc" id="L10">)</span>
+
+/** ENT-U1-006 */
+<span class="fc" id="L13">data class PlanSnapshotContext(</span>
+<span class="fc" id="L14">    val selectedStoreRef: StoreRef? = null,</span>
+<span class="fc" id="L15">    val seasonContext: SeasonContext? = null,</span>
+<span class="fc" id="L16">    val seasonOverride: SeasonOverride? = null,</span>
+<span class="fc" id="L17">    val schedulePolicyVersion: String? = null,</span>
+<span class="fc" id="L18">)</span>
+
+/** ENT-U1-004 (ADR-006/R-01: IDs/selections + plan context only; no ingredient freeze). */
+<span class="fc" id="L21">data class LockSnapshot(</span>
+<span class="fc" id="L22">    val snapshotId: LockSnapshotId,</span>
+<span class="fc" id="L23">    val planId: PlanId,</span>
+<span class="fc" id="L24">    val lockedRecipeSelections: List&lt;LockedRecipeSelection&gt;,</span>
+<span class="fc" id="L25">    val planContext: PlanSnapshotContext = PlanSnapshotContext(),</span>
+<span class="fc" id="L26">    val createdAt: Instant,</span>
+<span class="fc" id="L27">    val sourceCatalogVersion: String? = null,</span>
+<span class="fc" id="L28">)</span>
+
+<span class="pc" id="L30">enum class ShoppingItemIngredientDataStatus { COMPLETE, INCOMPLETE, MISSING_SOURCE, MANUAL }</span>
+
+<span class="pc" id="L32">enum class ShoppingListStateStatus { EMPTY, GENERATED, PARTIAL, STALE, ERROR_MAPPED }</span>
+
+<span class="nc" id="L34">enum class MergeDecisionType { MERGED, SEPARATE, MANUAL_REVIEW }</span>
+
+enum class MergeReasonCode {
+<span class="nc" id="L37">    NAME_UNIT_COMPATIBLE,</span>
+<span class="nc" id="L38">    UNIT_INCOMPATIBLE,</span>
+<span class="nc" id="L39">    AMOUNT_INCOMPATIBLE,</span>
+<span class="nc" id="L40">    MISSING_DATA,</span>
+<span class="nc" id="L41">    UNSAFE_TO_MERGE,</span>
+<span class="nc" id="L42">}</span>
+
+<span class="nc" id="L44">data class MergeDecision(</span>
+<span class="nc" id="L45">    val decision: MergeDecisionType,</span>
+<span class="nc" id="L46">    val mergeKey: String? = null,</span>
+<span class="nc" id="L47">    val reasonCode: MergeReasonCode,</span>
+<span class="nc" id="L48">    val explanation: String? = null,</span>
+<span class="nc" id="L49">)</span>
+
+/** ENT-U1-008 / U3 C4 item. Preserves U1 fields for compatibility; adds U3 projection/edit/remap fields. */
+<span class="fc" id="L52">data class ShoppingListItem(</span>
+<span class="fc" id="L53">    val itemId: ShoppingListItemId,</span>
+<span class="fc" id="L54">    val displayName: String,</span>
+<span class="fc" id="L55">    val normalizedName: String? = null,</span>
+<span class="fc" id="L56">    val amount: Double? = null,</span>
+<span class="fc" id="L57">    val unit: String? = null,</span>
+<span class="fc" id="L58">    val amountText: String? = null,</span>
+<span class="fc" id="L59">    val checked: Boolean = false,</span>
+<span class="fc" id="L60">    val sourceRecipeIds: List&lt;RecipeId&gt; = emptyList(),</span>
+<span class="fc" id="L61">    val presence: StorePresenceStatus? = null,</span>
+<span class="pc" id="L62">    val presenceReason: PresenceLookupReason? = null,</span>
+<span class="fc" id="L63">    val manuallyEdited: Boolean = false,</span>
+<span class="pc" id="L64">    val mergeGroupKey: String? = null,</span>
+    /** True when merge/mapping/resolution became ambiguous; C4 must keep explicit unknown state. */
+<span class="fc" id="L66">    val unresolved: Boolean = false,</span>
+<span class="fc" id="L67">    val unresolvedReason: String? = null,</span>
+    // U3 additive fields (BR3.3/BR3.5/BR3.10)
+<span class="fc" id="L69">    val displayText: String = displayName,</span>
+<span class="fc" id="L70">    val quantityText: String? = amountText,</span>
+<span class="pc" id="L71">    val userEdited: Boolean = manuallyEdited,</span>
+<span class="fc" id="L72">    val sourceIngredientRefs: List&lt;String&gt; = emptyList(),</span>
+<span class="fc" id="L73">    val ingredientDataStatus: ShoppingItemIngredientDataStatus = ShoppingItemIngredientDataStatus.COMPLETE,</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">    val availabilityStatus: StorePresenceStatus = presence ?: StorePresenceStatus.NOT_CHECKED,</span>
+<span class="pc bpc" id="L75" title="4 of 6 branches missed.">    val availabilityReason: String? = presenceReason?.message ?: presenceReason?.code,</span>
+<span class="pc" id="L76">    val availabilityCheckedAt: Instant? = null,</span>
+<span class="pc" id="L77">    val selectedStoreId: String? = null,</span>
+<span class="pc bpc" id="L78" title="1 of 2 branches missed.">    val presenceQueryKey: String? = mergeGroupKey ?: normalizedName,</span>
+<span class="pc" id="L79">    val addedManually: Boolean = false,</span>
+<span class="fc" id="L80">    val removed: Boolean = false,</span>
+<span class="fc" id="L81">)</span>
+
+<span class="pc bpc" id="L83" title="1 of 2 branches missed.">fun ShoppingListItem.effectiveDisplayText(): String = displayText.ifBlank { displayName }</span>
+<span class="fc bfc" id="L84" title="All 2 branches covered.">fun ShoppingListItem.effectiveQuantityText(): String? = quantityText ?: amountText</span>
+
+/** ADR-006/R-03 exact warning text (must not change). */
+object ShoppingListStaleWarning {
+    const val EXACT_TEXT: String =
+        &quot;Meal plan modified. Grocery list not up-to-date. Press the Regenerate button.&quot;
+}
+
+<span class="fc" id="L92">data class ShoppingListStaleStatus(</span>
+<span class="pc" id="L93">    val snapshotId: LockSnapshotId? = null,</span>
+<span class="fc" id="L94">    val isStale: Boolean = false,</span>
+<span class="fc bfc" id="L95" title="All 2 branches covered.">    val staleWarning: String? = if (isStale) ShoppingListStaleWarning.EXACT_TEXT else null,</span>
+<span class="pc" id="L96">    val staleReason: String? = null,</span>
+<span class="fc" id="L97">)</span>
+
+/** C4 aggregate — current edited list state (BR3.1-BR3.5). */
+<span class="fc" id="L100">data class ShoppingListAggregate(</span>
+<span class="fc" id="L101">    val shoppingListId: ShoppingListId,</span>
+<span class="fc" id="L102">    val snapshotId: LockSnapshotId? = null,</span>
+<span class="pc" id="L103">    val sourceRecipeIds: List&lt;RecipeId&gt; = emptyList(),</span>
+<span class="pc" id="L104">    val items: List&lt;ShoppingListItem&gt; = emptyList(),</span>
+<span class="pc" id="L105">    val listStatus: ShoppingListStateStatus = ShoppingListStateStatus.EMPTY,</span>
+<span class="fc" id="L106">    val staleStatus: ShoppingListStaleStatus = ShoppingListStaleStatus(),</span>
+<span class="fc" id="L107">    val hasUserEdits: Boolean = false,</span>
+<span class="fc" id="L108">    val generationNotes: List&lt;String&gt; = emptyList(),</span>
+<span class="pc" id="L109">    val lastGeneratedAt: Instant? = null,</span>
+<span class="fc" id="L110">    val lastEditedAt: Instant? = null,</span>
+<span class="fc" id="L111">    val selectedStoreRef: StoreRef? = null,</span>
+<span class="fc" id="L112">)</span>
+
+<span class="pc" id="L114">enum class ShoppingItemPatchOperation { SET_CHECKED, EDIT_TEXT, EDIT_QUANTITY, ADD_ITEM, REMOVE_ITEM }</span>
+
+<span class="fc" id="L116">data class ShoppingItemPatch(</span>
+<span class="pc" id="L117">    val itemId: ShoppingListItemId? = null,</span>
+<span class="pc" id="L118">    val operation: ShoppingItemPatchOperation = ShoppingItemPatchOperation.EDIT_TEXT,</span>
+<span class="fc" id="L119">    val displayText: String? = null,</span>
+<span class="fc" id="L120">    val quantity: Double? = null,</span>
+<span class="fc" id="L121">    val unit: String? = null,</span>
+<span class="fc" id="L122">    val quantityText: String? = null,</span>
+<span class="pc" id="L123">    val checked: Boolean? = null,</span>
+<span class="pc" id="L124">    val removed: Boolean? = null,</span>
+<span class="pc" id="L125">    val addedItem: ShoppingListItem? = null,</span>
+<span class="fc" id="L126">)</span>
+
+<span class="fc" id="L128">data class ShoppingListPatchRequest(</span>
+<span class="pc" id="L129">    val shoppingListId: ShoppingListId? = null,</span>
+<span class="fc" id="L130">    val patch: ShoppingItemPatch,</span>
+<span class="fc" id="L131">    val editedAt: Instant? = null,</span>
+<span class="fc" id="L132">)</span>
+
+<span class="pc" id="L134">enum class ShoppingListGenerationOperation { GENERATE, REGENERATE }</span>
+
+<span class="fc" id="L136">data class ShoppingListGenerationRequest(</span>
+<span class="fc" id="L137">    val snapshotId: LockSnapshotId,</span>
+<span class="fc" id="L138">    val operation: ShoppingListGenerationOperation = ShoppingListGenerationOperation.GENERATE,</span>
+<span class="fc" id="L139">    val confirmRegenerateIfEdited: Boolean = false,</span>
+<span class="pc" id="L140">    val requestedAt: Instant? = null,</span>
+<span class="fc" id="L141">    val staleStatus: ShoppingListStaleStatus = ShoppingListStaleStatus(),</span>
+<span class="fc" id="L142">)</span>
+
+enum class ShoppingListGenerationOutcome {
+<span class="fc" id="L145">    GENERATED,</span>
+<span class="fc" id="L146">    CONFIRMATION_REQUIRED,</span>
+<span class="fc" id="L147">    INVALID_SNAPSHOT,</span>
+<span class="fc" id="L148">    PARTIAL,</span>
+<span class="fc" id="L149">    FAILED_MAPPED,</span>
+<span class="nc" id="L150">}</span>
+
+<span class="fc" id="L152">data class ShoppingListGenerationOutcomeResult(</span>
+<span class="fc" id="L153">    val status: ShoppingListGenerationOutcome,</span>
+<span class="fc" id="L154">    val shoppingList: ShoppingListAggregate? = null,</span>
+<span class="fc" id="L155">    val missingOrChangedRecipeIds: List&lt;RecipeId&gt; = emptyList(),</span>
+<span class="pc" id="L156">    val message: String? = null,</span>
+<span class="fc" id="L157">    val staleStatus: ShoppingListStaleStatus = ShoppingListStaleStatus(),</span>
+<span class="pc" id="L158">    val fallbackReason: FallbackReason? = null,</span>
+<span class="fc" id="L159">)</span>
+
+<span class="nc" id="L161">fun ShoppingListGenerationOutcomeResult.toLegacy(): ShoppingListGenerationResult = ShoppingListGenerationResult(</span>
+<span class="nc bnc" id="L162" title="All 4 branches missed.">    status = when (status) {</span>
+<span class="nc" id="L163">        ShoppingListGenerationOutcome.GENERATED -&gt; GenerationStatus.GENERATED</span>
+<span class="nc" id="L164">        ShoppingListGenerationOutcome.CONFIRMATION_REQUIRED -&gt; GenerationStatus.NEEDS_CONFIRMATION</span>
+        ShoppingListGenerationOutcome.INVALID_SNAPSHOT,
+<span class="nc" id="L166">        ShoppingListGenerationOutcome.FAILED_MAPPED -&gt; GenerationStatus.FAILED</span>
+<span class="nc" id="L167">        ShoppingListGenerationOutcome.PARTIAL -&gt; GenerationStatus.GENERATED</span>
+    },
+<span class="nc bnc" id="L169" title="All 2 branches missed.">    snapshotId = shoppingList?.snapshotId,</span>
+<span class="nc bnc" id="L170" title="All 2 branches missed.">    shoppingListId = shoppingList?.shoppingListId,</span>
+<span class="nc bnc" id="L171" title="All 4 branches missed.">    items = shoppingList?.items.orEmpty(),</span>
+<span class="nc" id="L172">    fallbackReason = fallbackReason,</span>
+<span class="nc" id="L173">    userActionRequired = message,</span>
+<span class="nc" id="L174">)</span>
+
+/** ENT-U1-007 legacy compatibility result. */
+<span class="fc" id="L177">data class ShoppingListGenerationResult(</span>
+<span class="fc" id="L178">    val status: GenerationStatus,</span>
+<span class="fc" id="L179">    val snapshotId: LockSnapshotId? = null,</span>
+<span class="pc" id="L180">    val shoppingListId: ShoppingListId? = null,</span>
+<span class="pc" id="L181">    val items: List&lt;ShoppingListItem&gt; = emptyList(),</span>
+<span class="pc" id="L182">    val unresolvedIngredients: List&lt;IngredientLine&gt; = emptyList(),</span>
+<span class="fc" id="L183">    val fallbackReason: FallbackReason? = null,</span>
+<span class="fc" id="L184">    val userActionRequired: String? = null,</span>
+<span class="fc" id="L185">)</span>
+
+/** R-02 / BR3.5: C4-owned explicit batch presence application with list/store scope. */
+<span class="fc" id="L188">data class ApplyPresenceCheckBatchRequest(</span>
+<span class="pc" id="L189">    val shoppingListId: ShoppingListId? = null,</span>
+<span class="pc" id="L190">    val storeId: String? = null,</span>
+<span class="pc" id="L191">    val shoppingList: ShoppingListAggregate? = null,</span>
+<span class="pc" id="L192">    val batch: BatchPresenceResult? = null,</span>
+<span class="pc bpc" id="L193" title="2 of 4 branches missed.">    val projections: List&lt;StorePresenceResult&gt; = batch?.results.orEmpty(),</span>
+<span class="pc bnc" id="L194" title="All 2 branches missed.">    val storeRef: StoreRef? = batch?.storeRef,</span>
+<span class="fc" id="L195">    val allowIdentityRemap: Boolean = true,</span>
+<span class="fc" id="L196">)</span>
+
+<span class="pc" id="L198">data class ApplyPresenceCheckBatchResult(</span>
+<span class="pc" id="L199">    val shoppingList: ShoppingListAggregate? = null,</span>
+<span class="pc bnc" id="L200" title="All 4 branches missed.">    val items: List&lt;ShoppingListItem&gt; = shoppingList?.items.orEmpty(),</span>
+<span class="pc" id="L201">    val status: ApplyPresenceStatus = ApplyPresenceStatus.APPLIED,</span>
+<span class="pc" id="L202">    val unknownOrRemapCount: Int = 0,</span>
+<span class="pc" id="L203">    val fallbackReason: FallbackReason? = null,</span>
+<span class="pc" id="L204">    val remapReasonsByItemId: Map&lt;String, String&gt; = emptyMap(),</span>
+<span class="nc" id="L205">)</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

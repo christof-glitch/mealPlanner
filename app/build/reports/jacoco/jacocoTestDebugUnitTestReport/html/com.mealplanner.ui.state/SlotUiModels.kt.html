@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SlotUiModels.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">com.mealplanner.ui.state</a> &gt; <span class="el_source">SlotUiModels.kt</span></div><h1>SlotUiModels.kt</h1><pre class="source lang-java linenums">package com.mealplanner.ui.state
+
+import com.mealplanner.domain.model.DayOfWeek
+import com.mealplanner.domain.model.MealSlotType
+import com.mealplanner.domain.model.PlanSlotRef
+import com.mealplanner.domain.model.RecipeId
+
+/** R-06 slot context carried by all slot actions (origin preserved for focus/back-stack). */
+<span class="fc" id="L9">data class SlotActionContext(</span>
+<span class="fc" id="L10">    val slotRef: PlanSlotRef,</span>
+<span class="fc" id="L11">    val dayOfWeek: DayOfWeek = slotRef.dayOfWeek,</span>
+<span class="fc" id="L12">    val mealType: MealSlotType = slotRef.mealType,</span>
+<span class="fc" id="L13">    val slotId: String = &quot;${slotRef.planId}:${slotRef.dayOfWeek}:${slotRef.mealType}&quot;,</span>
+<span class="fc" id="L14">    val currentRecipeId: RecipeId? = null,</span>
+<span class="pc" id="L15">    val origin: SlotOrigin = SlotOrigin.PLAN,</span>
+<span class="fc" id="L16">)</span>
+
+<span class="pc" id="L18">enum class SlotOrigin { TODAY, PLAN }</span>
+
+<span class="fc" id="L20">data class MealSlotUiModel(</span>
+<span class="fc" id="L21">    val context: SlotActionContext,</span>
+<span class="pc" id="L22">    val recipeTitle: String? = null,</span>
+<span class="pc" id="L23">    val timeLabel: String? = null,</span>
+<span class="pc" id="L24">    val nutritionLabel: String? = null,</span>
+<span class="pc" id="L25">    val sourceLabel: String? = null,</span>
+<span class="pc" id="L26">    val badges: List&lt;String&gt; = emptyList(),</span>
+<span class="pc bnc" id="L27" title="All 2 branches missed.">    val isEmpty: Boolean = recipeTitle == null,</span>
+<span class="pc" id="L28">    val statusLabels: List&lt;String&gt; = emptyList(),</span>
+<span class="fc" id="L29">)</span>
+
+<span class="nc" id="L31">enum class R05NextAction { RETRY, USE_BUNDLED_FALLBACK_CATALOG, CONTINUE_WITH_MANUAL_PLANNING }</span>
+
+<span class="nc" id="L33">data class R05State(</span>
+<span class="nc" id="L34">    val visible: Boolean = false,</span>
+<span class="nc" id="L35">    val message: String = &quot;No local data available and remote data is unavailable.&quot;,</span>
+<span class="nc" id="L36">    val nextActions: List&lt;R05NextAction&gt; = listOf(R05NextAction.RETRY, R05NextAction.USE_BUNDLED_FALLBACK_CATALOG, R05NextAction.CONTINUE_WITH_MANUAL_PLANNING),</span>
+<span class="nc" id="L37">)</span>
+
+<span class="fc" id="L39">data class PlanScreenState(</span>
+<span class="pc" id="L40">    val planId: String = &quot;plan-1&quot;,</span>
+<span class="pc" id="L41">    val weekSlots: List&lt;MealSlotUiModel&gt; = emptyList(),</span>
+<span class="pc" id="L42">    val lockStateLabel: String = &quot;Recipes not locked&quot;,</span>
+<span class="pc" id="L43">    val lockSummary: String? = null,</span>
+<span class="pc" id="L44">    val isLocked: Boolean = false,</span>
+<span class="pc" id="L45">    val nutritionCueLabel: String? = null,</span>
+<span class="pc" id="L46">    val seasonContextLabel: String = &quot;Using device date and location&quot;,</span>
+<span class="pc" id="L47">    val loading: Boolean = false,</span>
+<span class="pc" id="L48">    val errorMessage: String? = null,</span>
+<span class="pc" id="L49">    val fallbackMessage: String? = null,</span>
+<span class="pc" id="L50">    val r05State: R05State? = null,</span>
+<span class="pc" id="L51">    val lastFocusedSlotId: String? = null,</span>
+<span class="pc" id="L52">    val statusMessage: String? = null,</span>
+<span class="fc" id="L53">)</span>
+
+<span class="fc" id="L55">data class TodayScreenState(</span>
+<span class="pc" id="L56">    val dateLabel: String = &quot;&quot;,</span>
+<span class="pc" id="L57">    val todaySlots: List&lt;MealSlotUiModel&gt; = emptyList(),</span>
+<span class="pc" id="L58">    val nutritionCueLabel: String? = null,</span>
+<span class="pc" id="L59">    val seasonContextLabel: String = &quot;Using device date and location&quot;,</span>
+<span class="pc" id="L60">    val loading: Boolean = false,</span>
+<span class="pc" id="L61">    val errorMessage: String? = null,</span>
+<span class="pc" id="L62">    val fallbackMessage: String? = null,</span>
+<span class="pc" id="L63">    val r05State: R05State? = null,</span>
+<span class="pc" id="L64">    val lastFocusedSlotId: String? = null,</span>
+<span class="pc" id="L65">    val statusMessage: String? = null,</span>
+<span class="fc" id="L66">)</span>
+
+sealed interface PlanIntent {
+<span class="nc" id="L69">    data class SelectOrReplace(val context: SlotActionContext, val recipeId: String?) : PlanIntent</span>
+<span class="nc" id="L70">    data class ViewRecipe(val context: SlotActionContext) : PlanIntent</span>
+<span class="nc" id="L71">    data class ChooseRecipe(val context: SlotActionContext) : PlanIntent</span>
+    data object LockRecipesForShopping : PlanIntent
+    data object Retry : PlanIntent
+    data object UseBundledFallbackCatalog : PlanIntent
+    data object ContinueWithManualPlanning : PlanIntent
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

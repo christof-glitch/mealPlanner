@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.mealplanner.domain.planning.C3SlotSelectionServiceTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-09T20:30:40.585Z" hostname="jyu-mac-20260120.local" time="0.001">
+<testsuite name="com.mealplanner.domain.planning.C3SlotSelectionServiceTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-09T21:40:18.187Z" hostname="jyu-mac-20260120.local" time="0.002">
   <properties/>
-  <testcase name="set selection affects only target slot and preserves single state" classname="com.mealplanner.domain.planning.C3SlotSelectionServiceTest" time="0.0"/>
-  <testcase name="invalid slot ref rejected with typed result" classname="com.mealplanner.domain.planning.C3SlotSelectionServiceTest" time="0.001"/>
+  <testcase name="set selection affects only target slot and preserves single state" classname="com.mealplanner.domain.planning.C3SlotSelectionServiceTest" time="0.001"/>
+  <testcase name="invalid slot ref rejected with typed result" classname="com.mealplanner.domain.planning.C3SlotSelectionServiceTest" time="0.0"/>
   <testcase name="clear selection affects only target slot" classname="com.mealplanner.domain.planning.C3SlotSelectionServiceTest" time="0.0"/>
-  <testcase name="change marks stale with exact ADR-006 warning when lock or list context active and no auto regeneration" classname="com.mealplanner.domain.planning.C3SlotSelectionServiceTest" time="0.0"/>
+  <testcase name="change marks stale with exact ADR-006 warning when lock or list context active and no auto regeneration" classname="com.mealplanner.domain.planning.C3SlotSelectionServiceTest" time="0.001"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

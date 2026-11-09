@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MealPlannerScaffold.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">com.mealplanner.ui.navigation</a> &gt; <span class="el_source">MealPlannerScaffold.kt</span></div><h1>MealPlannerScaffold.kt</h1><pre class="source lang-java linenums">package com.mealplanner.ui.navigation
+
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.mealplanner.domain.model.PrismaStoreRef
+import com.mealplanner.ui.screens.grocery.GroceryScreen
+import com.mealplanner.ui.screens.onboarding.OnboardingScreen
+import com.mealplanner.ui.screens.plan.PlanScreen
+import com.mealplanner.ui.screens.recipe.RecipeDetailScreen
+import com.mealplanner.ui.screens.recipe.ReplaceAlternativesScreen
+import com.mealplanner.ui.screens.store.SelectPrismaStoreScreen
+import com.mealplanner.ui.screens.today.TodayScreen
+import com.mealplanner.ui.screens.user.UserScreen
+import com.mealplanner.ui.state.GroceryIntent
+import com.mealplanner.ui.state.GroceryScreenState
+import com.mealplanner.ui.state.PlanScreenState
+import com.mealplanner.ui.state.SlotActionContext
+import com.mealplanner.ui.state.StoreSelectionUiState
+import com.mealplanner.ui.state.TodayScreenState
+import com.mealplanner.ui.state.UserSettingsState
+
+/**
+ * Step 6 navigation shell (RM-01–RM-09). Bottom nav: Today/Plan/Grocery/User.
+ * Pushed: RecipeDetail. Full-screen: ReplaceAlternatives, SelectPrismaStore.
+ * R-06: slot context encoded in route args and preserved across back-stack transitions.
+ * Regenerate confirmation dialog is wired/rendered by Grocery screen state (Step 9) using shared primitive.
+ */
+@Composable
+fun MealPlannerScaffold(
+<span class="nc bnc" id="L54" title="All 2 branches missed.">    modifier: Modifier = Modifier,</span>
+<span class="nc bnc" id="L55" title="All 2 branches missed.">    navController: NavHostController = rememberNavController(),</span>
+<span class="nc bnc" id="L56" title="All 2 branches missed.">    startOnOnboarding: Boolean = false,</span>
+<span class="nc bnc" id="L57" title="All 2 branches missed.">    planState: PlanScreenState = PlanScreenState(),</span>
+<span class="nc bnc" id="L58" title="All 2 branches missed.">    todayState: TodayScreenState = TodayScreenState(),</span>
+<span class="nc bnc" id="L59" title="All 2 branches missed.">    groceryState: GroceryScreenState = GroceryScreenState(),</span>
+<span class="nc bnc" id="L60" title="All 2 branches missed.">    userState: UserSettingsState = UserSettingsState(),</span>
+<span class="nc bnc" id="L61" title="All 2 branches missed.">    storeSelectionState: StoreSelectionUiState = StoreSelectionUiState(),</span>
+<span class="nc bnc" id="L62" title="All 2 branches missed.">    onPlanIntent: (com.mealplanner.ui.state.PlanIntent) -&gt; Unit = {},</span>
+<span class="nc bnc" id="L63" title="All 2 branches missed.">    onPlanViewRecipe: (SlotActionContext) -&gt; Unit = {},</span>
+<span class="nc bnc" id="L64" title="All 2 branches missed.">    onPlanReplace: (SlotActionContext) -&gt; Unit = {},</span>
+<span class="nc bnc" id="L65" title="All 2 branches missed.">    onPlanChooseRecipe: (SlotActionContext) -&gt; Unit = {},</span>
+<span class="nc bnc" id="L66" title="All 2 branches missed.">    onPlanRetry: () -&gt; Unit = {},</span>
+<span class="nc bnc" id="L67" title="All 2 branches missed.">    onTodayViewRecipe: (SlotActionContext) -&gt; Unit = {},</span>
+<span class="nc bnc" id="L68" title="All 2 branches missed.">    onTodayReplace: (SlotActionContext) -&gt; Unit = {},</span>
+<span class="nc bnc" id="L69" title="All 2 branches missed.">    onTodayChooseRecipe: (SlotActionContext) -&gt; Unit = {},</span>
+<span class="nc bnc" id="L70" title="All 2 branches missed.">    onTodayRetry: () -&gt; Unit = {},</span>
+<span class="nc bnc" id="L71" title="All 2 branches missed.">    onGroceryIntent: (GroceryIntent) -&gt; Unit = {},</span>
+<span class="nc bnc" id="L72" title="All 2 branches missed.">    onSelectStore: () -&gt; Unit = { navController.navigate(MealPlannerRoute.SelectPrismaStore().route) },</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">    onStoreUseSuggestion: () -&gt; Unit = {},</span>
+<span class="nc bnc" id="L74" title="All 2 branches missed.">    onStoreSelectManual: (PrismaStoreRef) -&gt; Unit = {},</span>
+<span class="nc bnc" id="L75" title="All 2 branches missed.">    onStoreConfirm: () -&gt; Unit = { navController.popBackStack() },</span>
+<span class="nc bnc" id="L76" title="All 2 branches missed.">    onStoreManagePermission: () -&gt; Unit = {},</span>
+<span class="nc bnc" id="L77" title="All 2 branches missed.">    onUseForSlot: (SlotActionContext, String) -&gt; Unit = { _, _ -&gt; },</span>
+<span class="nc bnc" id="L78" title="All 2 branches missed.">    onChooseDifferentForSlot: (SlotActionContext) -&gt; Unit = {},</span>
+<span class="nc bnc" id="L79" title="All 2 branches missed.">    onSelectAlternative: (SlotActionContext, String) -&gt; Unit = { _, _ -&gt; },</span>
+<span class="nc bnc" id="L80" title="All 2 branches missed.">    onUserToggleSeasonOverride: (Boolean) -&gt; Unit = {},</span>
+<span class="nc bnc" id="L81" title="All 2 branches missed.">    onUserSeasonSelected: (String) -&gt; Unit = {},</span>
+<span class="nc bnc" id="L82" title="All 2 branches missed.">    onUserAreaLabelChanged: (String) -&gt; Unit = {},</span>
+<span class="nc bnc" id="L83" title="All 2 branches missed.">    onUserResetSeason: () -&gt; Unit = {},</span>
+<span class="nc bnc" id="L84" title="All 2 branches missed.">    onUserManagePermission: () -&gt; Unit = {},</span>
+<span class="nc bnc" id="L85" title="All 20 branches missed.">    onOnboardingContinue: () -&gt; Unit = { navController.navigate(MealPlannerRoute.Today.route) { popUpTo(MealPlannerRoute.Onboarding.route) { inclusive = true } } },</span>
+<span class="nc bnc" id="L86" title="All 214 branches missed.">) {</span>
+<span class="nc" id="L87">    val navBackStackEntry by navController.currentBackStackEntryAsState()</span>
+<span class="nc bnc" id="L88" title="All 2 branches missed.">    val currentDestination = navBackStackEntry?.destination</span>
+<span class="nc bnc" id="L89" title="All 6 branches missed.">    val showBottomBar = BottomNavRoutes.any { route -&gt; currentDestination?.hierarchy?.any { it.route == route.route } == true }</span>
+
+<span class="nc bnc" id="L91" title="All 2 branches missed.">    Scaffold(</span>
+<span class="nc" id="L92">        modifier = modifier.testTag(&quot;meal-planner-scaffold&quot;),</span>
+<span class="nc" id="L93">        bottomBar = {</span>
+<span class="nc bnc" id="L94" title="All 8 branches missed.">            if (showBottomBar) {</span>
+<span class="nc bnc" id="L95" title="All 2 branches missed.">                NavigationBar(modifier = Modifier.testTag(&quot;bottom-navigation&quot;)) {</span>
+<span class="nc bnc" id="L96" title="All 6 branches missed.">                    BottomNavRoutes.forEach { route -&gt;</span>
+<span class="nc bnc" id="L97" title="All 6 branches missed.">                        val selected = currentDestination?.hierarchy?.any { it.route == route.route } == true</span>
+<span class="nc" id="L98">                        val label = bottomNavLabel(route)</span>
+<span class="nc" id="L99">                        NavigationBarItem(</span>
+<span class="nc" id="L100">                            selected = selected,</span>
+<span class="nc" id="L101">                            onClick = {</span>
+<span class="nc" id="L102">                                navController.navigate(route.route) {</span>
+<span class="nc" id="L103">                                    popUpTo(navController.graph.findStartDestination().id) { saveState = true }</span>
+<span class="nc" id="L104">                                    launchSingleTop = true</span>
+<span class="nc" id="L105">                                    restoreState = true</span>
+<span class="nc" id="L106">                                }</span>
+<span class="nc" id="L107">                            },</span>
+<span class="nc bnc" id="L108" title="All 8 branches missed.">                            icon = { Icon(bottomNavIcon(route), contentDescription = label) },</span>
+<span class="nc bnc" id="L109" title="All 8 branches missed.">                            label = { Text(label) },</span>
+<span class="nc" id="L110">                            modifier = Modifier.testTag(&quot;bottom-nav-${route.route}&quot;).semantics { contentDescription = &quot;$label destination&quot; },</span>
+                        )
+<span class="nc" id="L112">                    }</span>
+<span class="nc" id="L113">                }</span>
+<span class="nc" id="L114">            }</span>
+<span class="nc" id="L115">        },</span>
+<span class="nc" id="L116">    ) { innerPadding -&gt;</span>
+<span class="nc bnc" id="L117" title="All 8 branches missed.">        NavHost(</span>
+<span class="nc" id="L118">            navController = navController,</span>
+<span class="nc bnc" id="L119" title="All 2 branches missed.">            startDestination = if (startOnOnboarding) MealPlannerRoute.Onboarding.route else MealPlannerRoute.Today.route,</span>
+<span class="nc" id="L120">            modifier = Modifier.padding(innerPadding),</span>
+<span class="nc" id="L121">        ) {</span>
+<span class="nc" id="L122">            composable(MealPlannerRoute.Onboarding.route) {</span>
+<span class="nc bnc" id="L123" title="All 2 branches missed.">                OnboardingScreen(</span>
+<span class="nc" id="L124">                    permission = com.mealplanner.ui.state.LocationPermissionUiState.NOT_ASKED,</span>
+<span class="nc" id="L125">                    r05State = null,</span>
+<span class="nc" id="L126">                    onAllowLocation = {},</span>
+<span class="nc" id="L127">                    onChooseManuallyLater = onOnboardingContinue,</span>
+<span class="nc" id="L128">                    onContinue = onOnboardingContinue,</span>
+<span class="nc" id="L129">                    onRetry = {},</span>
+<span class="nc" id="L130">                    onUseBundledFallback = {},</span>
+<span class="nc" id="L131">                    onContinueManualPlanning = onOnboardingContinue,</span>
+                )
+<span class="nc" id="L133">            }</span>
+<span class="nc" id="L134">            composable(MealPlannerRoute.Today.route) {</span>
+<span class="nc bnc" id="L135" title="All 2 branches missed.">                TodayScreen(</span>
+<span class="nc" id="L136">                    state = todayState,</span>
+<span class="nc" id="L137">                    onViewRecipe = { ctx -&gt;</span>
+<span class="nc" id="L138">                        onTodayViewRecipe(ctx)</span>
+<span class="nc bnc" id="L139" title="All 2 branches missed.">                        val recipeId = ctx.currentRecipeId ?: return@TodayScreen</span>
+<span class="nc" id="L140">                        navController.navigate(MealPlannerRoute.RecipeDetail(recipeId, SlotContextNav.encode(ctx)).route)</span>
+<span class="nc" id="L141">                    },</span>
+<span class="nc" id="L142">                    onReplace = { ctx -&gt;</span>
+<span class="nc" id="L143">                        onTodayReplace(ctx)</span>
+<span class="nc" id="L144">                        navController.navigate(MealPlannerRoute.ReplaceAlternatives(SlotContextNav.encode(ctx)).route)</span>
+<span class="nc" id="L145">                    },</span>
+<span class="nc" id="L146">                    onChooseRecipe = { ctx -&gt;</span>
+<span class="nc" id="L147">                        onTodayChooseRecipe(ctx)</span>
+<span class="nc" id="L148">                        navController.navigate(MealPlannerRoute.ReplaceAlternatives(SlotContextNav.encode(ctx)).route)</span>
+<span class="nc" id="L149">                    },</span>
+<span class="nc" id="L150">                    onRetry = onTodayRetry,</span>
+                )
+<span class="nc" id="L152">            }</span>
+<span class="nc" id="L153">            composable(MealPlannerRoute.Plan.route) {</span>
+<span class="nc bnc" id="L154" title="All 2 branches missed.">                PlanScreen(</span>
+<span class="nc" id="L155">                    state = planState,</span>
+<span class="nc" id="L156">                    onViewRecipe = { ctx -&gt;</span>
+<span class="nc" id="L157">                        onPlanViewRecipe(ctx)</span>
+<span class="nc bnc" id="L158" title="All 2 branches missed.">                        val recipeId = ctx.currentRecipeId ?: return@PlanScreen</span>
+<span class="nc" id="L159">                        navController.navigate(MealPlannerRoute.RecipeDetail(recipeId, SlotContextNav.encode(ctx)).route)</span>
+<span class="nc" id="L160">                    },</span>
+<span class="nc" id="L161">                    onReplace = { ctx -&gt;</span>
+<span class="nc" id="L162">                        onPlanReplace(ctx)</span>
+<span class="nc" id="L163">                        navController.navigate(MealPlannerRoute.ReplaceAlternatives(SlotContextNav.encode(ctx)).route)</span>
+<span class="nc" id="L164">                    },</span>
+<span class="nc" id="L165">                    onChooseRecipe = { ctx -&gt;</span>
+<span class="nc" id="L166">                        onPlanChooseRecipe(ctx)</span>
+<span class="nc" id="L167">                        navController.navigate(MealPlannerRoute.ReplaceAlternatives(SlotContextNav.encode(ctx)).route)</span>
+<span class="nc" id="L168">                    },</span>
+<span class="nc" id="L169">                    onLockRecipes = { onPlanIntent(com.mealplanner.ui.state.PlanIntent.LockRecipesForShopping) },</span>
+<span class="nc" id="L170">                    onNavigateGrocery = { navController.navigate(MealPlannerRoute.Grocery.route) },</span>
+<span class="nc" id="L171">                    onRetry = onPlanRetry,</span>
+                )
+<span class="nc" id="L173">            }</span>
+<span class="nc" id="L174">            composable(MealPlannerRoute.Grocery.route) {</span>
+<span class="nc bnc" id="L175" title="All 2 branches missed.">                GroceryScreen(</span>
+<span class="nc" id="L176">                    state = groceryState,</span>
+<span class="nc" id="L177">                    onIntent = onGroceryIntent,</span>
+<span class="nc" id="L178">                    onNavigatePlan = { navController.navigate(MealPlannerRoute.Plan.route) },</span>
+<span class="nc" id="L179">                    onSelectStore = onSelectStore,</span>
+                )
+<span class="nc" id="L181">            }</span>
+<span class="nc" id="L182">            composable(MealPlannerRoute.User.route) {</span>
+<span class="nc bnc" id="L183" title="All 2 branches missed.">                UserScreen(</span>
+<span class="nc" id="L184">                    state = userState,</span>
+<span class="nc" id="L185">                    onToggleSeasonOverride = onUserToggleSeasonOverride,</span>
+<span class="nc" id="L186">                    onSeasonSelected = onUserSeasonSelected,</span>
+<span class="nc" id="L187">                    onAreaLabelChanged = onUserAreaLabelChanged,</span>
+<span class="nc" id="L188">                    onResetSeason = onUserResetSeason,</span>
+<span class="nc" id="L189">                    onManagePermission = onUserManagePermission,</span>
+                )
+<span class="nc" id="L191">            }</span>
+<span class="nc" id="L192">            composable(</span>
+<span class="nc" id="L193">                route = MealPlannerRoute.RecipeDetail.PATTERN,</span>
+<span class="nc" id="L194">                arguments = listOf(</span>
+<span class="nc" id="L195">                    navArgument(MealPlannerRoute.RecipeDetail.ARG_RECIPE_ID) { type = NavType.StringType },</span>
+<span class="nc" id="L196">                    navArgument(MealPlannerRoute.RecipeDetail.ARG_SLOT_CONTEXT) { type = NavType.StringType; nullable = true; defaultValue = null },</span>
+                ),
+<span class="nc" id="L198">            ) { backStackEntry -&gt;</span>
+<span class="nc bnc" id="L199" title="All 4 branches missed.">                val recipeId = backStackEntry.arguments?.getString(MealPlannerRoute.RecipeDetail.ARG_RECIPE_ID).orEmpty()</span>
+<span class="nc bnc" id="L200" title="All 2 branches missed.">                val slotContext = SlotContextNav.decode(backStackEntry.arguments?.getString(MealPlannerRoute.RecipeDetail.ARG_SLOT_CONTEXT))</span>
+<span class="nc bnc" id="L201" title="All 2 branches missed.">                RecipeDetailScreen(</span>
+<span class="nc" id="L202">                    recipeId = recipeId,</span>
+<span class="nc" id="L203">                    slotContext = slotContext,</span>
+<span class="nc" id="L204">                    onUseForSlot = { ctx, selectedRecipeId -&gt;</span>
+<span class="nc" id="L205">                        onUseForSlot(ctx, selectedRecipeId)</span>
+<span class="nc" id="L206">                        navController.popBackStack()</span>
+<span class="nc" id="L207">                    },</span>
+<span class="nc" id="L208">                    onChooseDifferent = { ctx -&gt;</span>
+<span class="nc" id="L209">                        onChooseDifferentForSlot(ctx)</span>
+<span class="nc" id="L210">                        navController.navigate(MealPlannerRoute.ReplaceAlternatives(SlotContextNav.encode(ctx)).route)</span>
+<span class="nc" id="L211">                    },</span>
+<span class="nc" id="L212">                    onBack = { navController.popBackStack() },</span>
+                )
+<span class="nc" id="L214">            }</span>
+<span class="nc" id="L215">            composable(</span>
+<span class="nc" id="L216">                route = MealPlannerRoute.ReplaceAlternatives.PATTERN,</span>
+<span class="nc" id="L217">                arguments = listOf(navArgument(MealPlannerRoute.ReplaceAlternatives.ARG_SLOT_CONTEXT) { type = NavType.StringType }),</span>
+<span class="nc" id="L218">            ) { backStackEntry -&gt;</span>
+<span class="nc bnc" id="L219" title="All 6 branches missed.">                val slotContext = SlotContextNav.decode(backStackEntry.arguments?.getString(MealPlannerRoute.ReplaceAlternatives.ARG_SLOT_CONTEXT))</span>
+<span class="nc" id="L220">                    ?: return@composable</span>
+<span class="nc bnc" id="L221" title="All 2 branches missed.">                ReplaceAlternativesScreen(</span>
+<span class="nc" id="L222">                    slotContext = slotContext,</span>
+<span class="nc" id="L223">                    onView = { ctx, recipeId -&gt;</span>
+<span class="nc" id="L224">                        navController.navigate(MealPlannerRoute.RecipeDetail(recipeId, SlotContextNav.encode(ctx)).route)</span>
+<span class="nc" id="L225">                    },</span>
+<span class="nc" id="L226">                    onSelect = { ctx, recipeId -&gt;</span>
+<span class="nc" id="L227">                        onSelectAlternative(ctx, recipeId)</span>
+                        // R-06: return to origin (Today/Plan) with shared state updated; focus handled by screen/state in Step 7/8.
+<span class="nc" id="L229">                        navController.popBackStack()</span>
+<span class="nc" id="L230">                    },</span>
+<span class="nc" id="L231">                    onCancel = { navController.popBackStack() },</span>
+                )
+<span class="nc" id="L233">            }</span>
+<span class="nc" id="L234">            composable(</span>
+<span class="nc" id="L235">                route = MealPlannerRoute.SelectPrismaStore.PATTERN,</span>
+<span class="nc" id="L236">                arguments = listOf(</span>
+<span class="nc" id="L237">                    navArgument(MealPlannerRoute.SelectPrismaStore.ARG_CURRENT_STORE_ID) { type = NavType.StringType; nullable = true; defaultValue = null },</span>
+                ),
+<span class="nc" id="L239">            ) {</span>
+<span class="nc bnc" id="L240" title="All 2 branches missed.">                SelectPrismaStoreScreen(</span>
+<span class="nc" id="L241">                    state = storeSelectionState,</span>
+<span class="nc" id="L242">                    onUseSuggestion = onStoreUseSuggestion,</span>
+<span class="nc" id="L243">                    onSelectManual = onStoreSelectManual,</span>
+<span class="nc" id="L244">                    onConfirm = onStoreConfirm,</span>
+<span class="nc" id="L245">                    onManagePermission = onStoreManagePermission,</span>
+<span class="nc" id="L246">                    onBack = { navController.popBackStack() },</span>
+                )
+<span class="nc" id="L248">            }</span>
+<span class="nc" id="L249">        }</span>
+<span class="nc" id="L250">    }</span>
+<span class="nc bnc" id="L251" title="All 2 branches missed.">}</span>
+
+<span class="nc" id="L253">private fun bottomNavLabel(route: MealPlannerRoute): String = when (route) {</span>
+<span class="nc bnc" id="L254" title="All 2 branches missed.">    MealPlannerRoute.Today -&gt; &quot;Today&quot;</span>
+<span class="nc bnc" id="L255" title="All 2 branches missed.">    MealPlannerRoute.Plan -&gt; &quot;Plan&quot;</span>
+<span class="nc bnc" id="L256" title="All 2 branches missed.">    MealPlannerRoute.Grocery -&gt; &quot;Grocery&quot;</span>
+<span class="nc bnc" id="L257" title="All 2 branches missed.">    MealPlannerRoute.User -&gt; &quot;User&quot;</span>
+<span class="nc" id="L258">    else -&gt; route.route</span>
+<span class="nc" id="L259">}</span>
+
+<span class="nc" id="L261">private fun bottomNavIcon(route: MealPlannerRoute) = when (route) {</span>
+<span class="nc bnc" id="L262" title="All 2 branches missed.">    MealPlannerRoute.Today -&gt; Icons.Filled.Home</span>
+<span class="nc bnc" id="L263" title="All 2 branches missed.">    MealPlannerRoute.Plan -&gt; Icons.AutoMirrored.Filled.List</span>
+<span class="nc bnc" id="L264" title="All 2 branches missed.">    MealPlannerRoute.Grocery -&gt; Icons.Filled.ShoppingCart</span>
+<span class="nc bnc" id="L265" title="All 2 branches missed.">    MealPlannerRoute.User -&gt; Icons.Filled.Person</span>
+<span class="nc" id="L266">    else -&gt; Icons.Filled.Home</span>
+<span class="nc" id="L267">}</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.mealplanner.ui.facades.StoreAvailabilityAndDiagnosticsTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-09T21:40:18.369Z" hostname="jyu-mac-20260120.local" time="0.002">
+  <properties/>
+  <testcase name="permissionDeniedOrNotAskedMapsToManualFlow" classname="com.mealplanner.ui.facades.StoreAvailabilityAndDiagnosticsTest" time="0.001"/>
+  <testcase name="manualStoreSelectionAlwaysEnabled" classname="com.mealplanner.ui.facades.StoreAvailabilityAndDiagnosticsTest" time="0.0"/>
+  <testcase name="presenceReasonMappingStaysUserSafe" classname="com.mealplanner.ui.facades.StoreAvailabilityAndDiagnosticsTest" time="0.0"/>
+  <testcase name="presenceRowsUseOnlyPresentNotFoundUnknownWithReasonNeverStock" classname="com.mealplanner.ui.facades.StoreAvailabilityAndDiagnosticsTest" time="0.0"/>
+  <testcase name="diagnosticsMessagesContainNoRawGpsSecretsOrPii" classname="com.mealplanner.ui.facades.StoreAvailabilityAndDiagnosticsTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

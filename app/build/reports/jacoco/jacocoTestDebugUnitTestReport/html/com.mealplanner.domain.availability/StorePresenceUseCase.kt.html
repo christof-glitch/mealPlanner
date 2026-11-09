@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StorePresenceUseCase.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">com.mealplanner.domain.availability</a> &gt; <span class="el_source">StorePresenceUseCase.kt</span></div><h1>StorePresenceUseCase.kt</h1><pre class="source lang-java linenums">package com.mealplanner.domain.availability
+
+import com.mealplanner.adapters.PresenceMappingBoundary
+import com.mealplanner.domain.model.FallbackReason
+import com.mealplanner.domain.model.MapIngredientsToStorePresenceBatchRequest
+import com.mealplanner.domain.model.PresenceBatchOverallStatus
+import com.mealplanner.domain.model.PresenceBatchStatus
+import com.mealplanner.domain.model.PresenceCheckBatchResult
+import com.mealplanner.domain.model.PresenceCheckQuery
+import com.mealplanner.domain.model.PresenceCheckResult
+import com.mealplanner.domain.model.PresenceQueryItem
+import com.mealplanner.domain.model.StorePresenceStatus
+import com.mealplanner.domain.model.StoreRef
+import java.time.Instant
+
+/**
+ * C5/A2 use case: best-effort PRISMA name/presence checks only (FR8/BR3.7).
+ * Never mutates shopping items (BR3.5/R-02). Returns typed fallback outcomes.
+ */
+<span class="fc" id="L20">class StorePresenceUseCase(</span>
+<span class="fc" id="L21">    private val boundary: PresenceMappingBoundary,</span>
+) {
+<span class="fc" id="L23">    suspend fun checkPresence(</span>
+        store: StoreRef,
+        queries: List&lt;PresenceCheckQuery&gt;,
+<span class="fc" id="L26">        checkedAt: Instant = Instant.now(),</span>
+    ): PresenceCheckBatchResult {
+<span class="pc bpc" id="L28" title="1 of 2 branches missed.">        if (queries.isEmpty()) {</span>
+<span class="nc" id="L29">            return PresenceCheckBatchResult(</span>
+<span class="nc" id="L30">                storeId = store.storeId,</span>
+<span class="nc" id="L31">                storeRef = store,</span>
+<span class="nc" id="L32">                results = emptyList(),</span>
+<span class="nc" id="L33">                batchStatus = PresenceBatchStatus.OK,</span>
+<span class="nc" id="L34">                message = &quot;No items to check.&quot;,</span>
+            )
+        }
+<span class="fc" id="L37">        val mapped = boundary.mapIngredientsToStorePresenceBatch(</span>
+<span class="fc" id="L38">            MapIngredientsToStorePresenceBatchRequest(</span>
+<span class="fc" id="L39">                ingredientRefs = emptyList(),</span>
+<span class="pc bpc" id="L40" title="1 of 2 branches missed.">                queryItems = queries.map { PresenceQueryItem(queryText = it.queryName, normalizedName = it.normalizedQueryName ?: it.queryName) },</span>
+<span class="fc" id="L41">                storeRef = store,</span>
+            ),
+        )
+<span class="fc" id="L44">        val batch = mapped.batchResult</span>
+<span class="fc" id="L45">        val byQuery = batch.results.groupBy { normalize(it.queryText) }</span>
+<span class="fc" id="L46">        val results = queries.map { q -&gt;</span>
+<span class="fc bfc" id="L47" title="All 2 branches covered.">            val matches = byQuery[normalize(q.queryName)].orEmpty()</span>
+<span class="pc bpc" id="L48" title="1 of 3 branches missed.">            val chosen = when (matches.size) {</span>
+<span class="fc" id="L49">                1 -&gt; matches.first()</span>
+<span class="fc" id="L50">                0 -&gt; null</span>
+<span class="nc bnc" id="L51" title="All 4 branches missed.">                else -&gt; matches.firstOrNull { it.status != StorePresenceStatus.UNKNOWN } ?: matches.first()</span>
+            }
+<span class="pc bpc" id="L53" title="4 of 14 branches missed.">            val status = chosen?.status?.takeIf { it == StorePresenceStatus.PRESENT || it == StorePresenceStatus.NOT_FOUND || it == StorePresenceStatus.UNKNOWN }</span>
+<span class="fc" id="L54">                ?: StorePresenceStatus.UNKNOWN</span>
+<span class="fc" id="L55">            PresenceCheckResult(</span>
+<span class="fc" id="L56">                itemRef = q.itemRef,</span>
+<span class="fc" id="L57">                queryName = q.queryName,</span>
+<span class="fc" id="L58">                resultStatus = status,</span>
+<span class="pc bpc" id="L59" title="5 of 12 branches missed.">                reason = chosen?.reason?.message ?: chosen?.reason?.code ?: if (matches.size &gt; 1) &quot;AMBIGUOUS_MAPPING&quot; else &quot;NO_RESULT&quot;,</span>
+<span class="pc bpc" id="L60" title="1 of 4 branches missed.">                checkedAt = chosen?.checkedAt ?: checkedAt,</span>
+<span class="fc" id="L61">                storeId = store.storeId,</span>
+<span class="fc" id="L62">                checkScope = &quot;PRISMA_NAME_PRESENCE&quot;,</span>
+<span class="fc" id="L63">                raw = chosen,</span>
+<span class="fc" id="L64">            )</span>
+        }
+<span class="pc" id="L66">        val batchStatus = mapBatchStatus(batch.overallStatus, batch.fallbackReason, mapped.mappingWarnings.mapNotNull { it.code })</span>
+<span class="fc" id="L67">        return PresenceCheckBatchResult(</span>
+<span class="fc" id="L68">            storeId = store.storeId,</span>
+<span class="fc" id="L69">            storeRef = store,</span>
+<span class="fc" id="L70">            results = results,</span>
+<span class="fc" id="L71">            batchStatus = batchStatus,</span>
+<span class="pc bpc" id="L72" title="2 of 6 branches missed.">            message = batch.fallbackReason?.message ?: mapped.mappingWarnings.firstOrNull()?.message,</span>
+<span class="pc bpc" id="L73" title="1 of 4 branches missed.">            fallbackReason = batch.fallbackReason ?: mapped.mappingWarnings.firstOrNull()?.let { FallbackReason(it.code, it.message, it.userActionRequired) },</span>
+        )
+    }
+
+    private fun mapBatchStatus(
+        overall: PresenceBatchOverallStatus,
+        fallback: FallbackReason?,
+        warningCodes: List&lt;String&gt;,
+    ): PresenceBatchStatus {
+<span class="pc bpc" id="L82" title="1 of 6 branches missed.">        val code = (fallback?.code ?: warningCodes.firstOrNull()).orEmpty().uppercase()</span>
+<span class="fc" id="L83">        return when {</span>
+<span class="fc bfc" id="L84" title="All 2 branches covered.">            code.contains(&quot;DENIED&quot;) -&gt; PresenceBatchStatus.DENIED</span>
+<span class="pc bpc" id="L85" title="2 of 4 branches missed.">            code.contains(&quot;UNAVAILABLE&quot;) || code.contains(&quot;NOT_CONFIGURED&quot;) -&gt; PresenceBatchStatus.UNAVAILABLE</span>
+<span class="pc bpc" id="L86" title="3 of 6 branches missed.">            code.contains(&quot;FAILED&quot;) || code.contains(&quot;ERROR&quot;) || code.contains(&quot;TIMEOUT&quot;) -&gt; PresenceBatchStatus.FAILED_MAPPED</span>
+<span class="pc bpc" id="L87" title="1 of 2 branches missed.">            overall == PresenceBatchOverallStatus.COMPLETE -&gt; PresenceBatchStatus.OK</span>
+<span class="nc bnc" id="L88" title="All 2 branches missed.">            overall == PresenceBatchOverallStatus.PARTIAL -&gt; PresenceBatchStatus.PARTIAL</span>
+<span class="nc bnc" id="L89" title="All 2 branches missed.">            overall == PresenceBatchOverallStatus.FAILED -&gt; PresenceBatchStatus.FAILED_MAPPED</span>
+<span class="nc" id="L90">            else -&gt; PresenceBatchStatus.PARTIAL</span>
+        }
+    }
+
+<span class="fc" id="L94">    private fun normalize(value: String): String = value.trim().lowercase().replace(Regex(&quot;\\s+&quot;), &quot; &quot;)</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

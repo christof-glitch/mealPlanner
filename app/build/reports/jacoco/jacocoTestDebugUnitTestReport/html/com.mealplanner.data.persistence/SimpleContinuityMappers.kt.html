@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SimpleContinuityMappers.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">com.mealplanner.data.persistence</a> &gt; <span class="el_source">SimpleContinuityMappers.kt</span></div><h1>SimpleContinuityMappers.kt</h1><pre class="source lang-java linenums">package com.mealplanner.data.persistence
+
+import com.mealplanner.domain.model.DataSourceStatus
+import com.mealplanner.domain.model.Freshness
+import com.mealplanner.domain.model.LockSnapshot
+import com.mealplanner.domain.model.LockedRecipeSelection
+import com.mealplanner.domain.model.PlanLockState
+import com.mealplanner.domain.model.PlanSnapshotContext
+import com.mealplanner.domain.model.PlanSlotRef
+import com.mealplanner.domain.model.PlanSlotState
+import com.mealplanner.domain.model.ShoppingListItem
+import com.mealplanner.domain.model.SourceName
+import com.mealplanner.domain.model.StorePresenceStatus
+import com.mealplanner.domain.model.WeeklyPlanState
+import java.time.Instant
+
+/**
+ * Minimal continuity mappers for U1 foundation.
+ * Uses simple pipe-delimited encoding to avoid runtime JSON dependency in domain tests;
+ * production serialization can be replaced with kotlinx.serialization/Moshi in later units.
+ */
+object SimpleContinuityMappers {
+<span class="nc" id="L23">    fun encodePlan(entity: WeeklyPlanState, updatedAt: Instant = Instant.now()): WeeklyPlanEntity =</span>
+<span class="fc" id="L24">        WeeklyPlanEntity(</span>
+<span class="fc" id="L25">            planId = entity.planId,</span>
+<span class="fc" id="L26">            weekStartContext = entity.weekStartContext,</span>
+<span class="fc" id="L27">            lockState = entity.lockState.name,</span>
+<span class="fc" id="L28">            activeLockSnapshotId = entity.activeLockSnapshotId,</span>
+<span class="fc" id="L29">            staleWarning = entity.staleWarning,</span>
+<span class="fc" id="L30">            slotsJson = entity.slots.joinToString(&quot;\n&quot;) { encodeSlot(it) },</span>
+<span class="fc" id="L31">            lockedRecipeIdsJson = entity.lockedRecipeIds.joinToString(&quot;,&quot;),</span>
+<span class="fc" id="L32">            updatedAtEpochMs = updatedAt.toEpochMilli(),</span>
+<span class="fc" id="L33">        )</span>
+
+<span class="fc" id="L35">    fun decodePlan(entity: WeeklyPlanEntity): WeeklyPlanState = WeeklyPlanState(</span>
+<span class="fc" id="L36">        planId = entity.planId,</span>
+<span class="fc" id="L37">        weekStartContext = entity.weekStartContext,</span>
+<span class="pc bpc" id="L38" title="1 of 2 branches missed.">        lockState = runCatching { PlanLockState.valueOf(entity.lockState) }.getOrDefault(PlanLockState.UNLOCKED),</span>
+<span class="fc" id="L39">        activeLockSnapshotId = entity.activeLockSnapshotId,</span>
+<span class="fc" id="L40">        staleWarning = entity.staleWarning,</span>
+<span class="pc bpc" id="L41" title="2 of 4 branches missed.">        slots = if (entity.slotsJson.isBlank()) emptyList() else entity.slotsJson.lines().filter { it.isNotBlank() }.map { decodeSlot(entity.planId, it) },</span>
+<span class="pc bpc" id="L42" title="2 of 4 branches missed.">        lockedRecipeIds = if (entity.lockedRecipeIdsJson.isBlank()) emptyList() else entity.lockedRecipeIdsJson.split(&quot;,&quot;).filter { it.isNotBlank() },</span>
+<span class="fc" id="L43">    )</span>
+
+<span class="fc" id="L45">    fun encodeSnapshot(snapshot: LockSnapshot): LockSnapshotEntity = LockSnapshotEntity(</span>
+<span class="fc" id="L46">        snapshotId = snapshot.snapshotId,</span>
+<span class="fc" id="L47">        planId = snapshot.planId,</span>
+<span class="fc" id="L48">        createdAtEpochMs = snapshot.createdAt.toEpochMilli(),</span>
+<span class="fc" id="L49">        selectionsJson = snapshot.lockedRecipeSelections.joinToString(&quot;\n&quot;) {</span>
+<span class="fc" id="L50">            listOf(it.slotRef.dayOfWeek.name, it.slotRef.mealType.name, it.recipeId, it.selectionSource.name).joinToString(&quot;|&quot;)</span>
+        },
+<span class="fc" id="L52">        planContextJson = listOf(</span>
+<span class="pc bpc" id="L53" title="2 of 4 branches missed.">            snapshot.planContext.selectedStoreRef?.displayName.orEmpty(),</span>
+<span class="pc bpc" id="L54" title="2 of 4 branches missed.">            snapshot.planContext.seasonContext?.resolvedSeason.orEmpty(),</span>
+<span class="pc bpc" id="L55" title="2 of 4 branches missed.">            snapshot.planContext.seasonOverride?.overrideSeason.orEmpty(),</span>
+<span class="pc bpc" id="L56" title="1 of 2 branches missed.">            snapshot.planContext.schedulePolicyVersion.orEmpty(),</span>
+<span class="fc" id="L57">        ).joinToString(&quot;|&quot;),</span>
+<span class="fc" id="L58">        sourceCatalogVersion = snapshot.sourceCatalogVersion,</span>
+<span class="fc" id="L59">    )</span>
+
+    fun decodeSnapshot(entity: LockSnapshotEntity): LockSnapshot {
+<span class="pc bpc" id="L62" title="2 of 4 branches missed.">        val selections = if (entity.selectionsJson.isBlank()) emptyList() else entity.selectionsJson.lines().filter { it.isNotBlank() }.map { line -&gt;</span>
+<span class="fc" id="L63">            val p = line.split(&quot;|&quot;)</span>
+<span class="fc" id="L64">            LockedRecipeSelection(</span>
+<span class="fc" id="L65">                slotRef = PlanSlotRef(entity.planId, enumValueOf(p[0]), enumValueOf(p[1])),</span>
+<span class="fc" id="L66">                recipeId = p[2],</span>
+<span class="pc bpc" id="L67" title="1 of 2 branches missed.">                selectionSource = runCatching { enumValueOf&lt;com.mealplanner.domain.model.SelectionSource&gt;(p[3]) }.getOrDefault(com.mealplanner.domain.model.SelectionSource.USER_SELECTED),</span>
+<span class="fc" id="L68">            )</span>
+        }
+<span class="fc" id="L70">        val ctx = entity.planContextJson.split(&quot;|&quot;)</span>
+<span class="fc" id="L71">        return LockSnapshot(</span>
+<span class="fc" id="L72">            snapshotId = entity.snapshotId,</span>
+<span class="fc" id="L73">            planId = entity.planId,</span>
+<span class="fc" id="L74">            lockedRecipeSelections = selections,</span>
+<span class="fc" id="L75">            planContext = PlanSnapshotContext(</span>
+<span class="pc bpc" id="L76" title="4 of 8 branches missed.">                selectedStoreRef = ctx.getOrNull(0)?.takeIf { it.isNotBlank() }?.let { com.mealplanner.domain.model.StoreRef(displayName = it) },</span>
+<span class="pc bpc" id="L77" title="4 of 8 branches missed.">                seasonContext = ctx.getOrNull(1)?.takeIf { it.isNotBlank() }?.let { com.mealplanner.domain.model.SeasonContext(resolvedSeason = it) },</span>
+<span class="pc bpc" id="L78" title="4 of 8 branches missed.">                seasonOverride = ctx.getOrNull(2)?.takeIf { it.isNotBlank() }?.let { com.mealplanner.domain.model.SeasonOverride(mode = com.mealplanner.domain.model.SeasonOverrideMode.OVERRIDE, overrideSeason = it) },</span>
+<span class="pc bpc" id="L79" title="3 of 6 branches missed.">                schedulePolicyVersion = ctx.getOrNull(3)?.takeIf { it.isNotBlank() },</span>
+            ),
+<span class="fc" id="L81">            createdAt = Instant.ofEpochMilli(entity.createdAtEpochMs),</span>
+<span class="fc" id="L82">            sourceCatalogVersion = entity.sourceCatalogVersion,</span>
+        )
+    }
+
+<span class="fc" id="L86">    fun encodeShoppingItems(items: List&lt;ShoppingListItem&gt;): String = items.joinToString(&quot;\n&quot;) { item -&gt;</span>
+<span class="fc" id="L87">        listOf(</span>
+<span class="fc" id="L88">            item.itemId,</span>
+<span class="fc" id="L89">            escape(item.displayName),</span>
+<span class="fc bfc" id="L90" title="All 2 branches covered.">            item.normalizedName.orEmpty(),</span>
+<span class="fc bfc" id="L91" title="All 4 branches covered.">            item.amount?.toString().orEmpty(),</span>
+<span class="fc bfc" id="L92" title="All 2 branches covered.">            item.unit.orEmpty(),</span>
+<span class="fc" id="L93">            item.checked.toString(),</span>
+<span class="fc" id="L94">            item.sourceRecipeIds.joinToString(&quot;,&quot;),</span>
+<span class="fc bfc" id="L95" title="All 4 branches covered.">            item.presence?.name.orEmpty(),</span>
+<span class="fc" id="L96">            item.manuallyEdited.toString(),</span>
+<span class="fc" id="L97">            item.unresolved.toString(),</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">            escape(item.unresolvedReason.orEmpty()),</span>
+<span class="fc" id="L99">        ).joinToString(&quot;|&quot;)</span>
+<span class="fc" id="L100">    }</span>
+
+<span class="pc bpc" id="L102" title="2 of 4 branches missed.">    fun decodeShoppingItems(json: String): List&lt;ShoppingListItem&gt; = if (json.isBlank()) emptyList() else json.lines().filter { it.isNotBlank() }.map { line -&gt;</span>
+<span class="fc" id="L103">        val p = line.split(&quot;|&quot;)</span>
+<span class="fc" id="L104">        ShoppingListItem(</span>
+<span class="pc bpc" id="L105" title="2 of 4 branches missed.">            itemId = p.getOrElse(0) { &quot;&quot; },</span>
+<span class="pc bpc" id="L106" title="2 of 4 branches missed.">            displayName = unescape(p.getOrElse(1) { &quot;&quot; }),</span>
+<span class="pc bpc" id="L107" title="1 of 6 branches missed.">            normalizedName = p.getOrNull(2)?.takeIf { it.isNotBlank() },</span>
+<span class="pc bpc" id="L108" title="1 of 8 branches missed.">            amount = p.getOrNull(3)?.takeIf { it.isNotBlank() }?.toDoubleOrNull(),</span>
+<span class="pc bpc" id="L109" title="1 of 6 branches missed.">            unit = p.getOrNull(4)?.takeIf { it.isNotBlank() },</span>
+<span class="pc bpc" id="L110" title="2 of 4 branches missed.">            checked = p.getOrNull(5)?.toBooleanStrictOrNull() ?: false,</span>
+<span class="pc bpc" id="L111" title="2 of 6 branches missed.">            sourceRecipeIds = p.getOrNull(6)?.split(&quot;,&quot;)?.filter { it.isNotBlank() } ?: emptyList(),</span>
+<span class="pc bpc" id="L112" title="2 of 10 branches missed.">            presence = p.getOrNull(7)?.takeIf { it.isNotBlank() }?.let { runCatching { StorePresenceStatus.valueOf(it) }.getOrNull() },</span>
+<span class="pc bpc" id="L113" title="2 of 4 branches missed.">            manuallyEdited = p.getOrNull(8)?.toBooleanStrictOrNull() ?: false,</span>
+<span class="pc bpc" id="L114" title="2 of 4 branches missed.">            unresolved = p.getOrNull(9)?.toBooleanStrictOrNull() ?: false,</span>
+<span class="pc bpc" id="L115" title="1 of 8 branches missed.">            unresolvedReason = p.getOrNull(10)?.takeIf { it.isNotBlank() }?.let { unescape(it) },</span>
+<span class="fc" id="L116">        )</span>
+<span class="fc" id="L117">    }</span>
+
+<span class="fc" id="L119">    private fun encodeSlot(slot: PlanSlotState): String = listOf(</span>
+<span class="fc" id="L120">        slot.slotRef.dayOfWeek.name,</span>
+<span class="fc" id="L121">        slot.slotRef.mealType.name,</span>
+<span class="pc bpc" id="L122" title="1 of 2 branches missed.">        slot.assignedRecipeId.orEmpty(),</span>
+<span class="fc" id="L123">        slot.slotStatus.name,</span>
+<span class="pc bpc" id="L124" title="4 of 6 branches missed.">        slot.exclusionReason?.reasonCode?.name.orEmpty(),</span>
+<span class="pc bpc" id="L125" title="4 of 6 branches missed.">        slot.dataSource?.source?.name.orEmpty(),</span>
+<span class="pc bpc" id="L126" title="4 of 6 branches missed.">        slot.dataSource?.freshness?.name.orEmpty(),</span>
+<span class="pc bpc" id="L127" title="2 of 4 branches missed.">        slot.dataSource?.fallbackUsed?.toString().orEmpty(),</span>
+<span class="fc" id="L128">    ).joinToString(&quot;|&quot;)</span>
+
+    private fun decodeSlot(planId: String, line: String): PlanSlotState {
+<span class="fc" id="L131">        val p = line.split(&quot;|&quot;)</span>
+<span class="fc" id="L132">        val slotRef = PlanSlotRef(planId = planId, dayOfWeek = enumValueOf(p[0]), mealType = enumValueOf(p[1]))</span>
+<span class="pc bpc" id="L133" title="6 of 10 branches missed.">        val source = p.getOrNull(5)?.takeIf { it.isNotBlank() }?.let { runCatching { SourceName.valueOf(it) }.getOrNull() }</span>
+<span class="pc bpc" id="L134" title="6 of 10 branches missed.">        val freshness = p.getOrNull(6)?.takeIf { it.isNotBlank() }?.let { runCatching { Freshness.valueOf(it) }.getOrNull() }</span>
+<span class="fc" id="L135">        return PlanSlotState(</span>
+<span class="fc" id="L136">            slotRef = slotRef,</span>
+<span class="pc bpc" id="L137" title="3 of 6 branches missed.">            assignedRecipeId = p.getOrNull(2)?.takeIf { it.isNotBlank() },</span>
+<span class="pc bpc" id="L138" title="3 of 6 branches missed.">            slotStatus = runCatching { enumValueOf&lt;com.mealplanner.domain.model.SlotStatus&gt;(p.getOrElse(3) { &quot;EMPTY&quot; }) }.getOrDefault(com.mealplanner.domain.model.SlotStatus.EMPTY),</span>
+<span class="pc bpc" id="L139" title="7 of 8 branches missed.">            dataSource = if (source != null &amp;&amp; freshness != null) DataSourceStatus(source, freshness, p.getOrNull(7)?.toBooleanStrictOrNull() ?: false) else null,</span>
+        )
+    }
+
+<span class="fc" id="L143">    private fun escape(s: String): String = s.replace(&quot;\\&quot;, &quot;\\\\&quot;).replace(&quot;|&quot;, &quot;\\p&quot;).replace(&quot;\n&quot;, &quot;\\n&quot;)</span>
+<span class="fc" id="L144">    private fun unescape(s: String): String = s.replace(&quot;\\n&quot;, &quot;\n&quot;).replace(&quot;\\p&quot;, &quot;|&quot;).replace(&quot;\\\\&quot;, &quot;\\&quot;)</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserScreen.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">com.mealplanner.ui.screens.user</a> &gt; <span class="el_source">UserScreen.kt</span></div><h1>UserScreen.kt</h1><pre class="source lang-java linenums">package com.mealplanner.ui.screens.user
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.dp
+import com.mealplanner.ui.components.SeasonContextIndicator
+import com.mealplanner.ui.components.StatusBanner
+import com.mealplanner.ui.state.UserSettingsState
+
+/** RM-09 User (Step 7). Season override/default/reset, permission/privacy status. */
+@Composable
+fun UserScreen(
+    state: UserSettingsState,
+    onToggleSeasonOverride: (Boolean) -&gt; Unit,
+    onSeasonSelected: (String) -&gt; Unit,
+    onAreaLabelChanged: (String) -&gt; Unit,
+    onResetSeason: () -&gt; Unit,
+    onManagePermission: () -&gt; Unit,
+<span class="nc bnc" id="L38" title="All 2 branches missed.">    modifier: Modifier = Modifier,</span>
+<span class="nc bnc" id="L39" title="All 48 branches missed.">) {</span>
+<span class="nc" id="L40">    Column(</span>
+<span class="nc" id="L41">        modifier = modifier</span>
+<span class="nc" id="L42">            .fillMaxSize()</span>
+<span class="nc" id="L43">            .verticalScroll(rememberScrollState())</span>
+<span class="nc" id="L44">            .padding(16.dp)</span>
+<span class="nc" id="L45">            .testTag(&quot;user-screen&quot;),</span>
+<span class="nc" id="L46">        verticalArrangement = Arrangement.spacedBy(12.dp),</span>
+    ) {
+<span class="nc" id="L48">        Text(&quot;User&quot;, style = MaterialTheme.typography.headlineSmall, modifier = Modifier.semantics { heading() })</span>
+<span class="nc" id="L49">        SeasonContextIndicator(state.seasonContextLabel)</span>
+<span class="nc" id="L50">        Card(modifier = Modifier.fillMaxWidth().testTag(&quot;season-override-card&quot;)) {</span>
+<span class="nc bnc" id="L51" title="All 6 branches missed.">            Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {</span>
+<span class="nc" id="L52">                Text(&quot;Season context&quot;, style = MaterialTheme.typography.titleMedium)</span>
+<span class="nc" id="L53">                Text(&quot;Default uses device date and location. Override is optional and affects season fit display.&quot;)</span>
+<span class="nc" id="L54">                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {</span>
+<span class="nc" id="L55">                    Switch(</span>
+<span class="nc" id="L56">                        checked = state.seasonOverrideEnabled,</span>
+<span class="nc" id="L57">                        onCheckedChange = onToggleSeasonOverride,</span>
+<span class="nc" id="L58">                        modifier = Modifier.testTag(&quot;season-override-switch&quot;),</span>
+                    )
+<span class="nc" id="L60">                    Text(&quot;Override season context&quot;)</span>
+<span class="nc" id="L61">                }</span>
+<span class="nc bnc" id="L62" title="All 2 branches missed.">                if (state.seasonOverrideEnabled) {</span>
+<span class="nc" id="L63">                    OutlinedTextField(</span>
+<span class="nc bnc" id="L64" title="All 2 branches missed.">                        value = state.seasonSelection.orEmpty(),</span>
+<span class="nc" id="L65">                        onValueChange = onSeasonSelected,</span>
+<span class="nc bnc" id="L66" title="All 8 branches missed.">                        label = { Text(&quot;Season&quot;) },</span>
+<span class="nc" id="L67">                        modifier = Modifier.fillMaxWidth().testTag(&quot;season-selection-field&quot;),</span>
+<span class="nc" id="L68">                        singleLine = true,</span>
+                    )
+<span class="nc" id="L70">                    OutlinedTextField(</span>
+<span class="nc bnc" id="L71" title="All 2 branches missed.">                        value = state.areaLabel.orEmpty(),</span>
+<span class="nc" id="L72">                        onValueChange = onAreaLabelChanged,</span>
+<span class="nc bnc" id="L73" title="All 8 branches missed.">                        label = { Text(&quot;Area/region label (optional)&quot;) },</span>
+<span class="nc" id="L74">                        modifier = Modifier.fillMaxWidth().testTag(&quot;area-label-field&quot;),</span>
+<span class="nc" id="L75">                        singleLine = true,</span>
+                    )
+                }
+<span class="nc bnc" id="L78" title="All 2 branches missed.">                state.validationMessage?.let { StatusBanner(it) }</span>
+<span class="nc" id="L79">                OutlinedButton(onClick = onResetSeason, modifier = Modifier.testTag(&quot;reset-season-action&quot;)) {</span>
+<span class="nc bnc" id="L80" title="All 8 branches missed.">                    Text(&quot;Reset to device default&quot;)</span>
+<span class="nc" id="L81">                }</span>
+<span class="nc" id="L82">            }</span>
+<span class="nc" id="L83">        }</span>
+<span class="nc" id="L84">        Card(modifier = Modifier.fillMaxWidth().testTag(&quot;permissions-privacy-card&quot;)) {</span>
+<span class="nc bnc" id="L85" title="All 6 branches missed.">            Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {</span>
+<span class="nc" id="L86">                Text(&quot;Permissions and privacy&quot;, style = MaterialTheme.typography.titleMedium)</span>
+<span class="nc" id="L87">                Text(&quot;Location permission: ${state.locationPermission.name}&quot;)</span>
+<span class="nc" id="L88">                Text(state.privacySummary)</span>
+<span class="nc" id="L89">                Button(onClick = onManagePermission, modifier = Modifier.testTag(&quot;manage-permission-action&quot;)) {</span>
+<span class="nc bnc" id="L90" title="All 8 branches missed.">                    Text(&quot;Manage location permission&quot;)</span>
+<span class="nc" id="L91">                }</span>
+<span class="nc" id="L92">            }</span>
+<span class="nc" id="L93">        }</span>
+<span class="nc" id="L94">    }</span>
+<span class="nc bnc" id="L95" title="All 2 branches missed.">}</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

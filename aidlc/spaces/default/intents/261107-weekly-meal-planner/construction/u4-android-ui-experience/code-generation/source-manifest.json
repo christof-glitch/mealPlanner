@@ -1,0 +1,115 @@
+{
+  "stage": "code-generation",
+  "unit": "u4-android-ui-experience",
+  "version": 1,
+  "writes": [
+    {
+      "path": "app/build.gradle.kts"
+    },
+    {
+      "path": "gradle/libs.versions.toml"
+    },
+    {
+      "path": "app/src/main/java/com/mealplanner/MealPlannerApp.kt"
+    },
+    {
+      "path": "app/src/main/java/com/mealplanner/ui/MealPlannerRoot.kt"
+    },
+    {
+      "path": "app/src/main/java/com/mealplanner/ui/MealPlannerUiState.kt"
+    },
+    {
+      "path": "app/src/main/java/com/mealplanner/ui/components/UiPrimitives.kt"
+    },
+    {
+      "path": "app/src/main/java/com/mealplanner/ui/facades/DefaultGroceryExperienceFacade.kt"
+    },
+    {
+      "path": "app/src/main/java/com/mealplanner/ui/facades/DefaultPlanExperienceFacade.kt"
+    },
+    {
+      "path": "app/src/main/java/com/mealplanner/ui/facades/DefaultStoreAvailabilityFacade.kt"
+    },
+    {
+      "path": "app/src/main/java/com/mealplanner/ui/facades/GroceryExperienceFacade.kt"
+    },
+    {
+      "path": "app/src/main/java/com/mealplanner/ui/facades/PlanExperienceFacade.kt"
+    },
+    {
+      "path": "app/src/main/java/com/mealplanner/ui/facades/StoreAvailabilityFacade.kt"
+    },
+    {
+      "path": "app/src/main/java/com/mealplanner/ui/mappers/DiagnosticsUiMapper.kt"
+    },
+    {
+      "path": "app/src/main/java/com/mealplanner/ui/navigation/MealPlannerRoute.kt"
+    },
+    {
+      "path": "app/src/main/java/com/mealplanner/ui/navigation/MealPlannerScaffold.kt"
+    },
+    {
+      "path": "app/src/main/java/com/mealplanner/ui/navigation/SlotContextNav.kt"
+    },
+    {
+      "path": "app/src/main/java/com/mealplanner/ui/platform/DefaultPermissionStatusProvider.kt"
+    },
+    {
+      "path": "app/src/main/java/com/mealplanner/ui/platform/PermissionStatusProvider.kt"
+    },
+    {
+      "path": "app/src/main/java/com/mealplanner/ui/platform/ShareCopyPlatformBoundary.kt"
+    },
+    {
+      "path": "app/src/main/java/com/mealplanner/ui/screens/grocery/GroceryScreen.kt"
+    },
+    {
+      "path": "app/src/main/java/com/mealplanner/ui/screens/onboarding/OnboardingScreen.kt"
+    },
+    {
+      "path": "app/src/main/java/com/mealplanner/ui/screens/plan/PlanScreen.kt"
+    },
+    {
+      "path": "app/src/main/java/com/mealplanner/ui/screens/recipe/RecipeDetailScreen.kt"
+    },
+    {
+      "path": "app/src/main/java/com/mealplanner/ui/screens/recipe/ReplaceAlternativesScreen.kt"
+    },
+    {
+      "path": "app/src/main/java/com/mealplanner/ui/screens/store/SelectPrismaStoreScreen.kt"
+    },
+    {
+      "path": "app/src/main/java/com/mealplanner/ui/screens/today/TodayScreen.kt"
+    },
+    {
+      "path": "app/src/main/java/com/mealplanner/ui/screens/user/UserScreen.kt"
+    },
+    {
+      "path": "app/src/main/java/com/mealplanner/ui/state/GroceryUiModels.kt"
+    },
+    {
+      "path": "app/src/main/java/com/mealplanner/ui/state/SlotUiModels.kt"
+    },
+    {
+      "path": "app/src/main/java/com/mealplanner/ui/state/StoreUiModels.kt"
+    },
+    {
+      "path": "app/src/main/java/com/mealplanner/ui/state/UserSettingsUiModels.kt"
+    },
+    {
+      "path": "app/src/test/java/com/mealplanner/ui/SupportingUiBehaviorTest.kt"
+    },
+    {
+      "path": "app/src/test/java/com/mealplanner/ui/UiRunnerSmokeTest.kt"
+    },
+    {
+      "path": "app/src/test/java/com/mealplanner/ui/facades/GroceryExperienceFacadeTest.kt"
+    },
+    {
+      "path": "app/src/test/java/com/mealplanner/ui/facades/PlanExperienceFacadeTest.kt"
+    },
+    {
+      "path": "app/src/test/java/com/mealplanner/ui/facades/StoreAvailabilityAndDiagnosticsTest.kt"
+    }
+  ]
+}

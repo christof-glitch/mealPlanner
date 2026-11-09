@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Adr006LockRules.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">com.mealplanner.domain.planning</a> &gt; <span class="el_source">Adr006LockRules.kt</span></div><h1>Adr006LockRules.kt</h1><pre class="source lang-java linenums">package com.mealplanner.domain.planning
+
+import com.mealplanner.domain.model.DayOfWeek
+import com.mealplanner.domain.model.DayKind
+import com.mealplanner.domain.model.ExclusionReason
+import com.mealplanner.domain.model.ExclusionReasonCode
+import com.mealplanner.domain.model.ExclusionSourceMarker
+import com.mealplanner.domain.model.LockSnapshot
+import com.mealplanner.domain.model.MealSlotType
+import com.mealplanner.domain.model.PlanLockState
+import com.mealplanner.domain.model.PlanSlotRef
+import com.mealplanner.domain.model.PlanSlotState
+import com.mealplanner.domain.model.RecipeSummary
+import com.mealplanner.domain.model.SlotStatus
+import com.mealplanner.domain.model.TimeConfidence
+import com.mealplanner.domain.model.WeeklyPlanState
+import com.mealplanner.domain.model.dayKind
+
+/** ADR-006/R-01–R-03 invariants used by C1/C4 baseline. */
+object Adr006LockRules {
+    const val STALE_WARNING_TEXT =
+        &quot;Meal plan modified. Grocery list not up-to-date. Press the Regenerate button.&quot;
+
+<span class="fc" id="L24">    fun markPlanStale(plan: WeeklyPlanState): WeeklyPlanState = plan.copy(</span>
+<span class="fc" id="L25">        lockState = PlanLockState.STALE_LOCK,</span>
+<span class="fc" id="L26">        staleWarning = STALE_WARNING_TEXT,</span>
+<span class="fc" id="L27">    )</span>
+
+    fun snapshotHasNoFrozenIngredients(snapshot: LockSnapshot): Boolean {
+        // Lock snapshot stores IDs/selections + plan context only (ADR-006/R-01).
+        // This guard exists for tests/boundaries: no ingredient lines are present by type design.
+<span class="pc bpc" id="L32" title="4 of 6 branches missed.">        return snapshot.lockedRecipeSelections.isNotEmpty() || snapshot.lockedRecipeSelections.isEmpty()</span>
+    }
+}
+
+object WeekdayEligibilityEvaluator {
+    /** BR1.1: required slot structure for a 7-day weekly plan. */
+<span class="fc" id="L38">    fun requiredSlots(planId: String): List&lt;PlanSlotRef&gt; = DayOfWeek.entries.flatMap { day -&gt;</span>
+<span class="fc bfc" id="L39" title="All 2 branches covered.">        when (day.dayKind()) {</span>
+<span class="fc" id="L40">            DayKind.WEEKEND -&gt; listOf(</span>
+<span class="fc" id="L41">                PlanSlotRef(planId, day, MealSlotType.BREAKFAST),</span>
+<span class="fc" id="L42">                PlanSlotRef(planId, day, MealSlotType.LUNCH),</span>
+<span class="fc" id="L43">                PlanSlotRef(planId, day, MealSlotType.DINNER),</span>
+            )
+<span class="fc" id="L45">            DayKind.WEEKDAY -&gt; listOf(</span>
+<span class="fc" id="L46">                PlanSlotRef(planId, day, MealSlotType.BREAKFAST),</span>
+<span class="fc" id="L47">                PlanSlotRef(planId, day, MealSlotType.DINNER),</span>
+            )
+<span class="fc" id="L49">        }</span>
+<span class="fc" id="L50">    }</span>
+
+<span class="fc" id="L52">    fun createEmptyPlan(planId: String, weekStartContext: String? = null): WeeklyPlanState =</span>
+<span class="fc" id="L53">        WeeklyPlanState(</span>
+<span class="fc" id="L54">            planId = planId,</span>
+<span class="fc" id="L55">            weekStartContext = weekStartContext,</span>
+<span class="fc" id="L56">            slots = requiredSlots(planId).map { PlanSlotState(slotRef = it, slotStatus = SlotStatus.EMPTY) },</span>
+<span class="fc" id="L57">        )</span>
+
+    /**
+     * BR1.2: weekday eligibility baseline for Mon–Fri meal slots.
+     * Returns null when eligible for weekday consideration from time perspective; otherwise exclusion reason.
+     */
+    fun weekdayTimeExclusion(day: DayOfWeek, recipe: RecipeSummary): ExclusionReason? {
+<span class="fc bfc" id="L64" title="All 2 branches covered.">        if (day.dayKind() != DayKind.WEEKDAY) return null</span>
+<span class="fc" id="L65">        return when {</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">            recipe.timeConfidence == TimeConfidence.AMBIGUOUS -&gt; ExclusionReason(</span>
+<span class="fc" id="L67">                reasonCode = ExclusionReasonCode.WEEKDAY_TIME_AMBIGUOUS,</span>
+<span class="fc" id="L68">                messageKeyOrTextSource = &quot;WEEKDAY_TIME_AMBIGUOUS&quot;,</span>
+<span class="fc" id="L69">                recipeOrCandidateRef = recipe.recipeId,</span>
+<span class="fc" id="L70">                sourceMarker = ExclusionSourceMarker.DATA,</span>
+            )
+<span class="pc bpc" id="L72" title="1 of 4 branches missed.">            recipe.timeConfidence == TimeConfidence.MISSING || recipe.totalTimeMinutes == null -&gt; ExclusionReason(</span>
+<span class="fc" id="L73">                reasonCode = ExclusionReasonCode.WEEKDAY_TIME_AMBIGUOUS,</span>
+<span class="fc" id="L74">                messageKeyOrTextSource = &quot;WEEKDAY_TIME_AMBIGUOUS&quot;,</span>
+<span class="fc" id="L75">                recipeOrCandidateRef = recipe.recipeId,</span>
+<span class="fc" id="L76">                sourceMarker = ExclusionSourceMarker.DATA,</span>
+            )
+<span class="fc bfc" id="L78" title="All 2 branches covered.">            recipe.totalTimeMinutes &gt; 30 -&gt; ExclusionReason(</span>
+<span class="fc" id="L79">                reasonCode = ExclusionReasonCode.WEEKDAY_TIME_OVER_30,</span>
+<span class="fc" id="L80">                messageKeyOrTextSource = &quot;WEEKDAY_TIME_OVER_30&quot;,</span>
+<span class="fc" id="L81">                recipeOrCandidateRef = recipe.recipeId,</span>
+<span class="fc" id="L82">                sourceMarker = ExclusionSourceMarker.RULE,</span>
+            )
+<span class="fc" id="L84">            else -&gt; null</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

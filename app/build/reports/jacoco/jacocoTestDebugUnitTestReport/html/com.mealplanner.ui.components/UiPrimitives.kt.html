@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UiPrimitives.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">com.mealplanner.ui.components</a> &gt; <span class="el_source">UiPrimitives.kt</span></div><h1>UiPrimitives.kt</h1><pre class="source lang-java linenums">package com.mealplanner.ui.components
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.dp
+import com.mealplanner.ui.state.GroceryItemUiModel
+import com.mealplanner.ui.state.MealSlotUiModel
+import com.mealplanner.ui.state.PresenceRowUiModel
+import com.mealplanner.ui.state.R05NextAction
+import com.mealplanner.ui.state.R05State
+
+/** Shared UI primitives (Step 6). Accessibility: non-color-only labels, content descriptions, testTag. */
+
+@Composable
+<span class="nc bnc" id="L37" title="All 20 branches missed.">fun StatusBanner(text: String, modifier: Modifier = Modifier) {</span>
+<span class="nc bnc" id="L38" title="All 6 branches missed.">    if (text.isBlank()) return</span>
+<span class="nc bnc" id="L39" title="All 4 branches missed.">    Card(modifier = modifier.fillMaxWidth().semantics { contentDescription = &quot;Status: $text&quot; }) {</span>
+<span class="nc bnc" id="L40" title="All 8 branches missed.">        Text(text = text, modifier = Modifier.padding(12.dp), style = MaterialTheme.typography.bodyMedium)</span>
+<span class="nc" id="L41">    }</span>
+<span class="nc bnc" id="L42" title="All 2 branches missed.">}</span>
+
+@Composable
+<span class="nc bnc" id="L45" title="All 26 branches missed.">fun ErrorRetryPanel(message: String, onRetry: () -&gt; Unit, modifier: Modifier = Modifier) {</span>
+<span class="nc bnc" id="L46" title="All 2 branches missed.">    Card(modifier = modifier.fillMaxWidth().testTag(&quot;error-retry-panel&quot;)) {</span>
+<span class="nc bnc" id="L47" title="All 6 branches missed.">        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {</span>
+<span class="nc" id="L48">            Text(text = message, style = MaterialTheme.typography.bodyMedium)</span>
+<span class="nc bnc" id="L49" title="All 8 branches missed.">            Button(onClick = onRetry, modifier = Modifier.testTag(&quot;retry-action&quot;)) { Text(&quot;Retry&quot;) }</span>
+<span class="nc" id="L50">        }</span>
+<span class="nc" id="L51">    }</span>
+<span class="nc bnc" id="L52" title="All 2 branches missed.">}</span>
+
+@Composable
+fun R05FallbackPanel(
+    state: R05State,
+    onRetry: () -&gt; Unit,
+    onBundledFallback: () -&gt; Unit,
+    onManualPlanning: () -&gt; Unit,
+<span class="nc bnc" id="L60" title="All 2 branches missed.">    modifier: Modifier = Modifier,</span>
+<span class="nc bnc" id="L61" title="All 36 branches missed.">) {</span>
+<span class="nc bnc" id="L62" title="All 6 branches missed.">    if (!state.visible) return</span>
+<span class="nc bnc" id="L63" title="All 2 branches missed.">    Card(modifier = modifier.fillMaxWidth().testTag(&quot;r05-fallback-panel&quot;)) {</span>
+<span class="nc bnc" id="L64" title="All 6 branches missed.">        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {</span>
+<span class="nc" id="L65">            Text(text = state.message, modifier = Modifier.semantics { heading() })</span>
+<span class="nc" id="L66">            state.nextActions.forEach { action -&gt;</span>
+<span class="nc bnc" id="L67" title="All 4 branches missed.">                when (action) {</span>
+<span class="nc bnc" id="L68" title="All 8 branches missed.">                    R05NextAction.RETRY -&gt; OutlinedButton(onClick = onRetry, modifier = Modifier.fillMaxWidth().testTag(&quot;r05-retry&quot;)) { Text(&quot;Retry&quot;) }</span>
+<span class="nc bnc" id="L69" title="All 8 branches missed.">                    R05NextAction.USE_BUNDLED_FALLBACK_CATALOG -&gt; OutlinedButton(onClick = onBundledFallback, modifier = Modifier.fillMaxWidth().testTag(&quot;r05-bundled-fallback&quot;)) { Text(&quot;Use bundled fallback catalog&quot;) }</span>
+<span class="nc bnc" id="L70" title="All 8 branches missed.">                    R05NextAction.CONTINUE_WITH_MANUAL_PLANNING -&gt; Button(onClick = onManualPlanning, modifier = Modifier.fillMaxWidth().testTag(&quot;r05-manual-planning&quot;)) { Text(&quot;Continue with manual planning&quot;) }</span>
+                }
+<span class="nc" id="L72">            }</span>
+<span class="nc" id="L73">        }</span>
+<span class="nc" id="L74">    }</span>
+<span class="nc bnc" id="L75" title="All 2 branches missed.">}</span>
+
+@Composable
+fun MealSlotCard(
+    model: MealSlotUiModel,
+    onViewRecipe: () -&gt; Unit,
+    onReplace: () -&gt; Unit,
+    onChooseRecipe: () -&gt; Unit,
+<span class="nc bnc" id="L83" title="All 2 branches missed.">    modifier: Modifier = Modifier,</span>
+<span class="nc bnc" id="L84" title="All 36 branches missed.">) {</span>
+<span class="nc" id="L85">    val slotLabel = &quot;${model.context.dayOfWeek} ${model.context.mealType}&quot;</span>
+<span class="nc" id="L86">    val empty = model.isEmpty</span>
+<span class="nc bnc" id="L87" title="All 2 branches missed.">    Card(</span>
+<span class="nc" id="L88">        modifier = modifier</span>
+<span class="nc" id="L89">            .fillMaxWidth()</span>
+<span class="nc" id="L90">            .testTag(&quot;meal-slot-${model.context.slotId}&quot;)</span>
+<span class="nc bnc" id="L91" title="All 2 branches missed.">            .semantics { contentDescription = if (empty) &quot;$slotLabel: No recipe selected&quot; else &quot;$slotLabel: ${model.recipeTitle}&quot; },</span>
+<span class="nc" id="L92">    ) {</span>
+<span class="nc bnc" id="L93" title="All 6 branches missed.">        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {</span>
+<span class="nc" id="L94">            Text(text = slotLabel, style = MaterialTheme.typography.titleSmall, modifier = Modifier.semantics { heading() })</span>
+<span class="nc bnc" id="L95" title="All 2 branches missed.">            if (empty) {</span>
+<span class="nc" id="L96">                Text(&quot;No recipe selected&quot;)</span>
+<span class="nc" id="L97">                OutlinedButton(</span>
+<span class="nc" id="L98">                    onClick = onChooseRecipe,</span>
+<span class="nc" id="L99">                    modifier = Modifier.testTag(&quot;choose-recipe-${model.context.slotId}&quot;).semantics { contentDescription = &quot;Choose recipe for $slotLabel&quot; },</span>
+<span class="nc bnc" id="L100" title="All 8 branches missed.">                ) { Text(&quot;Choose recipe&quot;) }</span>
+<span class="nc" id="L101">            } else {</span>
+<span class="nc bnc" id="L102" title="All 2 branches missed.">                Text(model.recipeTitle ?: &quot;Recipe&quot;)</span>
+<span class="nc bnc" id="L103" title="All 2 branches missed.">                model.timeLabel?.let { Text(it, style = MaterialTheme.typography.bodySmall) }</span>
+<span class="nc bnc" id="L104" title="All 2 branches missed.">                model.nutritionLabel?.let { Text(it, style = MaterialTheme.typography.bodySmall) }</span>
+<span class="nc" id="L105">                RecipeMetaBadges(model.badges)</span>
+<span class="nc" id="L106">                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {</span>
+<span class="nc" id="L107">                    OutlinedButton(</span>
+<span class="nc" id="L108">                        onClick = onViewRecipe,</span>
+<span class="nc" id="L109">                        modifier = Modifier.testTag(&quot;view-recipe-${model.context.slotId}&quot;).semantics { contentDescription = &quot;View recipe for $slotLabel&quot; },</span>
+<span class="nc bnc" id="L110" title="All 8 branches missed.">                    ) { Text(&quot;View recipe&quot;) }</span>
+<span class="nc" id="L111">                    OutlinedButton(</span>
+<span class="nc" id="L112">                        onClick = onReplace,</span>
+<span class="nc" id="L113">                        modifier = Modifier.testTag(&quot;replace-recipe-${model.context.slotId}&quot;).semantics { contentDescription = &quot;Replace $slotLabel&quot; },</span>
+<span class="nc bnc" id="L114" title="All 8 branches missed.">                    ) { Text(&quot;Replace&quot;) }</span>
+<span class="nc" id="L115">                }</span>
+            }
+<span class="nc" id="L117">            model.statusLabels.forEach { Text(it, style = MaterialTheme.typography.bodySmall) }</span>
+<span class="nc" id="L118">        }</span>
+<span class="nc" id="L119">    }</span>
+<span class="nc bnc" id="L120" title="All 2 branches missed.">}</span>
+
+@Composable
+<span class="nc bnc" id="L123" title="All 36 branches missed.">fun NutritionBalanceCueCard(label: String, partial: Boolean = false, unavailable: Boolean = false, modifier: Modifier = Modifier) {</span>
+<span class="nc" id="L124">    val text = when {</span>
+<span class="nc bnc" id="L125" title="All 2 branches missed.">        unavailable -&gt; &quot;Nutrition information unavailable&quot;</span>
+<span class="nc bnc" id="L126" title="All 6 branches missed.">        partial &amp;&amp; label.isNotBlank() -&gt; &quot;$label. Some nutrition details unavailable&quot;</span>
+<span class="nc bnc" id="L127" title="All 4 branches missed.">        label.isNotBlank() -&gt; label</span>
+<span class="nc" id="L128">        else -&gt; &quot;Nutrition information unavailable&quot;</span>
+    }
+<span class="nc bnc" id="L130" title="All 2 branches missed.">    Card(modifier = modifier.fillMaxWidth().semantics { contentDescription = &quot;Nutrition balance cue: $text&quot; }) {</span>
+<span class="nc bnc" id="L131" title="All 6 branches missed.">        Column(modifier = Modifier.padding(12.dp)) {</span>
+<span class="nc" id="L132">            Text(&quot;Nutrition balance cue&quot;, style = MaterialTheme.typography.titleSmall)</span>
+<span class="nc" id="L133">            Text(text, style = MaterialTheme.typography.bodySmall)</span>
+<span class="nc" id="L134">        }</span>
+<span class="nc" id="L135">    }</span>
+<span class="nc bnc" id="L136" title="All 2 branches missed.">}</span>
+
+@Composable
+<span class="nc bnc" id="L139" title="All 20 branches missed.">fun SeasonContextIndicator(label: String, modifier: Modifier = Modifier) {</span>
+<span class="nc bnc" id="L140" title="All 12 branches missed.">    AssistChip(onClick = {}, label = { Text(label) }, modifier = modifier.testTag(&quot;season-context-indicator&quot;).semantics { contentDescription = &quot;Season context: $label&quot; })</span>
+<span class="nc bnc" id="L141" title="All 2 branches missed.">}</span>
+
+@Composable
+<span class="nc bnc" id="L144" title="All 20 branches missed.">fun RecipeMetaBadges(badges: List&lt;String&gt;, modifier: Modifier = Modifier) {</span>
+<span class="nc bnc" id="L145" title="All 6 branches missed.">    if (badges.isEmpty()) return</span>
+<span class="nc" id="L146">    Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(6.dp)) {</span>
+<span class="nc bnc" id="L147" title="All 8 branches missed.">        badges.forEach { badge -&gt; AssistChip(onClick = {}, label = { Text(badge) }, modifier = Modifier.semantics { contentDescription = badge }) }</span>
+<span class="nc" id="L148">    }</span>
+<span class="nc bnc" id="L149" title="All 2 branches missed.">}</span>
+
+@Composable
+<span class="nc bnc" id="L152" title="All 20 branches missed.">fun StorePresenceStatusRow(row: PresenceRowUiModel, modifier: Modifier = Modifier) {</span>
+    // FR8: name/presence only (PRESENT/NOT_FOUND/UNKNOWN + reason), never stock/guaranteed availability.
+<span class="nc" id="L154">    val label = &quot;${row.queryName}: ${row.statusLabel()} — ${row.reasonLabel}&quot;</span>
+<span class="nc" id="L155">    Row(</span>
+<span class="nc" id="L156">        modifier = modifier.fillMaxWidth().padding(vertical = 4.dp).testTag(&quot;presence-row-${row.itemId}&quot;)</span>
+<span class="nc" id="L157">            .semantics { contentDescription = label },</span>
+<span class="nc" id="L158">        verticalAlignment = Alignment.CenterVertically,</span>
+    ) {
+<span class="nc" id="L160">        Column(modifier = Modifier.weight(1f)) {</span>
+<span class="nc" id="L161">            Text(row.queryName, style = MaterialTheme.typography.bodyMedium)</span>
+<span class="nc" id="L162">            Text(&quot;${row.statusLabel()} (${row.reasonLabel})&quot;, style = MaterialTheme.typography.bodySmall)</span>
+<span class="nc" id="L163">        }</span>
+<span class="nc" id="L164">    }</span>
+<span class="nc bnc" id="L165" title="All 2 branches missed.">}</span>
+
+@Composable
+<span class="nc bnc" id="L168" title="All 26 branches missed.">fun RegenerateEditedListConfirmationDialog(onConfirm: () -&gt; Unit, onDismiss: () -&gt; Unit, modifier: Modifier = Modifier) {</span>
+<span class="nc bnc" id="L169" title="All 2 branches missed.">    AlertDialog(</span>
+<span class="nc" id="L170">        onDismissRequest = onDismiss,</span>
+<span class="nc" id="L171">        modifier = modifier.testTag(&quot;regenerate-confirm-dialog&quot;),</span>
+<span class="nc bnc" id="L172" title="All 8 branches missed.">        title = { Text(&quot;Regenerate shopping list?&quot;) },</span>
+<span class="nc bnc" id="L173" title="All 8 branches missed.">        text = { Text(&quot;Regenerate shopping list from locked recipes? Your current list edits/check-offs may be replaced or need review.&quot;) },</span>
+<span class="nc" id="L174">        confirmButton = {</span>
+<span class="nc bnc" id="L175" title="All 16 branches missed.">            Button(onClick = onConfirm, modifier = Modifier.testTag(&quot;regenerate-confirm-action&quot;)) { Text(&quot;Regenerate and replace&quot;) }</span>
+<span class="nc" id="L176">        },</span>
+<span class="nc" id="L177">        dismissButton = {</span>
+<span class="nc bnc" id="L178" title="All 16 branches missed.">            TextButton(onClick = onDismiss, modifier = Modifier.testTag(&quot;regenerate-cancel-action&quot;)) { Text(&quot;Cancel&quot;) }</span>
+<span class="nc" id="L179">        },</span>
+    )
+<span class="nc bnc" id="L181" title="All 2 branches missed.">}</span>
+
+@Composable
+<span class="nc bnc" id="L184" title="All 32 branches missed.">fun GroceryChecklistRow(item: GroceryItemUiModel, onToggle: () -&gt; Unit, onRemove: () -&gt; Unit, modifier: Modifier = Modifier) {</span>
+<span class="nc bnc" id="L185" title="All 10 branches missed.">    val presence = when (item.availabilityStatus.name) {</span>
+<span class="nc" id="L186">        &quot;PRESENT&quot;, &quot;NOT_FOUND&quot;, &quot;UNKNOWN&quot; -&gt; item.availabilityStatus.name</span>
+<span class="nc" id="L187">        else -&gt; &quot;UNKNOWN&quot;</span>
+    }
+<span class="nc" id="L189">    Row(</span>
+<span class="nc" id="L190">        modifier = modifier.fillMaxWidth().padding(vertical = 4.dp).testTag(&quot;grocery-item-${item.itemId}&quot;)</span>
+<span class="nc bnc" id="L191" title="All 4 branches missed.">            .semantics { contentDescription = &quot;${item.displayText}, ${if (item.checked) &quot;checked&quot; else &quot;unchecked&quot;}, presence $presence&quot; },</span>
+<span class="nc" id="L192">        verticalAlignment = Alignment.CenterVertically,</span>
+    ) {
+<span class="nc bnc" id="L194" title="All 2 branches missed.">        Checkbox(checked = item.checked, onCheckedChange = { onToggle() }, modifier = Modifier.testTag(&quot;grocery-check-${item.itemId}&quot;))</span>
+<span class="nc" id="L195">        Column(modifier = Modifier.weight(1f)) {</span>
+<span class="nc" id="L196">            Text(item.displayText)</span>
+<span class="nc bnc" id="L197" title="All 2 branches missed.">            item.quantityText?.let { Text(it, style = MaterialTheme.typography.bodySmall) }</span>
+<span class="nc bnc" id="L198" title="All 4 branches missed.">            Text(&quot;Presence: $presence${item.availabilityReason?.let { &quot; ($it)&quot; } ?: &quot;&quot;}&quot;, style = MaterialTheme.typography.bodySmall)</span>
+<span class="nc" id="L199">        }</span>
+<span class="nc bnc" id="L200" title="All 10 branches missed.">        TextButton(onClick = onRemove, modifier = Modifier.testTag(&quot;grocery-remove-${item.itemId}&quot;).semantics { contentDescription = &quot;Remove ${item.displayText}&quot; }) { Text(&quot;Remove&quot;) }</span>
+<span class="nc" id="L201">    }</span>
+<span class="nc bnc" id="L202" title="All 2 branches missed.">}</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

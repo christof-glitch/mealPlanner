@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PersistenceModels.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">com.mealplanner.data.persistence</a> &gt; <span class="el_source">PersistenceModels.kt</span></div><h1>PersistenceModels.kt</h1><pre class="source lang-java linenums">package com.mealplanner.data.persistence
+
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+/** Minimal continuity set (NFR1.1/FR11/FR12/BR1.13). */
+@Entity(tableName = &quot;weekly_plan_state&quot;)
+<span class="fc" id="L8">data class WeeklyPlanEntity(</span>
+<span class="fc" id="L9">    @PrimaryKey val planId: String,</span>
+<span class="fc" id="L10">    val weekStartContext: String?,</span>
+<span class="fc" id="L11">    val lockState: String,</span>
+<span class="fc" id="L12">    val activeLockSnapshotId: String?,</span>
+<span class="fc" id="L13">    val staleWarning: String?,</span>
+<span class="fc" id="L14">    val slotsJson: String,</span>
+<span class="fc" id="L15">    val lockedRecipeIdsJson: String,</span>
+<span class="pc" id="L16">    val updatedAtEpochMs: Long,</span>
+)
+
+@Entity(tableName = &quot;lock_snapshot&quot;)
+<span class="fc" id="L20">data class LockSnapshotEntity(</span>
+<span class="fc" id="L21">    @PrimaryKey val snapshotId: String,</span>
+<span class="fc" id="L22">    val planId: String,</span>
+<span class="fc" id="L23">    val createdAtEpochMs: Long,</span>
+<span class="fc" id="L24">    val selectionsJson: String,</span>
+<span class="fc" id="L25">    val planContextJson: String,</span>
+<span class="fc" id="L26">    val sourceCatalogVersion: String?,</span>
+)
+
+@Entity(tableName = &quot;shopping_list&quot;)
+<span class="nc" id="L30">data class ShoppingListEntity(</span>
+<span class="nc" id="L31">    @PrimaryKey val shoppingListId: String,</span>
+<span class="nc" id="L32">    val planId: String,</span>
+<span class="nc" id="L33">    val snapshotId: String?,</span>
+<span class="nc" id="L34">    val itemsJson: String,</span>
+<span class="nc" id="L35">    val statusMetadataJson: String?,</span>
+<span class="nc" id="L36">    val updatedAtEpochMs: Long,</span>
+)
+
+@Entity(tableName = &quot;app_preferences&quot;)
+<span class="nc" id="L40">data class PreferenceEntity(</span>
+<span class="nc" id="L41">    @PrimaryKey val key: String,</span>
+<span class="nc" id="L42">    val valueJson: String,</span>
+<span class="nc" id="L43">    val updatedAtEpochMs: Long,</span>
+)
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>C3SlotSelectionService.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">com.mealplanner.domain.planning</a> &gt; <span class="el_source">C3SlotSelectionService.kt</span></div><h1>C3SlotSelectionService.kt</h1><pre class="source lang-java linenums">package com.mealplanner.domain.planning
+
+import com.mealplanner.domain.model.LockStaleStatus
+import com.mealplanner.domain.model.PlanLockState
+import com.mealplanner.domain.model.SlotSelectionChangeRequest
+import com.mealplanner.domain.model.SlotSelectionChangeResult
+import com.mealplanner.domain.model.SlotSelectionOperation
+import com.mealplanner.domain.model.SlotSelectionResultStatus
+import com.mealplanner.domain.model.SlotStatus
+import com.mealplanner.domain.model.U2Validation
+import com.mealplanner.domain.model.WeeklyPlanState
+
+/**
+ * BR2.7/BR2.8/R-06/ADR-006: target-slot-only changes, stale signaling when lock/list context active.
+ * No auto-regeneration. C3 remains authoritative for WeeklyPlanState.
+ */
+<span class="fc" id="L17">class C3SlotSelectionService {</span>
+    fun apply(plan: WeeklyPlanState, request: SlotSelectionChangeRequest, lockOrListActive: Boolean): SlotSelectionChangeResult {
+<span class="fc" id="L19">        val validation = U2Validation.validateSlotSelectionRequest(request)</span>
+<span class="fc bfc" id="L20" title="All 2 branches covered.">        if (validation != null) {</span>
+<span class="fc" id="L21">            return SlotSelectionChangeResult(</span>
+<span class="fc" id="L22">                status = SlotSelectionResultStatus.REJECTED,</span>
+<span class="fc" id="L23">                weeklyPlanState = plan,</span>
+<span class="fc" id="L24">                changedSlotRef = request.slotRef,</span>
+<span class="fc" id="L25">                rejectionReason = validation.code,</span>
+            )
+        }
+<span class="fc" id="L28">        val slotIndex = plan.slots.indexOfFirst { it.slotRef == request.slotRef }</span>
+<span class="pc bpc" id="L29" title="1 of 2 branches missed.">        if (slotIndex &lt; 0) {</span>
+<span class="nc" id="L30">            return SlotSelectionChangeResult(</span>
+<span class="nc" id="L31">                status = SlotSelectionResultStatus.REJECTED,</span>
+<span class="nc" id="L32">                weeklyPlanState = plan,</span>
+<span class="nc" id="L33">                changedSlotRef = request.slotRef,</span>
+<span class="nc" id="L34">                rejectionReason = &quot;SLOT_NOT_FOUND&quot;,</span>
+            )
+        }
+<span class="pc bpc" id="L37" title="1 of 3 branches missed.">        val newRecipeId = when (request.operation) {</span>
+<span class="fc" id="L38">            SlotSelectionOperation.SET_SELECTION -&gt; request.recipeId</span>
+<span class="nc bnc" id="L39" title="All 2 branches missed.">            SlotSelectionOperation.REPLACE_WITH_ALTERNATIVE -&gt; request.alternativeRecipeId ?: request.recipeId</span>
+<span class="fc" id="L40">            SlotSelectionOperation.CLEAR_SELECTION -&gt; null</span>
+        }
+<span class="fc" id="L42">        val updatedSlots = plan.slots.toMutableList()</span>
+<span class="fc" id="L43">        val current = updatedSlots[slotIndex]</span>
+<span class="pc bpc" id="L44" title="3 of 4 branches missed.">        if (current.assignedRecipeId == newRecipeId &amp;&amp; request.operation != SlotSelectionOperation.CLEAR_SELECTION) {</span>
+<span class="nc" id="L45">            return SlotSelectionChangeResult(SlotSelectionResultStatus.NO_CHANGE, plan, request.slotRef)</span>
+        }
+<span class="fc" id="L47">        updatedSlots[slotIndex] = current.copy(</span>
+<span class="fc" id="L48">            assignedRecipeId = newRecipeId,</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">            slotStatus = if (newRecipeId == null) SlotStatus.EMPTY else SlotStatus.SELECTED,</span>
+<span class="fc" id="L50">            lastUpdatedAt = null,</span>
+        )
+<span class="fc" id="L52">        var updated = plan.copy(slots = updatedSlots)</span>
+<span class="fc" id="L53">        var stale: LockStaleStatus? = null</span>
+<span class="pc bpc" id="L54" title="2 of 6 branches missed.">        if (lockOrListActive || plan.lockState != PlanLockState.UNLOCKED || plan.activeLockSnapshotId != null) {</span>
+<span class="fc" id="L55">            updated = Adr006LockRules.markPlanStale(updated)</span>
+<span class="fc" id="L56">            stale = LockStaleStatus(</span>
+<span class="fc" id="L57">                snapshotId = updated.activeLockSnapshotId,</span>
+<span class="fc" id="L58">                isStale = true,</span>
+<span class="fc" id="L59">                staleWarning = Adr006LockRules.STALE_WARNING_TEXT,</span>
+<span class="fc" id="L60">                staleReason = &quot;SLOT_SELECTION_CHANGED&quot;,</span>
+            )
+        }
+<span class="fc" id="L63">        return SlotSelectionChangeResult(</span>
+<span class="fc" id="L64">            status = SlotSelectionResultStatus.APPLIED,</span>
+<span class="fc" id="L65">            weeklyPlanState = updated,</span>
+<span class="fc" id="L66">            changedSlotRef = request.slotRef,</span>
+<span class="fc" id="L67">            lockStaleStatus = stale,</span>
+        )
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DefaultGroceryExperienceFacade.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">com.mealplanner.ui.facades</a> &gt; <span class="el_source">DefaultGroceryExperienceFacade.kt</span></div><h1>DefaultGroceryExperienceFacade.kt</h1><pre class="source lang-java linenums">package com.mealplanner.ui.facades
+
+import com.mealplanner.domain.export.ExportShoppingListUseCase
+import com.mealplanner.domain.model.ExportMethod
+import com.mealplanner.domain.model.ExportRequest
+import com.mealplanner.domain.model.ExportResult
+import com.mealplanner.domain.model.ExportResultStatus
+import com.mealplanner.domain.model.ShareBoundaryReason
+import com.mealplanner.domain.model.ShoppingListAggregate
+import com.mealplanner.domain.model.ShoppingListExportDto
+import com.mealplanner.domain.model.ShoppingListGenerationOperation
+import com.mealplanner.domain.model.ShoppingListGenerationOutcome
+import com.mealplanner.domain.model.ShoppingListGenerationOutcomeResult
+import com.mealplanner.domain.model.ShoppingListGenerationRequest
+import com.mealplanner.domain.model.ShoppingListItem
+import com.mealplanner.domain.model.effectiveDisplayText
+import com.mealplanner.domain.model.effectiveQuantityText
+import com.mealplanner.domain.planning.Adr006LockRules
+import com.mealplanner.domain.shopping.ShoppingListRules
+import com.mealplanner.ui.state.GroceryDomainSnapshot
+import com.mealplanner.ui.state.GroceryIntent
+import com.mealplanner.ui.state.GroceryItemUiModel
+import com.mealplanner.ui.state.GroceryScreenState
+
+/**
+ * Thin grocery orchestration (ADR-005, ADR-006/R-01-R-03, BR3.8).
+ * Local editable UI state = current edited list for display/export; C4/domain own generation/merge rules.
+ */
+<span class="fc" id="L29">class DefaultGroceryExperienceFacade(</span>
+<span class="fc" id="L30">    private val exportUseCase: ExportShoppingListUseCase? = null,</span>
+<span class="fc" id="L31">    private val prepareExport: ((ShoppingListAggregate) -&gt; ShoppingListExportDto)? = null,</span>
+<span class="fc" id="L32">    private val generate: (() -&gt; ShoppingListGenerationOutcomeResult)? = null,</span>
+<span class="fc" id="L33">    private val regenerate: ((confirm: Boolean) -&gt; ShoppingListGenerationOutcomeResult)? = null,</span>
+<span class="fc" id="L34">) : GroceryExperienceFacade {</span>
+    private var recipesLocked: Boolean = false
+<span class="fc" id="L36">    private var lockSummary: String = &quot;Recipes not locked&quot;</span>
+    private var currentAggregate: ShoppingListAggregate? = null
+    private var showRegenerateConfirmation: Boolean = false
+    private var exportMessage: String? = null
+    private var exportInstructions: String? = null
+
+<span class="fc" id="L42">    override fun currentState(): GroceryScreenState = toState()</span>
+
+    override fun refresh(snapshot: GroceryDomainSnapshot): GroceryScreenState {
+<span class="fc" id="L45">        recipesLocked = snapshot.recipesLocked</span>
+<span class="pc bpc" id="L46" title="3 of 4 branches missed.">        lockSummary = snapshot.lockSummary.ifBlank { if (recipesLocked) &quot;Recipes locked&quot; else &quot;Recipes not locked&quot; }</span>
+<span class="fc bfc" id="L47" title="All 2 branches covered.">        currentAggregate = snapshot.currentEditedList ?: snapshot.aggregate</span>
+<span class="fc" id="L48">        showRegenerateConfirmation = false</span>
+<span class="fc" id="L49">        return toState()</span>
+    }
+
+    override fun handle(intent: GroceryIntent): GroceryScreenState {
+<span class="fc" id="L53">        when (intent) {</span>
+<span class="fc bfc" id="L54" title="All 2 branches covered.">            GroceryIntent.Generate -&gt; handleGenerate()</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">            GroceryIntent.RequestRegenerate -&gt; handleRequestRegenerate()</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">            GroceryIntent.ConfirmRegenerateAndReplace -&gt; handleRegenerateConfirmed()</span>
+<span class="pc bpc" id="L57" title="1 of 2 branches missed.">            GroceryIntent.CancelRegenerate -&gt; showRegenerateConfirmation = false</span>
+<span class="nc bnc" id="L58" title="All 2 branches missed.">            is GroceryIntent.ToggleChecked -&gt; toggle(intent.itemId)</span>
+<span class="nc bnc" id="L59" title="All 2 branches missed.">            is GroceryIntent.EditItem -&gt; edit(intent.itemId, intent.displayText, intent.quantityText)</span>
+<span class="nc bnc" id="L60" title="All 2 branches missed.">            is GroceryIntent.AddItem -&gt; add(intent.displayText, intent.quantityText)</span>
+<span class="nc bnc" id="L61" title="All 2 branches missed.">            is GroceryIntent.RemoveItem -&gt; remove(intent.itemId)</span>
+<span class="nc bnc" id="L62" title="All 4 branches missed.">            GroceryIntent.ExportOfficialSostoslista, GroceryIntent.ShareFallback, GroceryIntent.CopyTextFallback -&gt; {</span>
+<span class="nc" id="L63">                val result = exportCurrentEditedList(intent)</span>
+<span class="nc bnc" id="L64" title="All 2 branches missed.">                exportMessage = result.message ?: result.status.name</span>
+<span class="nc" id="L65">                exportInstructions = result.instructions</span>
+            }
+        }
+<span class="fc" id="L68">        return toState()</span>
+    }
+
+    override fun exportCurrentEditedList(intent: GroceryIntent): ExportResult {
+<span class="pc bpc" id="L72" title="1 of 2 branches missed.">        val aggregate = currentAggregate ?: return ExportResult(</span>
+<span class="nc" id="L73">            status = ExportResultStatus.FAILED_MAPPED,</span>
+<span class="nc" id="L74">            methodUsed = ExportMethod.COPY_TEXT,</span>
+<span class="nc" id="L75">            instructions = &quot;No shopping list available to export.&quot;,</span>
+<span class="nc" id="L76">            fallbackReason = ShareBoundaryReason(&quot;NO_LIST&quot;, &quot;No current edited shopping list.&quot;, &quot;Generate a shopping list first.&quot;),</span>
+        )
+<span class="pc bpc" id="L78" title="1 of 2 branches missed.">        val payload = (prepareExport ?: ::defaultPrepareExport).invoke(aggregate)</span>
+<span class="fc" id="L79">        val preferred = when (intent) {</span>
+<span class="fc bfc" id="L80" title="All 2 branches covered.">            GroceryIntent.ExportOfficialSostoslista -&gt; ExportMethod.S_OSTOSLISTA_OFFICIAL_IF_AVAILABLE</span>
+<span class="pc bpc" id="L81" title="1 of 2 branches missed.">            GroceryIntent.CopyTextFallback -&gt; ExportMethod.COPY_TEXT</span>
+<span class="fc" id="L82">            else -&gt; ExportMethod.SHARE_SHEET</span>
+        }
+<span class="fc" id="L84">        val request = ExportRequest(</span>
+<span class="fc" id="L85">            shoppingListId = aggregate.shoppingListId,</span>
+<span class="fc" id="L86">            payload = payload,</span>
+<span class="fc" id="L87">            preferredMethod = preferred,</span>
+<span class="fc" id="L88">            title = &quot;Shopping list&quot;,</span>
+        )
+<span class="pc bpc" id="L90" title="1 of 4 branches missed.">        return exportUseCase?.export(request) ?: ExportResult(</span>
+<span class="fc" id="L91">            status = ExportResultStatus.FALLBACK_USED,</span>
+<span class="fc" id="L92">            methodUsed = preferred,</span>
+<span class="fc" id="L93">            instructions = &quot;Use share or copy the current edited shopping list.&quot;,</span>
+<span class="fc" id="L94">            payload = payload,</span>
+        )
+    }
+
+    private fun handleGenerate() {
+<span class="fc bfc" id="L99" title="All 2 branches covered.">        if (!recipesLocked) {</span>
+<span class="fc" id="L100">            lockSummary = GroceryScreenState.LOCK_REQUIRED_MESSAGE</span>
+<span class="fc" id="L101">            return</span>
+        }
+<span class="pc bpc" id="L103" title="2 of 4 branches missed.">        val result = generate?.invoke() ?: return</span>
+<span class="pc bpc" id="L104" title="3 of 4 branches missed.">        if (result.status == ShoppingListGenerationOutcome.GENERATED || result.status == ShoppingListGenerationOutcome.PARTIAL) {</span>
+<span class="pc bpc" id="L105" title="1 of 2 branches missed.">            currentAggregate = result.shoppingList ?: currentAggregate</span>
+        }
+<span class="fc" id="L107">    }</span>
+
+    private fun handleRequestRegenerate() {
+<span class="pc bpc" id="L110" title="1 of 2 branches missed.">        val agg = currentAggregate ?: return</span>
+<span class="pc bpc" id="L111" title="1 of 2 branches missed.">        if (agg.hasUserEdits) {</span>
+<span class="fc" id="L112">            showRegenerateConfirmation = true // explicit confirmation path, no silent replacement</span>
+<span class="fc" id="L113">            return</span>
+        }
+<span class="nc bnc" id="L115" title="All 2 branches missed.">        applyRegenerateResult(regenerate?.invoke(false))</span>
+<span class="nc" id="L116">    }</span>
+
+    private fun handleRegenerateConfirmed() {
+<span class="pc bpc" id="L119" title="2 of 4 branches missed.">        val result = regenerate?.invoke(true) ?: return</span>
+<span class="pc bpc" id="L120" title="1 of 2 branches missed.">        if (result.status == ShoppingListGenerationOutcome.CONFIRMATION_REQUIRED) {</span>
+<span class="nc" id="L121">            showRegenerateConfirmation = true</span>
+<span class="nc" id="L122">            return</span>
+        }
+<span class="fc" id="L124">        showRegenerateConfirmation = false</span>
+<span class="fc" id="L125">        applyRegenerateResult(result)</span>
+<span class="fc" id="L126">    }</span>
+
+    private fun applyRegenerateResult(result: ShoppingListGenerationOutcomeResult?) {
+<span class="pc bpc" id="L129" title="1 of 2 branches missed.">        if (result == null) return</span>
+<span class="pc bpc" id="L130" title="3 of 4 branches missed.">        if (result.status == ShoppingListGenerationOutcome.GENERATED || result.status == ShoppingListGenerationOutcome.PARTIAL) {</span>
+<span class="pc bpc" id="L131" title="1 of 2 branches missed.">            currentAggregate = result.shoppingList ?: currentAggregate</span>
+<span class="fc" id="L132">            showRegenerateConfirmation = false</span>
+        }
+<span class="fc" id="L134">    }</span>
+
+    private fun toggle(itemId: String) {
+<span class="nc bnc" id="L137" title="All 4 branches missed.">        mutateItems { items -&gt; items.map { if (it.itemId == itemId) it.copy(checked = !it.checked) else it } }</span>
+<span class="nc" id="L138">    }</span>
+
+    private fun edit(itemId: String, displayText: String, quantityText: String?) {
+<span class="nc bnc" id="L141" title="All 2 branches missed.">        mutateItems { items -&gt; items.map { if (it.itemId == itemId) it.copy(displayName = displayText, displayText = displayText, quantityText = quantityText, amountText = quantityText, manuallyEdited = true, userEdited = true) else it } }</span>
+<span class="nc" id="L142">    }</span>
+
+    private fun add(displayText: String, quantityText: String?) {
+<span class="nc" id="L145">        mutateItems { items -&gt;</span>
+<span class="nc" id="L146">            val id = &quot;manual-${items.size + 1}-${displayText.hashCode()}&quot;</span>
+<span class="nc" id="L147">            items + ShoppingListItem(itemId = id, displayName = displayText, displayText = displayText, quantityText = quantityText, amountText = quantityText, manuallyEdited = true, userEdited = true, addedManually = true)</span>
+        }
+<span class="nc" id="L149">    }</span>
+
+    private fun remove(itemId: String) {
+<span class="nc" id="L152">        mutateItems { items -&gt; items.filterNot { it.itemId == itemId } }</span>
+<span class="nc" id="L153">    }</span>
+
+    private fun mutateItems(transform: (List&lt;ShoppingListItem&gt;) -&gt; List&lt;ShoppingListItem&gt;) {
+<span class="nc bnc" id="L156" title="All 2 branches missed.">        val agg = currentAggregate ?: return</span>
+<span class="nc" id="L157">        currentAggregate = agg.copy(items = transform(agg.items), hasUserEdits = true)</span>
+<span class="nc" id="L158">    }</span>
+
+    private fun toState(): GroceryScreenState {
+<span class="fc" id="L161">        val agg = currentAggregate</span>
+<span class="pc bpc" id="L162" title="1 of 6 branches missed.">        val stale = agg?.staleStatus?.isStale == true</span>
+<span class="fc" id="L163">        val staleWarning = when {</span>
+<span class="fc bfc" id="L164" title="All 2 branches covered.">            !stale -&gt; null</span>
+<span class="pc bpc" id="L165" title="7 of 14 branches missed.">            !agg?.staleStatus?.staleWarning.isNullOrBlank() -&gt; agg?.staleStatus?.staleWarning</span>
+<span class="nc" id="L166">            else -&gt; Adr006LockRules.STALE_WARNING_TEXT</span>
+        }
+<span class="pc bpc" id="L168" title="1 of 6 branches missed.">        val items = agg?.items?.filterNot { it.removed }.orEmpty().map {</span>
+<span class="fc" id="L169">            GroceryItemUiModel(</span>
+<span class="fc" id="L170">                itemId = it.itemId,</span>
+<span class="fc" id="L171">                displayText = it.effectiveDisplayText(),</span>
+<span class="fc" id="L172">                quantityText = it.effectiveQuantityText(),</span>
+<span class="fc" id="L173">                checked = it.checked,</span>
+<span class="fc" id="L174">                availabilityStatus = it.availabilityStatus,</span>
+<span class="fc" id="L175">                availabilityReason = it.availabilityReason,</span>
+<span class="fc" id="L176">            )</span>
+        }
+<span class="fc" id="L178">        return GroceryScreenState(</span>
+<span class="fc" id="L179">            recipesLocked = recipesLocked,</span>
+<span class="pc bpc" id="L180" title="1 of 4 branches missed.">            lockSummary = if (!recipesLocked) lockSummary.ifBlank { GroceryScreenState.LOCK_REQUIRED_MESSAGE } else lockSummary,</span>
+<span class="fc bfc" id="L181" title="All 4 branches covered.">            canGenerate = recipesLocked &amp;&amp; agg == null,</span>
+<span class="fc bfc" id="L182" title="All 2 branches covered.">            hasList = agg != null,</span>
+<span class="fc bfc" id="L183" title="All 2 branches covered.">            shoppingListId = agg?.shoppingListId,</span>
+<span class="fc bfc" id="L184" title="All 4 branches covered.">            hasUserEdits = agg?.hasUserEdits == true,</span>
+<span class="fc" id="L185">            isStale = stale,</span>
+<span class="fc" id="L186">            staleWarningText = staleWarning,</span>
+<span class="fc" id="L187">            items = items,</span>
+<span class="fc bfc" id="L188" title="All 2 branches covered.">            selectedStore = agg?.selectedStoreRef,</span>
+<span class="fc" id="L189">            exportMessage = exportMessage,</span>
+<span class="fc" id="L190">            exportInstructions = exportInstructions,</span>
+<span class="fc" id="L191">            showRegenerateConfirmation = showRegenerateConfirmation,</span>
+        )
+    }
+
+<span class="nc" id="L195">    private fun defaultPrepareExport(aggregate: ShoppingListAggregate): ShoppingListExportDto = ShoppingListExportDto(</span>
+<span class="nc" id="L196">        shoppingListId = aggregate.shoppingListId,</span>
+<span class="nc" id="L197">        snapshotId = aggregate.snapshotId,</span>
+<span class="nc" id="L198">        items = aggregate.items.filterNot { it.removed }.map {</span>
+<span class="nc" id="L199">            com.mealplanner.domain.model.ExportLineItem(</span>
+<span class="nc" id="L200">                displayText = it.effectiveDisplayText(),</span>
+<span class="nc" id="L201">                checked = it.checked,</span>
+<span class="nc" id="L202">                quantityText = it.effectiveQuantityText(),</span>
+<span class="nc" id="L203">                availabilityStatus = it.availabilityStatus.name,</span>
+<span class="nc" id="L204">                availabilityReason = it.availabilityReason,</span>
+<span class="nc" id="L205">                itemId = it.itemId,</span>
+<span class="nc" id="L206">            )</span>
+        },
+<span class="nc" id="L208">        staleWarning = aggregate.staleStatus.staleWarning,</span>
+<span class="nc" id="L209">    )</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

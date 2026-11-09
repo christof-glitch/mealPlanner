@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NutritionCueCalculator.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">com.mealplanner.domain.recipe</a> &gt; <span class="el_source">NutritionCueCalculator.kt</span></div><h1>NutritionCueCalculator.kt</h1><pre class="source lang-java linenums">package com.mealplanner.domain.recipe
+
+import com.mealplanner.domain.model.NutritionAvailability
+import com.mealplanner.domain.model.NutritionCueStatus
+import com.mealplanner.domain.model.WeeklyNutritionBalanceCue
+import com.mealplanner.domain.model.WeeklyNutritionBalanceCueRequest
+
+/**
+ * BR2.5: weekly non-medical nutrition cue computed only from request inputs.
+ * Never reads WeeklyPlanState (R-06/BR2.7). No medical targets/dosing/diagnoses.
+ */
+object NutritionCueCalculator {
+    fun calculate(request: WeeklyNutritionBalanceCueRequest): WeeklyNutritionBalanceCue {
+<span class="fc" id="L14">        val selected = request.selectedRecipeRefs</span>
+<span class="pc bpc" id="L15" title="1 of 2 branches missed.">        val profiles = request.nutritionProfilesByRecipeId.orEmpty()</span>
+<span class="fc" id="L16">        val usable = selected.mapNotNull { id -&gt;</span>
+<span class="fc bfc" id="L17" title="All 2 branches covered.">            val p = profiles[id] ?: return@mapNotNull null</span>
+<span class="fc bfc" id="L18" title="All 3 branches covered.">            when (p.nutritionAvailability) {</span>
+<span class="fc" id="L19">                NutritionAvailability.AVAILABLE -&gt; p</span>
+<span class="pc bpc" id="L20" title="1 of 2 branches missed.">                NutritionAvailability.PARTIAL -&gt; if (request.includePartialProfiles) p else null</span>
+<span class="fc" id="L21">                NutritionAvailability.UNAVAILABLE -&gt; null</span>
+<span class="fc" id="L22">            }</span>
+        }
+<span class="fc" id="L24">        val excluded = selected.size - usable.size</span>
+<span class="fc" id="L25">        val kcalValues = usable.mapNotNull { it.energyKcal }</span>
+<span class="fc" id="L26">        val status = when {</span>
+<span class="fc bfc" id="L27" title="All 2 branches covered.">            usable.isEmpty() -&gt; NutritionCueStatus.UNAVAILABLE</span>
+<span class="pc bpc" id="L28" title="1 of 2 branches missed.">            excluded &gt; 0 -&gt; NutritionCueStatus.PARTIAL</span>
+<span class="nc" id="L29">            else -&gt; NutritionCueStatus.AVAILABLE</span>
+        }
+<span class="pc bpc" id="L31" title="1 of 3 branches missed.">        val explanation = when (status) {</span>
+<span class="fc" id="L32">            NutritionCueStatus.UNAVAILABLE -&gt; &quot;NUTRITION_CUE_UNAVAILABLE_EXCLUDES_MISSING&quot;</span>
+<span class="fc" id="L33">            NutritionCueStatus.PARTIAL -&gt; &quot;NUTRITION_CUE_PARTIAL_EXCLUDES_MISSING&quot;</span>
+<span class="nc" id="L34">            NutritionCueStatus.AVAILABLE -&gt; &quot;NUTRITION_CUE_AVAILABLE_NON_MEDICAL&quot;</span>
+        }
+<span class="fc" id="L36">        return WeeklyNutritionBalanceCue(</span>
+<span class="fc" id="L37">            status = status,</span>
+<span class="fc" id="L38">            selectedRecipeCount = selected.size,</span>
+<span class="fc" id="L39">            recipesWithNutritionCount = usable.size,</span>
+<span class="fc bfc" id="L40" title="All 4 branches covered.">            averageEnergyKcal = if (kcalValues.isNotEmpty()) kcalValues.average() else null,</span>
+<span class="fc" id="L41">            tagCounts = null,</span>
+<span class="fc" id="L42">            excludedFromCalculationCount = excluded,</span>
+<span class="fc" id="L43">            explanationKey = explanation,</span>
+        )
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

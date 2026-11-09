@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>A1RecipeSourceAdapter.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">com.mealplanner.adapters</a> &gt; <span class="el_source">A1RecipeSourceAdapter.kt</span></div><h1>A1RecipeSourceAdapter.kt</h1><pre class="source lang-java linenums">package com.mealplanner.adapters
+
+import com.mealplanner.diagnostics.DiagnosticCategory
+import com.mealplanner.diagnostics.DiagnosticsSink
+import com.mealplanner.diagnostics.NoOpDiagnosticsSink
+import com.mealplanner.diagnostics.PrivacySafeDiagnostics
+import com.mealplanner.domain.model.A1InvestigationOutcome
+import com.mealplanner.domain.model.ExcludedRecipeCandidate
+import com.mealplanner.domain.model.FallbackReason
+import com.mealplanner.domain.model.Freshness
+import com.mealplanner.domain.model.IngredientLine
+import com.mealplanner.domain.model.RecipeAdapterStatus
+import com.mealplanner.domain.model.RecipeCandidateResult
+import com.mealplanner.domain.model.RecipeDataCompleteness
+import com.mealplanner.domain.model.RecipeDetail
+import com.mealplanner.domain.model.RecipeId
+import com.mealplanner.domain.model.RecipeQueryStatus
+import com.mealplanner.domain.model.RecipeSourceAdapterRequest
+import com.mealplanner.domain.model.RecipeSourceAdapterResult
+import com.mealplanner.domain.model.RecipeSourceQueryType
+import com.mealplanner.domain.model.RecipeSourceStatus
+import com.mealplanner.domain.model.RecipeSourceType
+import com.mealplanner.domain.model.RecipeSummary
+import com.mealplanner.domain.model.U2Validation
+
+/**
+ * Live Sydänmerkki execution gate (FQ1=A). Defaults must be false/false until OQ1 approved.
+ * Injected/configured explicitly; never a silent toggle.
+ */
+interface A1LiveAccessGate {
+    val allowLiveSource: Boolean
+    val oq1Approved: Boolean
+}
+
+object DefaultA1LiveAccessGate : A1LiveAccessGate {
+<span class="nc" id="L36">    override val allowLiveSource: Boolean = false</span>
+<span class="nc" id="L37">    override val oq1Approved: Boolean = false</span>
+}
+
+<span class="fc" id="L40">data class A1LiveClientResult(</span>
+<span class="fc" id="L41">    val status: RecipeAdapterStatus,</span>
+<span class="fc" id="L42">    val recipes: List&lt;RecipeDetail&gt; = emptyList(),</span>
+<span class="fc" id="L43">    val summaries: List&lt;RecipeSummary&gt; = emptyList(),</span>
+<span class="fc" id="L44">    val fallbackReason: FallbackReason? = null,</span>
+<span class="fc" id="L45">    val partialDataUsable: Boolean? = null,</span>
+<span class="fc" id="L46">    val investigationOutcome: A1InvestigationOutcome? = null,</span>
+<span class="fc" id="L47">)</span>
+
+/** Outbound live client abstraction. No live network in unit tests; production wiring lives outside U2 domain scope. */
+interface A1LiveRecipeClient {
+    suspend fun execute(request: RecipeSourceAdapterRequest): A1LiveClientResult
+}
+
+/** Mandatory curated/imported Sydänmerkki-aligned fallback. */
+interface CuratedRecipeFallbackSource {
+    suspend fun find(request: RecipeSourceAdapterRequest): List&lt;RecipeDetail&gt;
+    fun sourceStatus(): RecipeSourceStatus
+}
+
+/**
+ * U2 A1 adapter boundary (BR2.1, NFR2.1, NFR2.4, NFR3.1-NFR3.3, NFR3.6, NFR5.2).
+ * Gate -&gt; bounded live attempt (optional retries, idempotent only) -&gt; defensive mapping -&gt; curated fallback.
+ * Default-off live execution; no scraping/terms assumptions; no fabrication.
+ */
+<span class="fc" id="L65">class RecipeSourceAdapterBoundary(</span>
+<span class="fc" id="L66">    private val liveClient: A1LiveRecipeClient? = null,</span>
+<span class="fc" id="L67">    private val fallbackSource: CuratedRecipeFallbackSource,</span>
+<span class="fc" id="L68">    private val gate: A1LiveAccessGate = DefaultA1LiveAccessGate,</span>
+<span class="fc" id="L69">    private val diagnostics: DiagnosticsSink = NoOpDiagnosticsSink(),</span>
+<span class="fc" id="L70">    private val idempotentRetryCount: Int = 0,</span>
+<span class="fc" id="L71">) : RecipeSourceBoundary {</span>
+
+<span class="fc" id="L73">    private val fallbackStatus get() = fallbackSource.sourceStatus()</span>
+
+<span class="fc" id="L75">    override suspend fun execute(request: RecipeSourceAdapterRequest): RecipeSourceAdapterResult {</span>
+<span class="fc" id="L76">        val validation = U2Validation.validateAdapterRequest(request)</span>
+<span class="pc bpc" id="L77" title="1 of 2 branches missed.">        if (validation != null) {</span>
+<span class="nc" id="L78">            record(&quot;a1.request.invalid&quot;, request, RecipeAdapterStatus.unavailable)</span>
+<span class="nc" id="L79">            return unavailable(validation.code, validation.message, A1InvestigationOutcome.unknown)</span>
+        }
+<span class="fc bfc" id="L81" title="All 2 branches covered.">        if (!canUseLive(request)) {</span>
+<span class="fc" id="L82">            record(&quot;a1.live.gated_off&quot;, request, RecipeAdapterStatus.fallback_used)</span>
+<span class="fc" id="L83">            return fallbackResult(request, &quot;LIVE_DISABLED_DEFAULT&quot;, &quot;Live recipe source disabled by default until OQ1 is approved and allowed.&quot;, A1InvestigationOutcome.not_feasible_or_allowed)</span>
+        }
+<span class="pc bpc" id="L85" title="1 of 2 branches missed.">        val client = liveClient ?: return fallbackResult(request, &quot;LIVE_CLIENT_UNAVAILABLE&quot;, &quot;Live recipe client is not configured.&quot;, A1InvestigationOutcome.not_feasible_or_allowed)</span>
+<span class="pc" id="L86">        val live = executeLiveWithRetries(client, request)</span>
+<span class="fc" id="L87">        return mapLiveOutcome(request, live)</span>
+    }
+
+    private fun canUseLive(request: RecipeSourceAdapterRequest): Boolean =
+<span class="fc bfc" id="L91" title="All 6 branches covered.">        request.allowLiveSource &amp;&amp; gate.allowLiveSource &amp;&amp; gate.oq1Approved</span>
+
+<span class="fc" id="L93">    private suspend fun executeLiveWithRetries(client: A1LiveRecipeClient, request: RecipeSourceAdapterRequest): A1LiveClientResult {</span>
+<span class="fc" id="L94">        val maxAttempts = (idempotentRetryCount.coerceIn(0, 2)) + 1</span>
+<span class="fc" id="L95">        var last = A1LiveClientResult(RecipeAdapterStatus.unavailable)</span>
+<span class="pc bpc" id="L96" title="1 of 2 branches missed.">        repeat(maxAttempts) { attempt -&gt;</span>
+<span class="fc" id="L97">            last = safeLiveCall(client, request)</span>
+<span class="pc bpc" id="L98" title="1 of 6 branches missed.">            if (last.status == RecipeAdapterStatus.ok || last.status == RecipeAdapterStatus.restricted || last.status == RecipeAdapterStatus.not_supported) return last</span>
+<span class="pc bpc" id="L99" title="1 of 4 branches missed.">            if (!isRetryable(last.status) || attempt == maxAttempts - 1) return last</span>
+<span class="nc" id="L100">        }</span>
+<span class="nc" id="L101">        return last</span>
+    }
+
+    private fun isRetryable(status: RecipeAdapterStatus): Boolean =
+<span class="pc bpc" id="L105" title="1 of 4 branches missed.">        status == RecipeAdapterStatus.timeout || status == RecipeAdapterStatus.unavailable</span>
+
+<span class="fc" id="L107">    private suspend fun safeLiveCall(client: A1LiveRecipeClient, request: RecipeSourceAdapterRequest): A1LiveClientResult = try {</span>
+<span class="fc" id="L108">        client.execute(request)</span>
+<span class="nc" id="L109">    } catch (_: Throwable) {</span>
+        // NFR3.3: never expose raw exceptions across boundary.
+<span class="pc" id="L111">        A1LiveClientResult(RecipeAdapterStatus.parse_error_mapped, fallbackReason = FallbackReason(&quot;LIVE_EXECUTION_MAPPED_ERROR&quot;, &quot;Live source execution could not be safely completed.&quot;))</span>
+<span class="fc" id="L112">    }</span>
+
+<span class="fc" id="L114">    private suspend fun mapLiveOutcome(request: RecipeSourceAdapterRequest, live: A1LiveClientResult): RecipeSourceAdapterResult {</span>
+<span class="pc bpc" id="L115" title="4 of 8 branches missed.">        val safeRecipes = live.recipes.filter { it.title.isNotBlank() &amp;&amp; it.recipeId.isNotBlank() }</span>
+<span class="pc bpc" id="L116" title="1 of 4 branches missed.">        return when (live.status) {</span>
+            RecipeAdapterStatus.ok -&gt; {
+<span class="pc bpc" id="L118" title="13 of 14 branches missed.">                if (safeRecipes.isEmpty() &amp;&amp; live.summaries.isEmpty()) fallbackResult(request, live.fallbackReason?.code ?: &quot;LIVE_EMPTY&quot;, live.fallbackReason?.message ?: &quot;Live source returned no usable data.&quot;, live.investigationOutcome ?: A1InvestigationOutcome.feasible_limited)</span>
+                else {
+<span class="fc" id="L120">                    record(&quot;a1.live.ok&quot;, request, RecipeAdapterStatus.ok)</span>
+<span class="fc" id="L121">                    RecipeSourceAdapterResult(</span>
+<span class="fc" id="L122">                        status = RecipeAdapterStatus.ok,</span>
+<span class="pc bpc" id="L123" title="1 of 2 branches missed.">                        investigationOutcome = live.investigationOutcome ?: A1InvestigationOutcome.feasible_used,</span>
+<span class="pc bpc" id="L124" title="1 of 2 branches missed.">                        recipes = safeRecipes.ifEmpty { null },</span>
+<span class="pc bpc" id="L125" title="1 of 2 branches missed.">                        summaries = live.summaries.ifEmpty { null },</span>
+<span class="fc" id="L126">                        sourceStatus = liveSourceStatus(fallbackUsed = false),</span>
+<span class="fc" id="L127">                        partialDataUsable = live.partialDataUsable,</span>
+                    )
+                }
+            }
+            RecipeAdapterStatus.parse_error_mapped -&gt; {
+<span class="pc bpc" id="L132" title="3 of 6 branches missed.">                if (live.partialDataUsable == true &amp;&amp; safeRecipes.isNotEmpty()) {</span>
+<span class="fc" id="L133">                    val fallback = fallbackSource.find(request).filter { fb -&gt; safeRecipes.none { it.recipeId == fb.recipeId } }</span>
+<span class="fc" id="L134">                    val merged = safeRecipes + fallback</span>
+<span class="pc bpc" id="L135" title="2 of 4 branches missed.">                    if (fallback.isNotEmpty()) {</span>
+<span class="fc" id="L136">                        RecipeSourceAdapterResult(</span>
+<span class="fc" id="L137">                            status = RecipeAdapterStatus.fallback_used,</span>
+<span class="pc bpc" id="L138" title="1 of 2 branches missed.">                            investigationOutcome = live.investigationOutcome ?: A1InvestigationOutcome.feasible_limited,</span>
+<span class="fc" id="L139">                            recipes = merged,</span>
+<span class="fc" id="L140">                            sourceStatus = fallbackStatus,</span>
+<span class="pc bpc" id="L141" title="1 of 2 branches missed.">                            fallbackReason = live.fallbackReason ?: FallbackReason(&quot;PARSE_ERROR_MAPPED_FALLBACK_FILLED&quot;, &quot;Partial live data used; curated fallback filled missing records.&quot;),</span>
+<span class="fc" id="L142">                            partialDataUsable = true,</span>
+                        )
+                    } else {
+<span class="nc" id="L145">                        RecipeSourceAdapterResult(</span>
+<span class="nc" id="L146">                            status = RecipeAdapterStatus.parse_error_mapped,</span>
+<span class="nc bnc" id="L147" title="All 2 branches missed.">                            investigationOutcome = live.investigationOutcome ?: A1InvestigationOutcome.feasible_limited,</span>
+<span class="nc" id="L148">                            recipes = merged,</span>
+<span class="nc" id="L149">                            sourceStatus = liveSourceStatus(fallbackUsed = false),</span>
+<span class="nc bnc" id="L150" title="All 2 branches missed.">                            fallbackReason = live.fallbackReason ?: FallbackReason(&quot;PARSE_ERROR_MAPPED_PARTIAL&quot;, &quot;Only partial live data could be safely mapped.&quot;),</span>
+<span class="nc" id="L151">                            partialDataUsable = true,</span>
+                        )
+                    }
+<span class="nc bnc" id="L154" title="All 10 branches missed.">                } else fallbackResult(request, live.fallbackReason?.code ?: &quot;PARSE_ERROR_MAPPED&quot;, live.fallbackReason?.message ?: &quot;Live data could not be safely mapped.&quot;, live.investigationOutcome ?: A1InvestigationOutcome.feasible_limited)</span>
+            }
+            RecipeAdapterStatus.restricted, RecipeAdapterStatus.not_supported, RecipeAdapterStatus.timeout, RecipeAdapterStatus.unavailable -&gt; {
+<span class="fc" id="L157">                val fallback = fallbackSource.find(request)</span>
+<span class="pc bpc" id="L158" title="7 of 14 branches missed.">                if (fallback.isNotEmpty()) fallbackResult(request, live.fallbackReason?.code ?: live.status.name.uppercase(), live.fallbackReason?.message ?: &quot;Live source unavailable; curated fallback used.&quot;, live.investigationOutcome ?: A1InvestigationOutcome.feasible_limited, fallback)</span>
+<span class="pc bpc" id="L159" title="7 of 10 branches missed.">                else unavailable(live.fallbackReason?.code ?: live.status.name.uppercase(), live.fallbackReason?.message ?: &quot;Live source unavailable and no fallback data.&quot;, live.investigationOutcome ?: A1InvestigationOutcome.feasible_limited)</span>
+            }
+<span class="nc bnc" id="L161" title="All 8 branches missed.">            RecipeAdapterStatus.fallback_used -&gt; fallbackResult(request, live.fallbackReason?.code ?: &quot;FALLBACK_USED&quot;, live.fallbackReason?.message, live.investigationOutcome ?: A1InvestigationOutcome.unknown)</span>
+        }
+<span class="pc" id="L163">    }</span>
+
+<span class="fc" id="L165">    private suspend fun fallbackResult(request: RecipeSourceAdapterRequest, code: String, message: String?, outcome: A1InvestigationOutcome, preloaded: List&lt;RecipeDetail&gt;? = null): RecipeSourceAdapterResult {</span>
+<span class="fc bfc" id="L166" title="All 2 branches covered.">        val recipes = preloaded ?: fallbackSource.find(request)</span>
+<span class="fc bfc" id="L167" title="All 2 branches covered.">        record(&quot;a1.fallback&quot;, request, if (recipes.isEmpty()) RecipeAdapterStatus.unavailable else RecipeAdapterStatus.fallback_used)</span>
+<span class="pc bpc" id="L168" title="1 of 4 branches missed.">        return if (recipes.isEmpty()) unavailable(code, message ?: &quot;No curated fallback data available.&quot;, outcome)</span>
+<span class="fc" id="L169">        else RecipeSourceAdapterResult(</span>
+<span class="fc" id="L170">            status = RecipeAdapterStatus.fallback_used,</span>
+<span class="fc" id="L171">            investigationOutcome = outcome,</span>
+<span class="fc" id="L172">            recipes = recipes,</span>
+<span class="fc" id="L173">            summaries = recipes.map { it.summary },</span>
+<span class="fc" id="L174">            sourceStatus = fallbackStatus,</span>
+<span class="fc" id="L175">            fallbackReason = FallbackReason(code, message),</span>
+        )
+    }
+
+    private fun unavailable(code: String, message: String?, outcome: A1InvestigationOutcome): RecipeSourceAdapterResult {
+<span class="fc" id="L180">        val unavailableStatus = RecipeSourceStatus(RecipeSourceType.NONE, Freshness.UNKNOWN, fallbackUsed = false, fallbackReason = FallbackReason(code, message))</span>
+<span class="fc" id="L181">        return RecipeSourceAdapterResult(</span>
+<span class="fc" id="L182">            status = RecipeAdapterStatus.unavailable,</span>
+<span class="fc" id="L183">            investigationOutcome = outcome,</span>
+<span class="fc" id="L184">            sourceStatus = unavailableStatus,</span>
+<span class="fc" id="L185">            fallbackReason = FallbackReason(code, message),</span>
+<span class="fc" id="L186">            userSafeMessageKey = &quot;RECIPE_SOURCE_UNAVAILABLE&quot;,</span>
+        )
+    }
+
+<span class="fc" id="L190">    private fun liveSourceStatus(fallbackUsed: Boolean) = RecipeSourceStatus(</span>
+<span class="fc" id="L191">        sourceType = RecipeSourceType.SYDANMERKKI,</span>
+<span class="fc" id="L192">        freshness = Freshness.CURRENT,</span>
+<span class="fc" id="L193">        fallbackUsed = fallbackUsed,</span>
+<span class="fc" id="L194">    )</span>
+
+    // --- U1-compatible baseline methods ---
+<span class="nc" id="L197">    override suspend fun findCandidates(query: Map&lt;String, String&gt;): RecipeCandidateResult {</span>
+<span class="nc" id="L198">        val result = execute(RecipeSourceAdapterRequest(RecipeSourceQueryType.CATALOG, filters = null, allowLiveSource = false))</span>
+<span class="nc bnc" id="L199" title="All 6 branches missed.">        val candidates = result.summaries ?: result.recipes?.map { it.summary }.orEmpty()</span>
+<span class="nc bnc" id="L200" title="All 3 branches missed.">        val status = when (result.status) {</span>
+<span class="nc" id="L201">            RecipeAdapterStatus.ok -&gt; RecipeQueryStatus.OK</span>
+<span class="nc" id="L202">            RecipeAdapterStatus.fallback_used, RecipeAdapterStatus.parse_error_mapped -&gt; RecipeQueryStatus.FALLBACK</span>
+<span class="nc bnc" id="L203" title="All 2 branches missed.">            else -&gt; if (candidates.isEmpty()) RecipeQueryStatus.UNAVAILABLE else RecipeQueryStatus.PARTIAL</span>
+        }
+<span class="nc" id="L205">        return RecipeCandidateResult(</span>
+<span class="nc" id="L206">            queryContext = query,</span>
+<span class="nc" id="L207">            candidates = candidates,</span>
+<span class="nc" id="L208">            excludedCandidates = emptyList&lt;ExcludedRecipeCandidate&gt;(),</span>
+<span class="nc" id="L209">            status = status,</span>
+<span class="nc" id="L210">            sourceStatus = result.sourceStatus,</span>
+<span class="nc" id="L211">            fallbackReason = result.fallbackReason,</span>
+        )
+    }
+
+<span class="nc" id="L215">    override suspend fun getRecipeSummary(recipeId: RecipeId): RecipeSummary? {</span>
+<span class="nc" id="L216">        val result = execute(RecipeSourceAdapterRequest(RecipeSourceQueryType.BY_ID, recipeIds = listOf(recipeId), allowLiveSource = false))</span>
+<span class="nc bnc" id="L217" title="All 8 branches missed.">        return result.summaries?.firstOrNull { it.recipeId == recipeId } ?: result.recipes?.firstOrNull { it.recipeId == recipeId }?.summary</span>
+    }
+
+<span class="fc" id="L220">    override suspend fun resolveIngredients(recipeIds: List&lt;RecipeId&gt;): Map&lt;RecipeId, List&lt;IngredientLine&gt;&gt; {</span>
+<span class="fc" id="L221">        val result = execute(RecipeSourceAdapterRequest(RecipeSourceQueryType.BY_IDS, recipeIds = recipeIds, allowLiveSource = false))</span>
+<span class="pc bpc" id="L222" title="1 of 2 branches missed.">        val details = result.recipes.orEmpty().associateBy { it.recipeId }</span>
+<span class="pc bpc" id="L223" title="2 of 4 branches missed.">        return recipeIds.associateWith { id -&gt; details[id]?.ingredients.orEmpty() }</span>
+    }
+
+<span class="nc" id="L226">    override fun sourceStatus(): RecipeSourceStatus = fallbackStatus</span>
+
+    private fun record(name: String, request: RecipeSourceAdapterRequest, status: RecipeAdapterStatus) {
+<span class="fc" id="L229">        diagnostics.record(PrivacySafeDiagnostics.event(name, DiagnosticCategory.INTEGRATION_FALLBACK, mapOf(</span>
+<span class="fc" id="L230">            &quot;queryType&quot; to request.queryType.name,</span>
+<span class="fc" id="L231">            &quot;status&quot; to status.name,</span>
+<span class="fc bfc" id="L232" title="All 2 branches covered.">            &quot;recipeCount&quot; to (request.recipeIds?.size ?: 0).toString(),</span>
+        )))
+<span class="fc" id="L234">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

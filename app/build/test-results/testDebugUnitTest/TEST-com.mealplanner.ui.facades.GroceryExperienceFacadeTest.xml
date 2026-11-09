@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.mealplanner.ui.facades.GroceryExperienceFacadeTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-09T21:40:18.350Z" hostname="jyu-mac-20260120.local" time="0.013">
+  <properties/>
+  <testcase name="officialSostoslistaAttemptMapsToFallbackStatesWithInstructions" classname="com.mealplanner.ui.facades.GroceryExperienceFacadeTest" time="0.011"/>
+  <testcase name="generateOnlyWhenDomainReportsReadyExplicit" classname="com.mealplanner.ui.facades.GroceryExperienceFacadeTest" time="0.001"/>
+  <testcase name="staleKeepsCurrentListAndExposesExactAdr006WarningNoAutoRegeneration" classname="com.mealplanner.ui.facades.GroceryExperienceFacadeTest" time="0.0"/>
+  <testcase name="regenerateWithEditsRequiresExplicitConfirmationNoSilentReplacement" classname="com.mealplanner.ui.facades.GroceryExperienceFacadeTest" time="0.001"/>
+  <testcase name="exportUsesCurrentEditedListPayload" classname="com.mealplanner.ui.facades.GroceryExperienceFacadeTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

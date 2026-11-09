@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RecipeDetailScreen.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">com.mealplanner.ui.screens.recipe</a> &gt; <span class="el_source">RecipeDetailScreen.kt</span></div><h1>RecipeDetailScreen.kt</h1><pre class="source lang-java linenums">package com.mealplanner.ui.screens.recipe
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.dp
+import com.mealplanner.ui.components.RecipeMetaBadges
+import com.mealplanner.ui.components.StatusBanner
+import com.mealplanner.ui.state.SlotActionContext
+
+/** RM-04 Recipe detail (pushed, Step 8). Domain-provided labels/eligibility explanations only; no fabrication (ADR-005). */
+@Composable
+fun RecipeDetailScreen(
+    recipeId: String,
+    slotContext: SlotActionContext?,
+    onUseForSlot: (SlotActionContext, String) -&gt; Unit,
+    onChooseDifferent: (SlotActionContext) -&gt; Unit,
+    onBack: () -&gt; Unit,
+<span class="nc bnc" id="L37" title="All 2 branches missed.">    modifier: Modifier = Modifier,</span>
+<span class="nc bnc" id="L38" title="All 2 branches missed.">    sourceLabel: String? = null,</span>
+<span class="nc bnc" id="L39" title="All 2 branches missed.">    seasonFitLabel: String = &quot;Season fit unknown&quot;,</span>
+<span class="nc bnc" id="L40" title="All 2 branches missed.">    timeLabel: String? = null,</span>
+<span class="nc bnc" id="L41" title="All 2 branches missed.">    weekdayEligibilityLabel: String? = null,</span>
+<span class="nc bnc" id="L42" title="All 2 branches missed.">    nutritionLabel: String = &quot;Nutrition information unavailable&quot;,</span>
+<span class="nc bnc" id="L43" title="All 2 branches missed.">    ingredients: List&lt;String&gt; = emptyList(),</span>
+<span class="nc bnc" id="L44" title="All 2 branches missed.">    prepNotes: String? = null,</span>
+<span class="nc bnc" id="L45" title="All 2 branches missed.">    missingDataLabels: List&lt;String&gt; = emptyList(),</span>
+<span class="nc bnc" id="L46" title="All 2 branches missed.">    badges: List&lt;String&gt; = emptyList(),</span>
+<span class="nc bnc" id="L47" title="All 98 branches missed.">) {</span>
+<span class="nc bnc" id="L48" title="All 2 branches missed.">    val slotLabel = slotContext?.let { &quot;${it.dayOfWeek} ${it.mealType}&quot; }</span>
+<span class="nc" id="L49">    Column(</span>
+<span class="nc" id="L50">        modifier = modifier</span>
+<span class="nc" id="L51">            .fillMaxSize()</span>
+<span class="nc" id="L52">            .verticalScroll(rememberScrollState())</span>
+<span class="nc" id="L53">            .padding(16.dp)</span>
+<span class="nc" id="L54">            .testTag(&quot;recipe-detail-screen&quot;),</span>
+<span class="nc" id="L55">        verticalArrangement = Arrangement.spacedBy(12.dp),</span>
+    ) {
+<span class="nc" id="L57">        OutlinedButton(onClick = onBack, modifier = Modifier.testTag(&quot;recipe-detail-back&quot;).semantics { contentDescription = &quot;Back&quot; }) {</span>
+<span class="nc bnc" id="L58" title="All 8 branches missed.">            Text(&quot;Back&quot;)</span>
+<span class="nc" id="L59">        }</span>
+<span class="nc" id="L60">        Text(</span>
+<span class="nc" id="L61">            text = &quot;Recipe $recipeId&quot;,</span>
+<span class="nc" id="L62">            style = MaterialTheme.typography.headlineSmall,</span>
+<span class="nc" id="L63">            modifier = Modifier.semantics { heading() },</span>
+        )
+<span class="nc bnc" id="L65" title="All 2 branches missed.">        slotLabel?.let { Text(&quot;For meal slot: $it&quot;, style = MaterialTheme.typography.bodyMedium) }</span>
+<span class="nc" id="L66">        RecipeMetaBadges(badges)</span>
+<span class="nc" id="L67">        Card(modifier = Modifier.fillMaxWidth()) {</span>
+<span class="nc bnc" id="L68" title="All 6 branches missed.">            Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {</span>
+<span class="nc" id="L69">                Text(&quot;Details&quot;, style = MaterialTheme.typography.titleMedium)</span>
+<span class="nc bnc" id="L70" title="All 2 branches missed.">                Text(&quot;Source: ${sourceLabel ?: &quot;Not specified&quot;}&quot;)</span>
+<span class="nc" id="L71">                Text(&quot;Season fit: $seasonFitLabel&quot;)</span>
+<span class="nc bnc" id="L72" title="All 2 branches missed.">                timeLabel?.let { Text(&quot;Total time: $it&quot;) }</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">                weekdayEligibilityLabel?.let { Text(it) }</span>
+<span class="nc" id="L74">                Text(&quot;Nutrition: $nutritionLabel&quot;)</span>
+<span class="nc" id="L75">            }</span>
+<span class="nc" id="L76">        }</span>
+<span class="nc" id="L77">        Card(modifier = Modifier.fillMaxWidth()) {</span>
+<span class="nc bnc" id="L78" title="All 6 branches missed.">            Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {</span>
+<span class="nc" id="L79">                Text(&quot;Ingredients&quot;, style = MaterialTheme.typography.titleMedium)</span>
+<span class="nc bnc" id="L80" title="All 2 branches missed.">                if (ingredients.isEmpty()) {</span>
+<span class="nc" id="L81">                    Text(&quot;Ingredient details unavailable&quot;)</span>
+<span class="nc" id="L82">                } else {</span>
+<span class="nc" id="L83">                    ingredients.forEach { Text(&quot;• $it&quot;) }</span>
+                }
+<span class="nc bnc" id="L85" title="All 2 branches missed.">                prepNotes?.let {</span>
+<span class="nc" id="L86">                    Spacer(Modifier.height(4.dp))</span>
+<span class="nc" id="L87">                    Text(&quot;Preparation&quot;, style = MaterialTheme.typography.titleSmall)</span>
+<span class="nc" id="L88">                    Text(it)</span>
+<span class="nc" id="L89">                }</span>
+<span class="nc" id="L90">            }</span>
+<span class="nc" id="L91">        }</span>
+<span class="nc bnc" id="L92" title="All 4 branches missed.">        if (missingDataLabels.isNotEmpty()) {</span>
+<span class="nc" id="L93">            missingDataLabels.forEach { StatusBanner(it) }</span>
+        }
+<span class="nc bnc" id="L95" title="All 2 branches missed.">        if (slotContext != null) {</span>
+<span class="nc" id="L96">            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {</span>
+<span class="nc bnc" id="L97" title="All 10 branches missed.">                Button(</span>
+<span class="nc" id="L98">                    onClick = { onUseForSlot(slotContext, recipeId) },</span>
+<span class="nc" id="L99">                    modifier = Modifier.weight(1f).testTag(&quot;use-for-slot-action&quot;)</span>
+<span class="nc" id="L100">                        .semantics { contentDescription = &quot;Use for this meal slot: $slotLabel&quot; },</span>
+<span class="nc bnc" id="L101" title="All 8 branches missed.">                ) { Text(&quot;Use for this meal slot&quot;) }</span>
+<span class="nc" id="L102">                OutlinedButton(</span>
+<span class="nc" id="L103">                    onClick = { onChooseDifferent(slotContext) },</span>
+<span class="nc" id="L104">                    modifier = Modifier.weight(1f).testTag(&quot;choose-different-action&quot;)</span>
+<span class="nc" id="L105">                        .semantics { contentDescription = &quot;Choose different recipe for $slotLabel&quot; },</span>
+<span class="nc bnc" id="L106" title="All 8 branches missed.">                ) { Text(&quot;Choose different&quot;) }</span>
+<span class="nc" id="L107">            }</span>
+        }
+<span class="nc" id="L109">    }</span>
+<span class="nc bnc" id="L110" title="All 2 branches missed.">}</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

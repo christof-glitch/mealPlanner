@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>U2Types.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">com.mealplanner.domain.model</a> &gt; <span class="el_source">U2Types.kt</span></div><h1>U2Types.kt</h1><pre class="source lang-java linenums">package com.mealplanner.domain.model
+
+/**
+ * U2 additive domain contract types (ENT-U2-001..012, C2/C3 + A1).
+ * Canonical slot reference is [PlanSlotRef]; no MealSlotRef alias.
+ * No fabricated values; missing/ambiguous data uses explicit typed states.
+ */
+
+<span class="fc" id="L9">data class RecipeFilters(</span>
+<span class="fc" id="L10">    val mealTypes: List&lt;MealSlotType&gt;? = null,</span>
+<span class="fc" id="L11">    val maxTotalTimeMinutes: Int? = null,</span>
+<span class="pc" id="L12">    val requireSydanmerkkiCompatible: Boolean? = null,</span>
+<span class="pc" id="L13">    val seasonFitPreference: SeasonFitPreference? = null,</span>
+<span class="pc" id="L14">    val includeUnknownSeason: Boolean? = null,</span>
+<span class="pc" id="L15">    val nutritionAttributeFilter: List&lt;String&gt;? = null,</span>
+<span class="pc" id="L16">    val sourceTypes: List&lt;String&gt;? = null,</span>
+<span class="fc" id="L17">)</span>
+
+<span class="nc" id="L19">enum class SeasonFitPreference { IN_SEASON_ONLY, PREFER_IN_SEASON, ANY }</span>
+
+<span class="pc" id="L21">enum class RecipeSourceQueryType { CATALOG, BY_ID, BY_IDS, ALTERNATIVES, ELIGIBILITY }</span>
+
+/** ENT-U2-001 */
+<span class="fc" id="L24">data class RecipeSourceAdapterRequest(</span>
+<span class="fc" id="L25">    val queryType: RecipeSourceQueryType,</span>
+<span class="fc" id="L26">    val recipeIds: List&lt;RecipeId&gt;? = null,</span>
+<span class="fc" id="L27">    val slotContext: PlanSlotRef? = null,</span>
+<span class="pc" id="L28">    val seasonContext: SeasonContext? = null,</span>
+<span class="pc" id="L29">    val filters: RecipeFilters? = null,</span>
+    /** true only when feasibility/terms/allowed access are confirmed (OQ1/FQ1=A). */
+<span class="fc" id="L31">    val allowLiveSource: Boolean,</span>
+<span class="fc" id="L32">)</span>
+
+enum class RecipeAdapterStatus {
+<span class="fc" id="L35">    ok, fallback_used, unavailable, restricted, timeout, parse_error_mapped, not_supported</span>
+<span class="nc" id="L36">}</span>
+
+enum class A1InvestigationOutcome {
+<span class="fc" id="L39">    feasible_used, feasible_limited, not_feasible_or_allowed, unknown</span>
+<span class="nc" id="L40">}</span>
+
+<span class="pc" id="L42">enum class RecipeDataCompleteness { COMPLETE, PARTIAL, MINIMAL }</span>
+
+/** ENT-U2-003 */
+<span class="fc" id="L45">data class RecipeDetail(</span>
+<span class="fc" id="L46">    val recipeId: RecipeId,</span>
+<span class="fc" id="L47">    val title: String,</span>
+<span class="fc" id="L48">    val summary: RecipeSummary,</span>
+<span class="fc" id="L49">    val ingredients: List&lt;IngredientLine&gt;? = null,</span>
+<span class="pc" id="L50">    val preparationNotes: List&lt;String&gt;? = null,</span>
+<span class="pc" id="L51">    val cookingGuidance: List&lt;String&gt;? = null,</span>
+<span class="fc" id="L52">    val seasonTags: List&lt;String&gt;? = null,</span>
+<span class="pc" id="L53">    val nutrition: NutritionProfile? = null,</span>
+<span class="fc" id="L54">    val dataCompleteness: RecipeDataCompleteness,</span>
+<span class="pc" id="L55">    val sourceStatus: RecipeSourceStatus,</span>
+<span class="fc" id="L56">)</span>
+
+/** ENT-U2-002 */
+<span class="fc" id="L59">data class RecipeSourceAdapterResult(</span>
+<span class="fc" id="L60">    val status: RecipeAdapterStatus,</span>
+<span class="fc" id="L61">    val investigationOutcome: A1InvestigationOutcome,</span>
+<span class="fc" id="L62">    val recipes: List&lt;RecipeDetail&gt;? = null,</span>
+<span class="fc" id="L63">    val summaries: List&lt;RecipeSummary&gt;? = null,</span>
+<span class="fc" id="L64">    val sourceStatus: RecipeSourceStatus,</span>
+<span class="fc" id="L65">    val fallbackReason: FallbackReason? = null,</span>
+<span class="pc" id="L66">    val userSafeMessageKey: String? = null,</span>
+<span class="fc" id="L67">    val partialDataUsable: Boolean? = null,</span>
+<span class="fc" id="L68">)</span>
+
+/** ENT-U2-004 */
+<span class="fc" id="L71">data class RecipeTimeNormalization(</span>
+<span class="fc" id="L72">    val totalTimeMinutes: Int? = null,</span>
+<span class="fc" id="L73">    val timeVerifiability: TimeConfidence,</span>
+<span class="pc" id="L74">    val weekdayEligible: Boolean? = null,</span>
+<span class="fc" id="L75">    val exclusionReason: ExclusionReason? = null,</span>
+<span class="fc" id="L76">    val rawTimeText: String? = null,</span>
+<span class="pc" id="L77">    val normalizationRule: String? = null,</span>
+<span class="fc" id="L78">)</span>
+
+<span class="pc" id="L80">enum class SeasonFitLabel { IN_SEASON, OUT_OF_SEASON, SHOULDER, SEASON_FIT_UNKNOWN }</span>
+<span class="pc" id="L81">enum class SeasonMappingSource { RECIPE_TAG, CURATED_MAPPING, NONE }</span>
+
+/** ENT-U2-005 */
+<span class="fc" id="L84">data class SeasonFitEvaluation(</span>
+<span class="fc" id="L85">    val seasonFitLabel: SeasonFitLabel,</span>
+<span class="fc" id="L86">    val effectiveSeasonResolution: EffectiveSeasonResolution,</span>
+<span class="fc" id="L87">    val matchedTags: List&lt;String&gt;? = null,</span>
+<span class="fc" id="L88">    val mappingSource: SeasonMappingSource,</span>
+<span class="pc" id="L89">    val explanationKey: String? = null,</span>
+<span class="fc" id="L90">)</span>
+
+<span class="pc" id="L92">enum class NutritionSourceConfidence { HIGH, MEDIUM, LOW, UNKNOWN }</span>
+
+object NutritionLabels {
+    const val UNAVAILABLE = &quot;Nutrition information unavailable&quot;
+}
+
+/** ENT-U2-006 */
+<span class="fc" id="L99">data class NutritionProfile(</span>
+<span class="fc" id="L100">    val nutritionAvailability: NutritionAvailability,</span>
+<span class="fc" id="L101">    val energyKcal: Double? = null,</span>
+<span class="pc" id="L102">    val proteinG: Double? = null,</span>
+<span class="pc" id="L103">    val carbG: Double? = null,</span>
+<span class="pc" id="L104">    val fatG: Double? = null,</span>
+<span class="pc" id="L105">    val fiberG: Double? = null,</span>
+<span class="pc" id="L106">    val sydanmerkkiNutritionFlags: List&lt;String&gt;? = null,</span>
+<span class="pc" id="L107">    val sourceConfidence: NutritionSourceConfidence? = null,</span>
+<span class="fc bfc" id="L108" title="All 4 branches covered.">    val unavailableLabel: String? = NutritionLabels.UNAVAILABLE.takeIf { nutritionAvailability == NutritionAvailability.UNAVAILABLE },</span>
+<span class="fc" id="L109">)</span>
+
+<span class="pc" id="L111">enum class NutritionCueStatus { AVAILABLE, PARTIAL, UNAVAILABLE }</span>
+
+/** ENT-U2-012 */
+<span class="fc" id="L114">data class WeeklyNutritionBalanceCueRequest(</span>
+<span class="pc" id="L115">    val weekOrPlanId: PlanId? = null,</span>
+<span class="fc" id="L116">    val selectedRecipeRefs: List&lt;RecipeId&gt;,</span>
+<span class="fc" id="L117">    val nutritionProfilesByRecipeId: Map&lt;RecipeId, NutritionProfile&gt;? = null,</span>
+<span class="fc" id="L118">    val includePartialProfiles: Boolean,</span>
+<span class="fc" id="L119">)</span>
+
+/** ENT-U2-007 */
+<span class="fc" id="L122">data class WeeklyNutritionBalanceCue(</span>
+<span class="fc" id="L123">    val status: NutritionCueStatus,</span>
+<span class="fc" id="L124">    val selectedRecipeCount: Int,</span>
+<span class="fc" id="L125">    val recipesWithNutritionCount: Int,</span>
+<span class="pc" id="L126">    val averageEnergyKcal: Double? = null,</span>
+<span class="pc" id="L127">    val tagCounts: Map&lt;String, Int&gt;? = null,</span>
+<span class="fc" id="L128">    val excludedFromCalculationCount: Int,</span>
+<span class="fc" id="L129">    val explanationKey: String,</span>
+<span class="fc" id="L130">)</span>
+
+/** ENT-U2-008 */
+<span class="fc" id="L133">data class AlternativeRecipesRequest(</span>
+<span class="fc" id="L134">    val slotRef: PlanSlotRef,</span>
+<span class="fc" id="L135">    val currentRecipeId: RecipeId? = null,</span>
+<span class="pc" id="L136">    val seasonContext: SeasonContext,</span>
+<span class="fc" id="L137">    val effectiveSeasonResolution: EffectiveSeasonResolution? = null,</span>
+<span class="fc" id="L138">    val limit: Int? = null,</span>
+<span class="fc" id="L139">    val includeFallbackSources: Boolean,</span>
+<span class="fc" id="L140">)</span>
+
+/** ENT-U2-009 */
+<span class="fc" id="L143">data class AlternativeRecipesResult(</span>
+<span class="fc" id="L144">    val status: AlternativeRecipesStatus,</span>
+<span class="pc" id="L145">    val alternatives: List&lt;RecipeSummary&gt; = emptyList(),</span>
+<span class="pc" id="L146">    val excludedCandidates: List&lt;ExcludedRecipeCandidate&gt;? = null,</span>
+<span class="pc" id="L147">    val sourceStatus: RecipeSourceStatus,</span>
+<span class="pc" id="L148">    val emptyReason: String? = null,</span>
+<span class="fc" id="L149">)</span>
+
+<span class="pc" id="L151">enum class AlternativeRecipesStatus { OK, EMPTY, FALLBACK, UNAVAILABLE }</span>
+
+<span class="pc" id="L153">enum class SlotSelectionOperation { SET_SELECTION, REPLACE_WITH_ALTERNATIVE, CLEAR_SELECTION }</span>
+<span class="pc" id="L154">enum class SlotSelectionInitiatedBy { USER }</span>
+
+/** ENT-U2-010 */
+<span class="fc" id="L157">data class SlotSelectionChangeRequest(</span>
+<span class="fc" id="L158">    val slotRef: PlanSlotRef,</span>
+<span class="fc" id="L159">    val operation: SlotSelectionOperation,</span>
+<span class="fc" id="L160">    val recipeId: RecipeId? = null,</span>
+<span class="pc" id="L161">    val alternativeRecipeId: RecipeId? = null,</span>
+<span class="pc" id="L162">    val initiatedBy: SlotSelectionInitiatedBy = SlotSelectionInitiatedBy.USER,</span>
+<span class="fc" id="L163">)</span>
+
+<span class="pc" id="L165">enum class SlotSelectionResultStatus { APPLIED, REJECTED, NO_CHANGE }</span>
+
+/** ENT-U2-011 */
+<span class="fc" id="L168">data class SlotSelectionChangeResult(</span>
+<span class="fc" id="L169">    val status: SlotSelectionResultStatus,</span>
+<span class="fc" id="L170">    val weeklyPlanState: WeeklyPlanState,</span>
+<span class="pc" id="L171">    val changedSlotRef: PlanSlotRef,</span>
+<span class="fc" id="L172">    val lockStaleStatus: LockStaleStatus? = null,</span>
+<span class="fc" id="L173">    val rejectionReason: String? = null,</span>
+<span class="fc" id="L174">)</span>
+
+/** U2 lock stale projection compatible with C3 consumers. */
+<span class="fc" id="L177">data class LockStaleStatus(</span>
+<span class="pc" id="L178">    val snapshotId: LockSnapshotId? = null,</span>
+<span class="pc" id="L179">    val isStale: Boolean,</span>
+<span class="pc" id="L180">    val staleWarning: String? = null,</span>
+<span class="pc" id="L181">    val staleReason: String? = null,</span>
+<span class="fc" id="L182">)</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

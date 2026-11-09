@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SeasonFitEvaluator.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">com.mealplanner.domain.recipe</a> &gt; <span class="el_source">SeasonFitEvaluator.kt</span></div><h1>SeasonFitEvaluator.kt</h1><pre class="source lang-java linenums">package com.mealplanner.domain.recipe
+
+import com.mealplanner.domain.model.EffectiveSeasonResolution
+import com.mealplanner.domain.model.EffectiveSeasonStatus
+import com.mealplanner.domain.model.RecipeDetail
+import com.mealplanner.domain.model.SeasonFitEvaluation
+import com.mealplanner.domain.model.SeasonFitLabel
+import com.mealplanner.domain.model.SeasonMappingSource
+
+/** BR2.4: season fit from tags/curated mapping; UNKNOWN when evidence insufficient. No false matches. */
+object SeasonFitEvaluator {
+<span class="fc" id="L12">    private val seasonAliases = mapOf(</span>
+<span class="fc" id="L13">        &quot;winter&quot; to setOf(&quot;winter&quot;, &quot;talvi&quot;),</span>
+<span class="fc" id="L14">        &quot;spring&quot; to setOf(&quot;spring&quot;, &quot;kevät&quot;, &quot;kevat&quot;),</span>
+<span class="fc" id="L15">        &quot;summer&quot; to setOf(&quot;summer&quot;, &quot;kesä&quot;, &quot;kesa&quot;),</span>
+<span class="fc" id="L16">        &quot;autumn&quot; to setOf(&quot;autumn&quot;, &quot;fall&quot;, &quot;syksy&quot;),</span>
+    )
+
+    fun evaluate(recipe: RecipeDetail, effectiveResolution: EffectiveSeasonResolution): SeasonFitEvaluation {
+<span class="fc" id="L20">        val resolved = normalizeSeason(effectiveResolution.effectiveContext.resolvedSeason)</span>
+<span class="pc bpc" id="L21" title="1 of 4 branches missed.">        if (effectiveResolution.status == EffectiveSeasonStatus.UNKNOWN || resolved == null) {</span>
+<span class="fc" id="L22">            return SeasonFitEvaluation(</span>
+<span class="fc" id="L23">                seasonFitLabel = SeasonFitLabel.SEASON_FIT_UNKNOWN,</span>
+<span class="fc" id="L24">                effectiveSeasonResolution = effectiveResolution,</span>
+<span class="pc bpc" id="L25" title="3 of 6 branches missed.">                matchedTags = recipe.seasonTags?.takeIf { it.isNotEmpty() },</span>
+<span class="pc bpc" id="L26" title="3 of 6 branches missed.">                mappingSource = if (recipe.seasonTags.isNullOrEmpty()) SeasonMappingSource.NONE else SeasonMappingSource.RECIPE_TAG,</span>
+<span class="fc" id="L27">                explanationKey = &quot;SEASON_FIT_UNKNOWN_NO_EFFECTIVE_SEASON&quot;,</span>
+            )
+        }
+<span class="pc bpc" id="L30" title="1 of 4 branches missed.">        val tags = recipe.seasonTags.orEmpty().map { it.trim().lowercase() }.filter { it.isNotBlank() }</span>
+<span class="fc bfc" id="L31" title="All 2 branches covered.">        if (tags.isEmpty()) {</span>
+<span class="fc" id="L32">            return SeasonFitEvaluation(</span>
+<span class="fc" id="L33">                seasonFitLabel = SeasonFitLabel.SEASON_FIT_UNKNOWN,</span>
+<span class="fc" id="L34">                effectiveSeasonResolution = effectiveResolution,</span>
+<span class="fc" id="L35">                mappingSource = SeasonMappingSource.NONE,</span>
+<span class="fc" id="L36">                explanationKey = &quot;SEASON_FIT_UNKNOWN_NO_MAPPING&quot;,</span>
+            )
+        }
+<span class="pc bpc" id="L39" title="1 of 2 branches missed.">        val current = seasonAliases[resolved] ?: setOf(resolved)</span>
+<span class="fc" id="L40">        val matched = tags.filter { tag -&gt; current.any { it == tag } }</span>
+<span class="fc bfc" id="L41" title="All 4 branches covered.">        val otherSeason = tags.any { tag -&gt; seasonAliases.entries.any { (season, aliases) -&gt; season != resolved &amp;&amp; aliases.any { it == tag } } }</span>
+<span class="fc" id="L42">        val label = when {</span>
+<span class="pc bpc" id="L43" title="1 of 6 branches missed.">            matched.isNotEmpty() &amp;&amp; !otherSeason -&gt; SeasonFitLabel.IN_SEASON</span>
+<span class="pc bpc" id="L44" title="4 of 6 branches missed.">            matched.isNotEmpty() &amp;&amp; otherSeason -&gt; SeasonFitLabel.SHOULDER</span>
+<span class="pc bpc" id="L45" title="1 of 2 branches missed.">            otherSeason -&gt; SeasonFitLabel.OUT_OF_SEASON</span>
+<span class="nc" id="L46">            else -&gt; SeasonFitLabel.SEASON_FIT_UNKNOWN</span>
+        }
+<span class="fc" id="L48">        return SeasonFitEvaluation(</span>
+<span class="fc" id="L49">            seasonFitLabel = label,</span>
+<span class="fc" id="L50">            effectiveSeasonResolution = effectiveResolution,</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">            matchedTags = matched.ifEmpty { null },</span>
+<span class="fc" id="L52">            mappingSource = SeasonMappingSource.RECIPE_TAG,</span>
+<span class="pc bpc" id="L53" title="1 of 2 branches missed.">            explanationKey = if (label == SeasonFitLabel.SEASON_FIT_UNKNOWN) &quot;SEASON_FIT_UNKNOWN_NO_MAPPING&quot; else null,</span>
+        )
+    }
+
+    private fun normalizeSeason(raw: String?): String? {
+<span class="pc bpc" id="L58" title="5 of 12 branches missed.">        val value = raw?.trim()?.lowercase()?.takeIf { it.isNotBlank() } ?: return null</span>
+<span class="pc bpc" id="L59" title="5 of 8 branches missed.">        return seasonAliases.entries.firstOrNull { (k, v) -&gt; k == value || v.contains(value) }?.key ?: value</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

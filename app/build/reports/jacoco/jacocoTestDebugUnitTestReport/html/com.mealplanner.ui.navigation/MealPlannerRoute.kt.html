@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MealPlannerRoute.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">com.mealplanner.ui.navigation</a> &gt; <span class="el_source">MealPlannerRoute.kt</span></div><h1>MealPlannerRoute.kt</h1><pre class="source lang-java linenums">package com.mealplanner.ui.navigation
+
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
+
+/** RM-01–RM-09 navigation routes (U4). Bottom nav + pushed/full-screen flows. R-06: slot context carried in args. */
+sealed interface MealPlannerRoute {
+    val route: String
+
+<span class="nc" id="L10">    data object Onboarding : MealPlannerRoute { override val route = &quot;onboarding&quot; }</span>
+<span class="nc" id="L11">    data object Today : MealPlannerRoute { override val route = &quot;today&quot; }</span>
+<span class="nc" id="L12">    data object Plan : MealPlannerRoute { override val route = &quot;plan&quot; }</span>
+<span class="nc" id="L13">    data object Grocery : MealPlannerRoute { override val route = &quot;grocery&quot; }</span>
+<span class="nc" id="L14">    data object User : MealPlannerRoute { override val route = &quot;user&quot; }</span>
+
+<span class="nc" id="L16">    data class RecipeDetail(val recipeId: String, val slotContextKey: String? = null) : MealPlannerRoute {</span>
+<span class="nc" id="L17">        override val route = buildString {</span>
+<span class="nc" id="L18">            append(&quot;recipe/&quot;)</span>
+<span class="nc" id="L19">            append(URLEncoder.encode(recipeId, StandardCharsets.UTF_8))</span>
+<span class="nc bnc" id="L20" title="All 6 branches missed.">            if (!slotContextKey.isNullOrBlank()) {</span>
+<span class="nc" id="L21">                append(&quot;?slotContextKey=&quot;)</span>
+<span class="nc" id="L22">                append(URLEncoder.encode(slotContextKey, StandardCharsets.UTF_8))</span>
+            }
+<span class="nc" id="L24">        }</span>
+        companion object {
+            const val ARG_RECIPE_ID = &quot;recipeId&quot;
+            const val ARG_SLOT_CONTEXT = &quot;slotContextKey&quot;
+            const val PATTERN = &quot;recipe/{recipeId}?slotContextKey={slotContextKey}&quot;
+        }
+    }
+
+<span class="nc" id="L32">    data class ReplaceAlternatives(val slotContextKey: String) : MealPlannerRoute {</span>
+<span class="nc" id="L33">        override val route = &quot;replace/${URLEncoder.encode(slotContextKey, StandardCharsets.UTF_8)}&quot;</span>
+        companion object {
+            const val ARG_SLOT_CONTEXT = &quot;slotContextKey&quot;
+            const val PATTERN = &quot;replace/{slotContextKey}&quot;
+        }
+    }
+
+<span class="nc" id="L40">    data class SelectPrismaStore(val currentStoreId: String? = null) : MealPlannerRoute {</span>
+<span class="nc" id="L41">        override val route = buildString {</span>
+<span class="nc" id="L42">            append(&quot;store/select&quot;)</span>
+<span class="nc bnc" id="L43" title="All 6 branches missed.">            if (!currentStoreId.isNullOrBlank()) {</span>
+<span class="nc" id="L44">                append(&quot;?currentStoreId=&quot;)</span>
+<span class="nc" id="L45">                append(URLEncoder.encode(currentStoreId, StandardCharsets.UTF_8))</span>
+            }
+<span class="nc" id="L47">        }</span>
+        companion object {
+            const val ARG_CURRENT_STORE_ID = &quot;currentStoreId&quot;
+            const val PATTERN = &quot;store/select?currentStoreId={currentStoreId}&quot;
+        }
+    }
+}
+
+<span class="nc" id="L55">val BottomNavRoutes = listOf(MealPlannerRoute.Today, MealPlannerRoute.Plan, MealPlannerRoute.Grocery, MealPlannerRoute.User)</span>
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

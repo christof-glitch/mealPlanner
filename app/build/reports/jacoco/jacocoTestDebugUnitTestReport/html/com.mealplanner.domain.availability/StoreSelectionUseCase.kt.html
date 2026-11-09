@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StoreSelectionUseCase.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">com.mealplanner.domain.availability</a> &gt; <span class="el_source">StoreSelectionUseCase.kt</span></div><h1>StoreSelectionUseCase.kt</h1><pre class="source lang-java linenums">package com.mealplanner.domain.availability
+
+import com.mealplanner.domain.model.FallbackReason
+import com.mealplanner.domain.model.PrismaStoreRef
+import com.mealplanner.domain.model.StoreSelectionMode
+import com.mealplanner.domain.model.StoreSelectionState
+import com.mealplanner.domain.model.StoreSuggestionResult
+import com.mealplanner.domain.model.StoreSuggestionStatus
+
+/** A2 nearest-suggestion port (OQ2 investigational). */
+interface NearestStoreSuggestionPort {
+    suspend fun suggestNearest(): StoreSuggestionResult
+}
+
+<span class="fc" id="L15">class ManualOnlyNearestStoreSuggestionPort : NearestStoreSuggestionPort {</span>
+<span class="nc" id="L16">    override suspend fun suggestNearest(): StoreSuggestionResult = StoreSuggestionResult(</span>
+<span class="nc" id="L17">        status = StoreSuggestionStatus.UNAVAILABLE,</span>
+<span class="nc" id="L18">        message = &quot;Nearest store suggestion unavailable; manual selection is always available.&quot;,</span>
+<span class="nc" id="L19">        fallbackReason = FallbackReason(&quot;NEAREST_STORE_NOT_CONFIGURED&quot;, &quot;Nearest PRISMA store lookup not configured.&quot;, &quot;Select a store manually.&quot;),</span>
+<span class="nc" id="L20">    )</span>
+}
+
+/**
+ * C5/A2 store selection: manual always available; nearest suggestion best-effort (BR3.6).
+ */
+<span class="fc" id="L26">class StoreSelectionUseCase(</span>
+<span class="fc" id="L27">    private val nearestPort: NearestStoreSuggestionPort = ManualOnlyNearestStoreSuggestionPort(),</span>
+<span class="fc" id="L28">) {</span>
+<span class="fc" id="L29">    fun selectStoreManually(store: PrismaStoreRef): StoreSelectionState = StoreSelectionState(</span>
+<span class="fc" id="L30">        selectedStore = store,</span>
+<span class="fc" id="L31">        selectionMode = StoreSelectionMode.MANUAL,</span>
+<span class="fc" id="L32">        message = &quot;Store selected manually.&quot;,</span>
+<span class="fc" id="L33">    )</span>
+
+<span class="fc" id="L35">    suspend fun suggestNearestStore(): StoreSuggestionResult = try {</span>
+<span class="fc" id="L36">        nearestPort.suggestNearest()</span>
+<span class="nc" id="L37">    } catch (e: Exception) {</span>
+<span class="pc" id="L38">        StoreSuggestionResult(</span>
+<span class="nc" id="L39">            status = StoreSuggestionStatus.UNKNOWN,</span>
+<span class="nc" id="L40">            message = &quot;Store suggestion failed safely.&quot;,</span>
+<span class="nc" id="L41">            fallbackReason = FallbackReason(&quot;SUGGESTION_FAILED_MAPPED&quot;, &quot;Nearest store suggestion failed.&quot;, &quot;Select a store manually.&quot;),</span>
+        )
+<span class="fc" id="L43">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

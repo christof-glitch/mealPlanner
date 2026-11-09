@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.mealplanner.domain.planning.LockAndStaleStateTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-11-09T20:30:40.587Z" hostname="jyu-mac-20260120.local" time="0.002">
+<testsuite name="com.mealplanner.domain.planning.LockAndStaleStateTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-11-09T21:40:18.190Z" hostname="jyu-mac-20260120.local" time="0.002">
   <properties/>
   <testcase name="stale state does not auto regenerate" classname="com.mealplanner.domain.planning.LockAndStaleStateTest" time="0.001"/>
   <testcase name="explicit generate with locked snapshot succeeds" classname="com.mealplanner.domain.planning.LockAndStaleStateTest" time="0.0"/>
-  <testcase name="generate requires explicit locked snapshot" classname="com.mealplanner.domain.planning.LockAndStaleStateTest" time="0.0"/>
+  <testcase name="generate requires explicit locked snapshot" classname="com.mealplanner.domain.planning.LockAndStaleStateTest" time="0.001"/>
   <testcase name="unlocked plan without snapshot is not marked stale" classname="com.mealplanner.domain.planning.LockAndStaleStateTest" time="0.0"/>
   <testcase name="plan change after lock marks STALE_LOCK with exact warning text" classname="com.mealplanner.domain.planning.LockAndStaleStateTest" time="0.0"/>
-  <testcase name="regenerate with existing edits requires explicit confirmation" classname="com.mealplanner.domain.planning.LockAndStaleStateTest" time="0.001"/>
+  <testcase name="regenerate with existing edits requires explicit confirmation" classname="com.mealplanner.domain.planning.LockAndStaleStateTest" time="0.0"/>
   <testcase name="regenerate with edits succeeds only after explicit confirmation" classname="com.mealplanner.domain.planning.LockAndStaleStateTest" time="0.0"/>
   <testcase name="lock snapshot stores IDs selections and context only" classname="com.mealplanner.domain.planning.LockAndStaleStateTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>

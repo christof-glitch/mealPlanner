@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PlatformAbstractions.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">com.mealplanner.platform</a> &gt; <span class="el_source">PlatformAbstractions.kt</span></div><h1>PlatformAbstractions.kt</h1><pre class="source lang-java linenums">package com.mealplanner.platform
+
+import com.mealplanner.domain.model.FallbackReason
+import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.withTimeout
+
+/** A4 platform boundaries: permission/share/clipboard/date/location signals (no continuous tracking). */
+interface PermissionBoundary {
+    suspend fun hasLocationPermission(): Boolean
+    suspend fun requestLocationPermission(): Boolean
+}
+
+interface ShareSheetPlatform {
+    suspend fun shareText(title: String, body: String): SharePlatformResult
+}
+
+interface ClipboardPlatform {
+    suspend fun copyPlainText(label: String, text: String): Boolean
+}
+
+interface DateLocationSignalProvider {
+    /** Coarse/local date context only; no precise continuous tracking. */
+    fun currentLocalDateIso(): String?
+    /** Best-effort coarse location hint for nearest-store suggestion; null when unavailable/denied. */
+    suspend fun coarseLocationHint(): String?
+}
+
+sealed interface SharePlatformResult {
+    data object Shared : SharePlatformResult
+    data object Cancelled : SharePlatformResult
+<span class="nc" id="L31">    data class Failed(val reason: FallbackReason) : SharePlatformResult</span>
+}
+
+/** NFR1.2: bounded timeout + typed fallback off main thread. */
+suspend fun &lt;T&gt; withTypedTimeout(
+    timeoutMs: Long,
+    fallback: (FallbackReason) -&gt; T,
+    block: suspend () -&gt; T,
+<span class="nc" id="L39">): T = try {</span>
+<span class="nc" id="L40">    withTimeout(timeoutMs) { block() }</span>
+<span class="nc" id="L41">} catch (_: TimeoutCancellationException) {</span>
+<span class="nc" id="L42">    fallback(FallbackReason(&quot;TIMEOUT&quot;, &quot;Operation timed out.&quot;, &quot;Try again or use fallback.&quot;))</span>
+<span class="nc" id="L43">} catch (e: Exception) {</span>
+<span class="nc bnc" id="L44" title="All 2 branches missed.">    fallback(FallbackReason(&quot;FAILED&quot;, e.message ?: &quot;Operation failed.&quot;, &quot;Try again or use fallback.&quot;))</span>
+<span class="nc" id="L45">}</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

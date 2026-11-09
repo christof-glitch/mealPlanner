@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ShoppingListService.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">com.mealplanner.domain.shopping</a> &gt; <span class="el_source">ShoppingListService.kt</span></div><h1>ShoppingListService.kt</h1><pre class="source lang-java linenums">package com.mealplanner.domain.shopping
+
+import com.mealplanner.adapters.RecipeSourceBoundary
+import com.mealplanner.domain.model.ExportLineItem
+import com.mealplanner.domain.model.FallbackReason
+import com.mealplanner.domain.model.IngredientAvailabilityStatus
+import com.mealplanner.domain.model.IngredientLine
+import com.mealplanner.domain.model.LockSnapshot
+import com.mealplanner.domain.model.ShoppingItemIngredientDataStatus
+import com.mealplanner.domain.model.ShoppingListAggregate
+import com.mealplanner.domain.model.ShoppingListExportDto
+import com.mealplanner.domain.model.ShoppingListGenerationOperation
+import com.mealplanner.domain.model.ShoppingListGenerationOutcome
+import com.mealplanner.domain.model.ShoppingListGenerationOutcomeResult
+import com.mealplanner.domain.model.ShoppingListGenerationRequest
+import com.mealplanner.domain.model.ShoppingListItem
+import com.mealplanner.domain.model.ShoppingListStaleStatus
+import com.mealplanner.domain.model.ShoppingListStateStatus
+import com.mealplanner.domain.model.StorePresenceStatus
+import com.mealplanner.domain.model.effectiveDisplayText
+import com.mealplanner.domain.model.effectiveQuantityText
+import java.time.Instant
+import java.util.UUID
+
+/**
+ * C4 shopping list use-case/service (BR3.1-BR3.4, BR3.8).
+ * Re-resolves ingredients from C2 at generation time (ADR-006/R-01). No fabrication.
+ */
+<span class="fc" id="L29">class ShoppingListService(</span>
+<span class="fc" id="L30">    private val recipeResolver: RecipeSourceBoundary,</span>
+) {
+<span class="fc" id="L32">    suspend fun generateFromLockSnapshot(</span>
+        request: ShoppingListGenerationRequest,
+        snapshot: LockSnapshot?,
+<span class="nc" id="L35">        staleStatus: ShoppingListStaleStatus = request.staleStatus,</span>
+<span class="fc" id="L36">        now: Instant = Instant.now(),</span>
+    ): ShoppingListGenerationOutcomeResult {
+<span class="pc bpc" id="L38" title="1 of 4 branches missed.">        if (snapshot == null || snapshot.snapshotId != request.snapshotId) {</span>
+<span class="fc" id="L39">            return ShoppingListGenerationOutcomeResult(</span>
+<span class="fc" id="L40">                status = ShoppingListGenerationOutcome.INVALID_SNAPSHOT,</span>
+<span class="fc" id="L41">                message = &quot;Locked snapshot missing or invalid.&quot;,</span>
+<span class="fc" id="L42">                staleStatus = staleStatus,</span>
+<span class="fc" id="L43">                fallbackReason = FallbackReason(&quot;INVALID_SNAPSHOT&quot;, &quot;Cannot generate without a valid locked snapshot.&quot;),</span>
+            )
+        }
+<span class="fc" id="L46">        val lockedRecipeIds = snapshot.lockedRecipeSelections.map { it.recipeId }.distinct()</span>
+<span class="fc" id="L47">        val resolved = recipeResolver.resolveIngredients(lockedRecipeIds)</span>
+<span class="fc" id="L48">        val missingOrChanged = mutableListOf&lt;String&gt;()</span>
+<span class="fc" id="L49">        val allLines = mutableListOf&lt;IngredientLine&gt;()</span>
+<span class="fc" id="L50">        lockedRecipeIds.forEach { recipeId -&gt;</span>
+<span class="fc" id="L51">            val lines = resolved[recipeId]</span>
+<span class="pc bpc" id="L52" title="1 of 6 branches missed.">            if (lines.isNullOrEmpty()) {</span>
+<span class="fc" id="L53">                missingOrChanged += recipeId</span>
+<span class="fc" id="L54">                allLines += IngredientLine(</span>
+<span class="fc" id="L55">                    name = &quot;Missing recipe ingredients&quot;,</span>
+<span class="fc" id="L56">                    availabilityStatus = IngredientAvailabilityStatus.MISSING,</span>
+<span class="fc" id="L57">                    sourceRecipeId = recipeId,</span>
+                )
+            } else {
+<span class="fc" id="L60">                lines.forEach { line -&gt;</span>
+<span class="fc" id="L61">                    allLines += line</span>
+<span class="pc bpc" id="L62" title="1 of 2 branches missed.">                    if (line.availabilityStatus == IngredientAvailabilityStatus.CHANGED ||</span>
+<span class="pc bpc" id="L63" title="1 of 2 branches missed.">                        line.availabilityStatus == IngredientAvailabilityStatus.MISSING ||</span>
+<span class="pc bpc" id="L64" title="1 of 2 branches missed.">                        line.availabilityStatus == IngredientAvailabilityStatus.UNAVAILABLE</span>
+                    ) {
+<span class="nc bnc" id="L66" title="All 2 branches missed.">                        if (recipeId !in missingOrChanged) missingOrChanged += recipeId</span>
+                    }
+<span class="fc" id="L68">                }</span>
+            }
+<span class="fc" id="L70">        }</span>
+<span class="fc" id="L71">        val (items, unresolved) = ShoppingListRules.resolveIngredientLines(allLines)</span>
+<span class="fc" id="L72">        val notes = buildList {</span>
+<span class="fc bfc" id="L73" title="All 4 branches covered.">            if (missingOrChanged.isNotEmpty()) add(&quot;Missing or changed source data for recipes: ${missingOrChanged.joinToString(&quot;, &quot;)}&quot;)</span>
+<span class="fc bfc" id="L74" title="All 4 branches covered.">            if (unresolved.isNotEmpty()) add(&quot;${unresolved.size} ingredient line(s) unresolved or incomplete; no fabrication applied.&quot;)</span>
+<span class="fc" id="L75">        }</span>
+<span class="fc" id="L76">        val status = when {</span>
+<span class="pc bpc" id="L77" title="5 of 6 branches missed.">            items.isEmpty() &amp;&amp; unresolved.isNotEmpty() -&gt; ShoppingListGenerationOutcome.PARTIAL</span>
+<span class="pc bpc" id="L78" title="2 of 8 branches missed.">            missingOrChanged.isNotEmpty() || unresolved.isNotEmpty() -&gt; ShoppingListGenerationOutcome.PARTIAL</span>
+<span class="fc" id="L79">            else -&gt; ShoppingListGenerationOutcome.GENERATED</span>
+        }
+<span class="fc" id="L81">        val aggregate = ShoppingListAggregate(</span>
+<span class="fc" id="L82">            shoppingListId = &quot;shopping-${snapshot.snapshotId}-${UUID.randomUUID()}&quot;,</span>
+<span class="fc" id="L83">            snapshotId = snapshot.snapshotId,</span>
+<span class="fc" id="L84">            sourceRecipeIds = lockedRecipeIds,</span>
+<span class="fc" id="L85">            items = items.map { item -&gt;</span>
+<span class="fc" id="L86">                item.copy(</span>
+<span class="pc bpc" id="L87" title="1 of 2 branches missed.">                    selectedStoreId = snapshot.planContext.selectedStoreRef?.storeId,</span>
+<span class="pc bpc" id="L88" title="3 of 6 branches missed.">                    availabilityStatus = item.availabilityStatus.takeUnless { it == StorePresenceStatus.NOT_CHECKED } ?: StorePresenceStatus.NOT_CHECKED,</span>
+<span class="fc" id="L89">                    ingredientDataStatus = item.ingredientDataStatus,</span>
+<span class="fc" id="L90">                )</span>
+            },
+<span class="fc bfc" id="L92" title="All 2 branches covered.">            listStatus = if (status == ShoppingListGenerationOutcome.PARTIAL) ShoppingListStateStatus.PARTIAL else ShoppingListStateStatus.GENERATED,</span>
+<span class="fc" id="L93">            staleStatus = staleStatus,</span>
+<span class="fc" id="L94">            hasUserEdits = false,</span>
+<span class="fc" id="L95">            generationNotes = notes,</span>
+<span class="fc" id="L96">            lastGeneratedAt = now,</span>
+<span class="fc" id="L97">            selectedStoreRef = snapshot.planContext.selectedStoreRef,</span>
+        )
+<span class="fc" id="L99">        return ShoppingListGenerationOutcomeResult(</span>
+<span class="fc" id="L100">            status = status,</span>
+<span class="fc" id="L101">            shoppingList = aggregate,</span>
+<span class="fc" id="L102">            missingOrChangedRecipeIds = missingOrChanged,</span>
+<span class="fc bfc" id="L103" title="All 2 branches covered.">            message = notes.joinToString(&quot; &quot;).ifBlank { &quot;Shopping list generated from locked snapshot.&quot; },</span>
+<span class="fc" id="L104">            staleStatus = staleStatus,</span>
+        )
+    }
+
+<span class="fc" id="L108">    suspend fun regenerateFromLockSnapshot(</span>
+        request: ShoppingListGenerationRequest,
+        snapshot: LockSnapshot?,
+        currentList: ShoppingListAggregate?,
+<span class="nc" id="L112">        staleStatus: ShoppingListStaleStatus = request.staleStatus,</span>
+<span class="fc" id="L113">        now: Instant = Instant.now(),</span>
+    ): ShoppingListGenerationOutcomeResult {
+<span class="fc" id="L115">        val confirmation = ShoppingListRules.evaluateRegenerationRequest(currentList, request.copy(operation = ShoppingListGenerationOperation.REGENERATE))</span>
+<span class="pc bpc" id="L116" title="1 of 2 branches missed.">        if (confirmation.status == ShoppingListGenerationOutcome.CONFIRMATION_REQUIRED) {</span>
+<span class="fc" id="L117">            return confirmation.copy(staleStatus = staleStatus)</span>
+        }
+<span class="nc" id="L119">        return generateFromLockSnapshot(request.copy(operation = ShoppingListGenerationOperation.REGENERATE), snapshot, staleStatus, now)</span>
+    }
+
+    /** BR3.8: export uses current edited list state. */
+    fun prepareCurrentExportState(aggregate: ShoppingListAggregate): ShoppingListExportDto {
+<span class="fc" id="L124">        return ShoppingListExportDto(</span>
+<span class="fc" id="L125">            shoppingListId = aggregate.shoppingListId,</span>
+<span class="fc" id="L126">            snapshotId = aggregate.snapshotId,</span>
+<span class="fc" id="L127">            items = aggregate.items.filterNot { it.removed }.map { item -&gt;</span>
+<span class="fc" id="L128">                ExportLineItem(</span>
+<span class="fc" id="L129">                    displayText = item.effectiveDisplayText(),</span>
+<span class="fc" id="L130">                    checked = item.checked,</span>
+<span class="fc" id="L131">                    quantityText = item.effectiveQuantityText(),</span>
+<span class="fc" id="L132">                    availabilityStatus = item.availabilityStatus.name,</span>
+<span class="fc" id="L133">                    availabilityReason = item.availabilityReason,</span>
+<span class="fc" id="L134">                    itemId = item.itemId,</span>
+<span class="fc" id="L135">                )</span>
+            },
+<span class="fc" id="L137">            selectedStore = aggregate.selectedStoreRef,</span>
+<span class="fc" id="L138">            staleWarning = aggregate.staleStatus.staleWarning,</span>
+<span class="fc" id="L139">            notes = aggregate.generationNotes,</span>
+        )
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

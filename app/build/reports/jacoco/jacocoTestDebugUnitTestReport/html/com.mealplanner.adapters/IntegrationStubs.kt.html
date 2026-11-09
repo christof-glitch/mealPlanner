@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>IntegrationStubs.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">com.mealplanner.adapters</a> &gt; <span class="el_source">IntegrationStubs.kt</span></div><h1>IntegrationStubs.kt</h1><pre class="source lang-java linenums">package com.mealplanner.adapters
+
+import com.mealplanner.domain.model.BatchPresenceResult
+import com.mealplanner.domain.model.FallbackReason
+import com.mealplanner.domain.model.Freshness
+import com.mealplanner.domain.model.IngredientLine
+import com.mealplanner.domain.model.MapIngredientsToStorePresenceBatchRequest
+import com.mealplanner.domain.model.MapIngredientsToStorePresenceBatchResult
+import com.mealplanner.domain.model.PresenceBatchOverallStatus
+import com.mealplanner.domain.model.PresenceLookupReason
+import com.mealplanner.domain.model.PresenceSource
+import com.mealplanner.domain.model.RecipeCandidateResult
+import com.mealplanner.domain.model.RecipeId
+import com.mealplanner.domain.model.RecipeQueryStatus
+import com.mealplanner.domain.model.RecipeSourceStatus
+import com.mealplanner.domain.model.RecipeSourceType
+import com.mealplanner.domain.model.RecipeSummary
+import com.mealplanner.domain.model.StorePresenceResult
+import com.mealplanner.domain.model.StorePresenceStatus
+
+/** Fallback-safe C2 stub: no live Sydänmerkki calls in U1. */
+<span class="nc" id="L22">class FallbackRecipeSourceBoundary : RecipeSourceBoundary {</span>
+<span class="nc" id="L23">    private val status = RecipeSourceStatus(</span>
+<span class="nc" id="L24">        sourceType = RecipeSourceType.NONE,</span>
+<span class="nc" id="L25">        freshness = Freshness.UNKNOWN,</span>
+<span class="nc" id="L26">        fallbackUsed = true,</span>
+<span class="nc" id="L27">        fallbackReason = FallbackReason(&quot;RECIPE_SOURCE_UNAVAILABLE&quot;, &quot;Live recipe source not configured in U1 foundation.&quot;),</span>
+<span class="nc" id="L28">        userActionRequired = &quot;Use curated recipes or configure recipe source in a later unit.&quot;,</span>
+    )
+
+    override suspend fun findCandidates(query: Map&lt;String, String&gt;): RecipeCandidateResult =
+<span class="nc" id="L32">        RecipeCandidateResult(status = RecipeQueryStatus.UNAVAILABLE, sourceStatus = status, fallbackReason = status.fallbackReason)</span>
+
+<span class="nc" id="L34">    override suspend fun getRecipeSummary(recipeId: RecipeId): RecipeSummary? = null</span>
+
+    override suspend fun resolveIngredients(recipeIds: List&lt;RecipeId&gt;): Map&lt;RecipeId, List&lt;IngredientLine&gt;&gt; =
+<span class="nc" id="L37">        recipeIds.associateWith { emptyList() }</span>
+
+<span class="nc" id="L39">    override fun sourceStatus(): RecipeSourceStatus = status</span>
+}
+
+/**
+ * Fallback-safe C5 stub: name/presence mapping only, returns UNKNOWN projections.
+ * Never PRISMA lookup in U1; never owns merge/stale semantics.
+ */
+<span class="fc" id="L46">class FallbackPresenceMappingBoundary : PresenceMappingBoundary {</span>
+    override suspend fun mapIngredientsToStorePresenceBatch(
+        request: MapIngredientsToStorePresenceBatchRequest,
+    ): MapIngredientsToStorePresenceBatchResult {
+<span class="fc" id="L50">        val reason = PresenceLookupReason(</span>
+<span class="fc" id="L51">            code = &quot;PRISMA_LOOKUP_NOT_CONFIGURED&quot;,</span>
+<span class="fc" id="L52">            message = &quot;Store presence lookup is unavailable in U1 foundation.&quot;,</span>
+<span class="fc" id="L53">            userActionRequired = &quot;Use manual checklist or configure PRISMA in a later unit.&quot;,</span>
+        )
+<span class="fc" id="L55">        val results = request.queryItems.map { item -&gt;</span>
+<span class="fc" id="L56">            StorePresenceResult(</span>
+<span class="fc" id="L57">                ingredientRef = item.ingredientRef,</span>
+<span class="fc" id="L58">                queryText = item.queryText,</span>
+<span class="fc" id="L59">                storeRef = request.storeRef,</span>
+<span class="fc" id="L60">                status = StorePresenceStatus.UNKNOWN,</span>
+<span class="fc" id="L61">                reason = reason,</span>
+<span class="fc" id="L62">                source = PresenceSource.UNAVAILABLE,</span>
+<span class="fc" id="L63">            )</span>
+        }
+<span class="fc" id="L65">        return MapIngredientsToStorePresenceBatchResult(</span>
+<span class="fc" id="L66">            batchResult = BatchPresenceResult(</span>
+<span class="fc" id="L67">                storeRef = request.storeRef,</span>
+<span class="fc" id="L68">                results = results,</span>
+<span class="pc bpc" id="L69" title="1 of 2 branches missed.">                overallStatus = if (results.isEmpty()) PresenceBatchOverallStatus.COMPLETE else PresenceBatchOverallStatus.PARTIAL,</span>
+<span class="fc" id="L70">                fallbackReason = FallbackReason(&quot;PRISMA_UNAVAILABLE&quot;, reason.message, reason.userActionRequired),</span>
+            ),
+<span class="fc" id="L72">            mappingWarnings = listOf(reason),</span>
+        )
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

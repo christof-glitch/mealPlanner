@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.mealplanner.app-mergeDebugResources-53:/values-v30/values-v30.xml",
+            "outputFile": "com.mealplanner.app-mergeDebugResources-58:/values-v30/values-v30.xml",
             "map": [
                 {
-                    "source": "/Users/christfm/.gradle/caches/8.14.6/transforms/a8b38ee809206eddc64bbdd9a53e639e/transformed/material3-release/res/values-v30/values-v30.xml",
+                    "source": "/Users/christfm/.gradle/caches/8.14.6/transforms/4930f76dceb6983edfb45a6a5a8bad29/transformed/material3-release/res/values-v30/values-v30.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RecipeTimeNormalizationEvaluator.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">app</a> &gt; <a href="index.source.html" class="el_package">com.mealplanner.domain.recipe</a> &gt; <span class="el_source">RecipeTimeNormalizationEvaluator.kt</span></div><h1>RecipeTimeNormalizationEvaluator.kt</h1><pre class="source lang-java linenums">package com.mealplanner.domain.recipe
+
+import com.mealplanner.domain.model.DayOfWeek
+import com.mealplanner.domain.model.ExclusionReason
+import com.mealplanner.domain.model.ExclusionReasonCode
+import com.mealplanner.domain.model.ExclusionSourceMarker
+import com.mealplanner.domain.model.MealSlotType
+import com.mealplanner.domain.model.RecipeSummary
+import com.mealplanner.domain.model.RecipeTimeNormalization
+import com.mealplanner.domain.model.TimeConfidence
+import com.mealplanner.domain.model.dayKind
+import com.mealplanner.domain.model.DayKind
+
+/** BR2.3: deterministic weekday time normalization without guessing (FR3, OQ7). */
+object RecipeTimeNormalizationEvaluator {
+<span class="fc" id="L16">    fun normalize(</span>
+        day: DayOfWeek,
+        mealType: MealSlotType,
+        recipe: RecipeSummary,
+<span class="fc" id="L20">        rawTimeText: String? = null,</span>
+    ): RecipeTimeNormalization {
+<span class="fc bfc" id="L22" title="All 2 branches covered.">        val weekday = day.dayKind() == DayKind.WEEKDAY</span>
+<span class="fc" id="L23">        val confidence = recipe.timeConfidence</span>
+<span class="fc" id="L24">        val total = recipe.totalTimeMinutes</span>
+<span class="fc" id="L25">        return when {</span>
+<span class="fc bfc" id="L26" title="All 2 branches covered.">            !weekday -&gt; RecipeTimeNormalization(</span>
+<span class="pc bpc" id="L27" title="2 of 4 branches missed.">                totalTimeMinutes = total.takeIf { confidence == TimeConfidence.KNOWN },</span>
+<span class="fc" id="L28">                timeVerifiability = confidence,</span>
+<span class="fc" id="L29">                weekdayEligible = null,</span>
+<span class="fc" id="L30">                rawTimeText = rawTimeText,</span>
+<span class="fc" id="L31">                normalizationRule = &quot;WEEKEND_NOT_SUBJECT_TO_WEEKDAY_30_MIN&quot;,</span>
+            )
+<span class="fc bfc" id="L33" title="All 6 branches covered.">            confidence == TimeConfidence.KNOWN &amp;&amp; total != null &amp;&amp; total &lt;= 30 -&gt; RecipeTimeNormalization(</span>
+<span class="fc" id="L34">                totalTimeMinutes = total,</span>
+<span class="fc" id="L35">                timeVerifiability = TimeConfidence.KNOWN,</span>
+<span class="fc" id="L36">                weekdayEligible = true,</span>
+<span class="fc" id="L37">                rawTimeText = rawTimeText,</span>
+<span class="fc" id="L38">                normalizationRule = &quot;KNOWN_TOTAL_LE_30&quot;,</span>
+            )
+<span class="pc bpc" id="L40" title="1 of 6 branches missed.">            confidence == TimeConfidence.KNOWN &amp;&amp; total != null &amp;&amp; total &gt; 30 -&gt; RecipeTimeNormalization(</span>
+<span class="fc" id="L41">                totalTimeMinutes = total,</span>
+<span class="fc" id="L42">                timeVerifiability = TimeConfidence.KNOWN,</span>
+<span class="fc" id="L43">                weekdayEligible = false,</span>
+<span class="fc" id="L44">                exclusionReason = exclusion(recipe.recipeId, ExclusionReasonCode.WEEKDAY_TIME_OVER_30, ExclusionSourceMarker.RULE),</span>
+<span class="fc" id="L45">                rawTimeText = rawTimeText,</span>
+<span class="fc" id="L46">                normalizationRule = &quot;KNOWN_TOTAL_GT_30&quot;,</span>
+            )
+<span class="pc bpc" id="L48" title="1 of 4 branches missed.">            confidence == TimeConfidence.KNOWN &amp;&amp; total == null -&gt; ambiguous(recipe.recipeId, rawTimeText, &quot;KNOWN_CONFIDENCE_MISSING_TOTAL&quot;)</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">            confidence == TimeConfidence.AMBIGUOUS -&gt; ambiguous(recipe.recipeId, rawTimeText, &quot;AMBIGUOUS_TIME_NOT_GUESSED&quot;)</span>
+<span class="pc bpc" id="L50" title="1 of 2 branches missed.">            confidence == TimeConfidence.MISSING -&gt; missing(recipe.recipeId, rawTimeText)</span>
+<span class="nc" id="L51">            else -&gt; ambiguous(recipe.recipeId, rawTimeText, &quot;UNPARSEABLE_TIME_NOT_GUESSED&quot;)</span>
+        }
+    }
+
+<span class="fc" id="L55">    private fun missing(recipeId: String, rawTimeText: String?) = RecipeTimeNormalization(</span>
+<span class="fc" id="L56">        totalTimeMinutes = null,</span>
+<span class="fc" id="L57">        timeVerifiability = TimeConfidence.MISSING,</span>
+<span class="fc" id="L58">        weekdayEligible = false,</span>
+<span class="fc" id="L59">        exclusionReason = exclusion(recipeId, ExclusionReasonCode.WEEKDAY_TIME_AMBIGUOUS, ExclusionSourceMarker.DATA),</span>
+<span class="fc" id="L60">        rawTimeText = rawTimeText,</span>
+<span class="fc" id="L61">        normalizationRule = &quot;MISSING_TIME_NOT_GUESSED&quot;,</span>
+<span class="fc" id="L62">    )</span>
+
+<span class="fc" id="L64">    private fun ambiguous(recipeId: String, rawTimeText: String?, rule: String) = RecipeTimeNormalization(</span>
+<span class="fc" id="L65">        totalTimeMinutes = null,</span>
+<span class="fc" id="L66">        timeVerifiability = TimeConfidence.AMBIGUOUS,</span>
+<span class="fc" id="L67">        weekdayEligible = false,</span>
+<span class="fc" id="L68">        exclusionReason = exclusion(recipeId, ExclusionReasonCode.WEEKDAY_TIME_AMBIGUOUS, ExclusionSourceMarker.DATA),</span>
+<span class="fc" id="L69">        rawTimeText = rawTimeText,</span>
+<span class="fc" id="L70">        normalizationRule = rule,</span>
+<span class="fc" id="L71">    )</span>
+
+<span class="fc" id="L73">    private fun exclusion(recipeId: String, code: ExclusionReasonCode, marker: ExclusionSourceMarker) = ExclusionReason(</span>
+<span class="fc" id="L74">        reasonCode = code,</span>
+<span class="fc" id="L75">        messageKeyOrTextSource = code.name,</span>
+<span class="fc" id="L76">        recipeOrCandidateRef = recipeId,</span>
+<span class="fc" id="L77">        sourceMarker = marker,</span>
+<span class="fc" id="L78">    )</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
