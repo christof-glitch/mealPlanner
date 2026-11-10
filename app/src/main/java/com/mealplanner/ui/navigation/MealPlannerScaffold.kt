@@ -169,6 +169,7 @@ fun MealPlannerScaffold(
                     onLockRecipes = { onPlanIntent(com.mealplanner.ui.state.PlanIntent.LockRecipesForShopping) },
                     onNavigateGrocery = { navController.navigate(MealPlannerRoute.Grocery.route) },
                     onRetry = onPlanRetry,
+                    onIntent = onPlanIntent,
                 )
             }
             composable(MealPlannerRoute.Grocery.route) {

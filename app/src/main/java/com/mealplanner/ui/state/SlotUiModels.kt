@@ -73,4 +73,6 @@ sealed interface PlanIntent {
     data object Retry : PlanIntent
     data object UseBundledFallbackCatalog : PlanIntent
     data object ContinueWithManualPlanning : PlanIntent
+    /** User-requested: fill coming-week slots from available recipes (breakfast/non-breakfast rules). */
+    data object GenerateWeekPlan : PlanIntent
 }

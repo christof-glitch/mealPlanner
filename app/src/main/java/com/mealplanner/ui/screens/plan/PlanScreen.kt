@@ -29,8 +29,12 @@ import com.mealplanner.ui.components.R05FallbackPanel
 import com.mealplanner.ui.components.SeasonContextIndicator
 import com.mealplanner.ui.components.StatusBanner
 import com.mealplanner.ui.navigation.SlotContextNav
+import com.mealplanner.ui.state.PlanIntent
 import com.mealplanner.ui.state.PlanScreenState
 import com.mealplanner.ui.state.SlotActionContext
+import java.time.LocalDate
+import java.time.format.TextStyle
+import java.util.Locale
 
 /** RM-03 Plan week view (Step 7). R-06 shared slot state; lock links to Grocery without auto-generation (R-03). */
 @Composable
@@ -43,6 +47,7 @@ fun PlanScreen(
     onNavigateGrocery: () -> Unit,
     onRetry: () -> Unit,
     modifier: Modifier = Modifier,
+    onIntent: (PlanIntent) -> Unit = { if (it == PlanIntent.LockRecipesForShopping) onLockRecipes() },
 ) {
     Column(modifier = modifier.fillMaxSize().padding(16.dp).testTag("plan-screen")) {
         Text(
@@ -67,6 +72,14 @@ fun PlanScreen(
             unavailable = state.nutritionCueLabel.isNullOrBlank(),
             modifier = Modifier.padding(vertical = 8.dp),
         )
+        Button(
+            onClick = { onIntent(PlanIntent.GenerateWeekPlan) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp)
+                .testTag("plan-generate-week")
+                .semantics { contentDescription = "generate week plan" },
+        ) { Text("generate week plan") }
         Card(modifier = Modifier.fillMaxWidth().testTag("lock-control-card")) {
             Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text("Lock status: ${state.lockStateLabel}", style = MaterialTheme.typography.titleSmall)
@@ -77,7 +90,7 @@ fun PlanScreen(
                 )
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     Button(
-                        onClick = onLockRecipes,
+                        onClick = { onIntent(PlanIntent.LockRecipesForShopping) },
                         modifier = Modifier.testTag("lock-recipes-action").semantics { contentDescription = "Lock recipes for shopping list" },
                     ) { Text(if (state.isLocked) "Update lock" else "Lock recipes for shopping list") }
                     OutlinedButton(
@@ -90,19 +103,63 @@ fun PlanScreen(
         if (state.weekSlots.isEmpty()) {
             StatusBanner("No plan slots available. Continue with manual planning or retry loading data.")
         } else {
+            val today = LocalDate.now()
+            val comingDays = (0..6).map { today.plusDays(it.toLong()) }
+            val slotsByDow = state.weekSlots.groupBy { it.context.dayOfWeek }
+            val locale = Locale.getDefault()
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(10.dp),
-                modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                modifier = Modifier.fillMaxWidth().padding(top = 8.dp).testTag("plan-calendar"),
             ) {
-                items(state.weekSlots, key = { SlotContextNav.stableSlotKey(it.context) }) { slot ->
-                    MealSlotCard(
-                        model = slot,
-                        onViewRecipe = { onViewRecipe(slot.context) },
-                        onReplace = { onReplace(slot.context) },
-                        onChooseRecipe = { onChooseRecipe(slot.context) },
-                    )
+                items(comingDays, key = { it.toString() }) { date ->
+                    val dow = date.dayOfWeek.toDomainDayOfWeek()
+                    val daySlots = slotsByDow[dow].orEmpty().sortedBy { it.context.mealType.order() }
+                    Card(modifier = Modifier.fillMaxWidth().testTag("plan-day-${dow.name.lowercase()}")) {
+                        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Text(
+                                text = "${date.dayOfWeek.getDisplayName(TextStyle.FULL, locale)} ${date.month.getDisplayName(TextStyle.SHORT, locale)} ${date.dayOfMonth}",
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier.semantics { heading() },
+                            )
+                            if (daySlots.isEmpty()) {
+                                Text("No meal slots for this day.", style = MaterialTheme.typography.bodySmall)
+                            } else {
+                                daySlots.forEach { slot ->
+                                    Column {
+                                        Text(
+                                            text = slot.context.mealType.name.lowercase().replaceFirstChar { it.titlecase() },
+                                            style = MaterialTheme.typography.labelLarge,
+                                            modifier = Modifier.padding(top = 2.dp, bottom = 2.dp),
+                                        )
+                                        MealSlotCard(
+                                            model = slot,
+                                            onViewRecipe = { onViewRecipe(slot.context) },
+                                            onReplace = { onReplace(slot.context) },
+                                            onChooseRecipe = { onChooseRecipe(slot.context) },
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
     }
+}
+
+private fun java.time.DayOfWeek.toDomainDayOfWeek(): com.mealplanner.domain.model.DayOfWeek = when (this) {
+    java.time.DayOfWeek.MONDAY -> com.mealplanner.domain.model.DayOfWeek.MONDAY
+    java.time.DayOfWeek.TUESDAY -> com.mealplanner.domain.model.DayOfWeek.TUESDAY
+    java.time.DayOfWeek.WEDNESDAY -> com.mealplanner.domain.model.DayOfWeek.WEDNESDAY
+    java.time.DayOfWeek.THURSDAY -> com.mealplanner.domain.model.DayOfWeek.THURSDAY
+    java.time.DayOfWeek.FRIDAY -> com.mealplanner.domain.model.DayOfWeek.FRIDAY
+    java.time.DayOfWeek.SATURDAY -> com.mealplanner.domain.model.DayOfWeek.SATURDAY
+    java.time.DayOfWeek.SUNDAY -> com.mealplanner.domain.model.DayOfWeek.SUNDAY
+}
+
+private fun com.mealplanner.domain.model.MealSlotType.order(): Int = when (this) {
+    com.mealplanner.domain.model.MealSlotType.BREAKFAST -> 0
+    com.mealplanner.domain.model.MealSlotType.LUNCH -> 1
+    com.mealplanner.domain.model.MealSlotType.DINNER -> 2
 }
