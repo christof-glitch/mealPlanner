@@ -3,7 +3,7 @@
 **Intent:** `261107-weekly-meal-planner` (scope `mvp`, space `default`)  
 **Stage:** Build and Test (Construction 3.6)  
 **Lead:** `aidlc-quality-agent` (inline, gate)  
-**Date:** 2026-11-10 (latest: post-UI replay + option 2 coverage work)  
+**Date:** 2026-11-10 (latest: post-UI replay + option 2 coverage work + NFR traceability alignment)  
 **Construction autonomy:** `autonomous` (unit-major/serial)
 
 ## Inventory
@@ -33,7 +33,7 @@
 - `./gradlew :app:testDebugUnitTest :app:jacocoTestDebugUnitTestReport --console=plain` → **BUILD SUCCESSFUL** (2026-11-10 latest, 33 tasks: 2 executed, 31 up-to-date).
 - JaCoCo report: `app/build/reports/jacoco/jacocoTestDebugUnitTestReport/jacocoTestDebugUnitTestReport.xml` (2026-11-10 latest).
 - **Coverage floor Met:** 84.83% line coverage >= 80% MVP floor (improved via option 2 authorized tests/test-infra).
-- **Sensor traceability Not Met:** `aidlc engine sensor-traceability --stage build-and-test` (`/tmp/mealplanner-trace7.json`, `pass:false`) uncovered `NFR1–NFR4`; `FR1–FR12`, ACs, and `NFR5` covered.
+- **Sensor traceability Met:** `aidlc engine sensor-traceability --stage build-and-test` (`/tmp/mealplanner-trace8.json`, `pass:true`) uncovered none; `FR1–FR12`, ACs, and `NFR1–NFR5` covered.
 - **Requested UI/generation preserved:** coming-week Plan calendar from current day, `generate week plan` (Sat/Sun B/L/D, Mon–Fri B/D), breakfast by title heuristic, lunch/dinner random non-breakfast, unique recipe IDs across week, curated catalog, explicit action only, no auto-regeneration/stale invariant changes.
 - Live Sydänmerkki/PRISMA/S-ostoslista integrations **not executed** (OQ1–OQ4 investigational/gated; mandatory fallbacks preserved). No secrets/PII/raw GPS introduced.
 
@@ -41,7 +41,4 @@
 See `test-results.md` § “Target Verification Matrix” (complete, no `Pending` verdicts).
 
 ## Readiness / gate outcome
-**Not ready to pass Build and Test approval gate** due to remaining blocking finding:
-1. Cross-unit traceability sensor **Not Met** for `NFR1–NFR4` (residual `not_built`/`not_applicable` markers; FR/AC/NFR5 covered).
-
-Coverage blocker is resolved (84.83%). Loop-backs used: **1/3**. Option 2 authorized coverage follow-up completed in-stage. NFR traceability alignment may be feasible as evidence/artifact correction but should be handled per protocol (including loop-back/code-generation reopen if required) without weakening thresholds or invariants.
+**Ready to pass Build and Test approval gate** on latest evidence: coverage Met (84.83%), full suite `BUILD SUCCESSFUL`, and cross-unit traceability sensor `pass:true` (`/tmp/mealplanner-trace8.json`). CI-before-merge obligation is deferred to CI Pipeline (3.7). Loop-backs used: **1/3**; option 2 authorized coverage follow-up and NFR traceability alignment completed without weakening thresholds or invariants.

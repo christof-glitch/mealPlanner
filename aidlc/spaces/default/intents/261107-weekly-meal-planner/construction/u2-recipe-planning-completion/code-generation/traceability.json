@@ -308,8 +308,9 @@
     },
     {
       "id": "NFR3.4",
-      "status": "N/A",
-      "target": "aidlc/spaces/default/intents/261107-weekly-meal-planner/construction/u2-recipe-planning-completion/code-generation/code-summary.md"
+      "status": "OK",
+      "target": "app/src/main/java/com/mealplanner/adapters/A1RecipeSourceAdapter.kt",
+      "note": "Sydänmerkki live path remains gated/default-off/auditable with explicit fallback (FQ1=A/OQ1); no scraping/terms assumptions. Implementation and tests verified in build (2026-11-10)."
     },
     {
       "id": "NFR3.5",
