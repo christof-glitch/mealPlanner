@@ -3,7 +3,7 @@
 **Intent:** `261107-weekly-meal-planner` (scope `mvp`, space `default`)  
 **Stage:** Build and Test (Construction 3.6)  
 **Lead:** `aidlc-quality-agent` (inline, gate)  
-**Date:** 2026-11-10 (replay after U1–U4 Code Generation loop-back replay)  
+**Date:** 2026-11-10 (post-UI Plan calendar/generate-week-plan replay, after Loop-Back 1 replay)  
 **Construction autonomy:** `autonomous` (unit-major/serial)
 
 ## Inventory
@@ -15,7 +15,7 @@
 ## Coverage expectations (policy)
 - **Active strategy:** Standard (5–8 tests per component; unit + integration tests for key boundaries). Custom methodology ordering preserved per unit contracts.
 - **MVP additive floor:** 80% line coverage on the full assembled test suite; CI execution before merge (CI Pipeline stage follows). Floor is additive and was **not weakened**.
-- **Measured (2026-11-10):** JaCoCo LINE `60.38%` (`1955/3238`), INSTRUCTION `37.45%` (`16011/42754`), BRANCH `21.68%` (`802/3699`). **Below MVP floor — Not Met.**
+- **Measured (2026-11-10):** JaCoCo LINE `58.91%` (`2019/3427`), INSTRUCTION `36.70%` (`16377/44622`), BRANCH `21.32%` (`801/3757`). **Below MVP floor — Not Met.**
 
 ## Artifacts produced / updated
 | Artifact | Status | Path |
@@ -30,10 +30,12 @@
 | Build and test memory | Updated | `construction/build-and-test/memory.md` |
 
 ## Key results
-- `./gradlew :app:testDebugUnitTest :app:jacocoTestDebugUnitTestReport --console=plain` → **BUILD SUCCESSFUL** (2026-11-10, 28 tasks: 1 executed, 27 up-to-date).
-- JaCoCo report: `app/build/reports/jacoco/jacocoTestDebugUnitTestReport/jacocoTestDebugUnitTestReport.xml`.
-- **Coverage floor Not Met:** 60.38% line coverage < 80% MVP floor (improved from 58.55%); 0% Compose/UI packages dominate uncovered lines.
-- **Sensor traceability Not Met:** `aidlc engine sensor-traceability --stage build-and-test` (`/tmp/mealplanner-trace4.json`, exit 0) `pass:false`, uncovered `NFR1–NFR4`; `FR1–FR12`, ACs, and `NFR5` covered.
+- `./gradlew :app:compileDebugKotlin :app:compileDebugUnitTestKotlin --console=plain` → **BUILD SUCCESSFUL** (2026-11-10, post-UI Plan changes).
+- `./gradlew :app:testDebugUnitTest :app:jacocoTestDebugUnitTestReport --console=plain` → **BUILD SUCCESSFUL** (2026-11-10, 28 tasks: 8 executed, 20 up-to-date).
+- JaCoCo report: `app/build/reports/jacoco/jacocoTestDebugUnitTestReport/jacocoTestDebugUnitTestReport.xml` (generated 2026-11-10; build artifacts cleaned after evidence collection).
+- **Coverage floor Not Met:** 58.91% line coverage < 80% MVP floor (decreased from 60.38% after added Plan UI/generation/curated-catalog code); 0%/low Compose/UI packages dominate uncovered lines.
+- **Sensor traceability Not Met:** `aidlc engine sensor-traceability --stage build-and-test` (`/tmp/mealplanner-trace5.json`, exit 0) `pass:false`, uncovered `NFR1–NFR4`; `FR1–FR12`, ACs, and `NFR5` covered.
+- **Requested UI/generation (implemented, `31511f5`):** coming-week Plan calendar from current day, `generate week plan` filling slots (Sat/Sun B/L/D, Mon–Fri B/D), breakfast by title heuristic, lunch/dinner random non-breakfast, unique recipe IDs across week, curated available-recipe catalog, partial/no-fill behavior; preserves explicit generate action and no auto-regeneration/stale invariants. Breakfast classification remains heuristic (no explicit meal-category field).
 - Live Sydänmerkki/PRISMA/S-ostoslista integrations **not executed** (OQ1–OQ4 investigational/gated; mandatory fallbacks preserved). No secrets/PII/raw GPS introduced.
 
 ## Target Verification Matrix
@@ -41,7 +43,7 @@ See `test-results.md` § “Target Verification Matrix” (complete, no `Pending
 
 ## Readiness / gate outcome
 **Not ready to pass Build and Test approval gate.** Blocking findings:
-1. MVP 80% line-coverage floor **Not Met** (60.38%).
+1. MVP 80% line-coverage floor **Not Met** (58.91%).
 2. Cross-unit traceability sensor **Not Met** for `NFR1–NFR4` (residual `not_built`/`not_applicable` markers; FR/AC/NFR5 covered).
 
-Loop-backs used: **1/3**. Coverage shortfall is concentrated in Compose/UI code not practically coverable to 80% with plain JVM unit tests without plan-affecting instrumentation/Robolectric setup; targeted NFR traceability alignment may be feasible but does not clear the coverage blocker. **No impact-estimated fix identified that resolves all blocking failures without weakening thresholds or making plan-affecting changes.** Per failure ladder/protocol, halt-and-ask (human decision) is required before any gate/report.
+Loop-backs used: **1/3**. Coverage shortfall is concentrated in Compose/UI code and increased by post-UI changes, not practically coverable to 80% with plain JVM unit tests without plan-affecting instrumentation/Robolectric setup; targeted NFR traceability alignment may be feasible but does not clear the coverage blocker. **No impact-estimated fix identified that resolves all blocking failures without weakening thresholds or making plan-affecting changes.** Per failure ladder/protocol, halt-and-ask (human decision/report) is required before any gate pass.
