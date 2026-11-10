@@ -21978,3 +21978,18 @@
 **State Validity**: valid
 
 ---
+
+## Stage Awaiting Approval
+**Timestamp**: 2026-11-10T09:05:00Z
+**Event**: STAGE_AWAITING_APPROVAL
+**Stage**: ci-pipeline
+**Next Stage**: none
+**Brief Digest**: none
+**Sensor State**: required-sections@aidlc/spaces/default/intents/261107-weekly-meal-planner/construction/ci-pipeline/ci-config.md=not-run; required-sections@aidlc/spaces/default/intents/261107-weekly-meal-planner/construction/ci-pipeline/quality-gates.md=not-run; required-sections@aidlc/spaces/default/intents/261107-weekly-meal-planner/construction/ci-pipeline/ci-pipeline-questions.md=not-run; upstream-coverage@aidlc/spaces/default/intents/261107-weekly-meal-planner/construction/ci-pipeline/ci-config.md=not-run
+**Open Decisions**: 0
+**Question Id**: c5ac1655
+**Question Type**: gate
+**Question Chat**: ses_e48ddfe60ffetCuZ09DKGFHGhQ
+**Question Shows**: sha256:ab0e97c4341dd1a371e8a0f5cbfd1359319f85c2dd6f4b409d72a95f1d884d3b
+
+---
