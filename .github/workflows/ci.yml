@@ -1,0 +1,77 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-test-coverage:
+    name: Build, Test, and Coverage Gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Run unit tests and JaCoCo report (recorded verification + coverage)
+        run: ./gradlew :app:testDebugUnitTest :app:jacocoTestDebugUnitTestReport --console=plain
+
+      - name: Enforce MVP 80% line-coverage floor (JaCoCo)
+        run: |
+          python3 - <<'PY'
+          import sys
+          import xml.etree.ElementTree as ET
+
+          path = "app/build/reports/jacoco/jacocoTestDebugUnitTestReport/jacocoTestDebugUnitTestReport.xml"
+          root = ET.parse(path).getroot()
+          covered = missed = None
+          for c in root.findall("counter"):
+              if c.get("type") == "LINE":
+                  covered = int(c.get("covered", "0"))
+                  missed = int(c.get("missed", "0"))
+                  break
+          if covered is None or missed is None:
+              print("ERROR: LINE counter not found in JaCoCo report", file=sys.stderr)
+              sys.exit(2)
+          total = covered + missed
+          ratio = (covered / total) if total else 0.0
+          pct = ratio * 100.0
+          print(f"JaCoCo LINE coverage: {covered}/{total} = {pct:.2f}%")
+          if ratio + 1e-12 < 0.80:
+              print(f"ERROR: MVP 80% line-coverage floor not met ({pct:.2f}% < 80.00%)", file=sys.stderr)
+              sys.exit(1)
+          print("Coverage floor met (>= 80%).")
+          PY
+
+      - name: Upload test and coverage reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-and-coverage-reports
+          if-no-files-found: warn
+          path: |
+            app/build/reports/jacoco/jacocoTestDebugUnitTestReport/**
+            app/build/test-results/testDebugUnitTest/**
+            app/build/reports/tests/testDebugUnitTest/**
