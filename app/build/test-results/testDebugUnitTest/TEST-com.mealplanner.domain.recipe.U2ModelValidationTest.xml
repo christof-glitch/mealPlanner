@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.mealplanner.domain.recipe.U2ModelValidationTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-11-09T21:40:18.266Z" hostname="jyu-mac-20260120.local" time="0.001">
+<testsuite name="com.mealplanner.domain.recipe.U2ModelValidationTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-11-10T06:21:06.210Z" hostname="Mac.home" time="0.001">
   <properties/>
-  <testcase name="recipe detail and normalization preserve explicit unavailable partial states" classname="com.mealplanner.domain.recipe.U2ModelValidationTest" time="0.0"/>
+  <testcase name="recipe detail and normalization preserve explicit unavailable partial states" classname="com.mealplanner.domain.recipe.U2ModelValidationTest" time="0.001"/>
   <testcase name="adapter request and result carry typed A1 statuses and investigation outcome" classname="com.mealplanner.domain.recipe.U2ModelValidationTest" time="0.0"/>
   <testcase name="adapter request validation rejects malformed slot and missing ids" classname="com.mealplanner.domain.recipe.U2ModelValidationTest" time="0.0"/>
   <testcase name="season fit evaluation supports unknown with explanation and override precedence context" classname="com.mealplanner.domain.recipe.U2ModelValidationTest" time="0.0"/>
   <testcase name="alternatives and slot selection contracts are typed and validated" classname="com.mealplanner.domain.recipe.U2ModelValidationTest" time="0.0"/>
   <testcase name="recipe filters are additive and optional" classname="com.mealplanner.domain.recipe.U2ModelValidationTest" time="0.0"/>
-  <testcase name="nutrition profile and cue use explicit unavailable states and count exclusions" classname="com.mealplanner.domain.recipe.U2ModelValidationTest" time="0.001"/>
+  <testcase name="nutrition profile and cue use explicit unavailable states and count exclusions" classname="com.mealplanner.domain.recipe.U2ModelValidationTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

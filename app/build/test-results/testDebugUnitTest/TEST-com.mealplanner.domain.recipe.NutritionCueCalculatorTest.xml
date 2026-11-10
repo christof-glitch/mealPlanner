@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.mealplanner.domain.recipe.NutritionCueCalculatorTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-11-09T21:40:18.236Z" hostname="jyu-mac-20260120.local" time="0.001">
+<testsuite name="com.mealplanner.domain.recipe.NutritionCueCalculatorTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-11-10T06:21:06.201Z" hostname="Mac.home" time="0.002">
   <properties/>
-  <testcase name="profiles missing from map are excluded explicitly" classname="com.mealplanner.domain.recipe.NutritionCueCalculatorTest" time="0.001"/>
+  <testcase name="profiles missing from map are excluded explicitly" classname="com.mealplanner.domain.recipe.NutritionCueCalculatorTest" time="0.002"/>
   <testcase name="missing nutrition is explicit and unavailable cue never fabricates values" classname="com.mealplanner.domain.recipe.NutritionCueCalculatorTest" time="0.0"/>
   <testcase name="cue aggregates only from request inputs and reports exclusions" classname="com.mealplanner.domain.recipe.NutritionCueCalculatorTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>

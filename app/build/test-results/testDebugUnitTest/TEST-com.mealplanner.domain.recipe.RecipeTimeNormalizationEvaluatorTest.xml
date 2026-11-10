@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.mealplanner.domain.recipe.RecipeTimeNormalizationEvaluatorTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-09T21:40:18.263Z" hostname="jyu-mac-20260120.local" time="0.001">
+<testsuite name="com.mealplanner.domain.recipe.RecipeTimeNormalizationEvaluatorTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-10T06:21:06.208Z" hostname="Mac.home" time="0.001">
   <properties/>
-  <testcase name="KNOWN total 30 or less is eligible for weekday breakfast dinner" classname="com.mealplanner.domain.recipe.RecipeTimeNormalizationEvaluatorTest" time="0.001"/>
-  <testcase name="MISSING or AMBIGUOUS time is never guessed and excluded with WEEKDAY_TIME_AMBIGUOUS" classname="com.mealplanner.domain.recipe.RecipeTimeNormalizationEvaluatorTest" time="0.0"/>
+  <testcase name="KNOWN total 30 or less is eligible for weekday breakfast dinner" classname="com.mealplanner.domain.recipe.RecipeTimeNormalizationEvaluatorTest" time="0.0"/>
+  <testcase name="MISSING or AMBIGUOUS time is never guessed and excluded with WEEKDAY_TIME_AMBIGUOUS" classname="com.mealplanner.domain.recipe.RecipeTimeNormalizationEvaluatorTest" time="0.001"/>
   <testcase name="weekend slots are not subject to weekday 30 minute rule" classname="com.mealplanner.domain.recipe.RecipeTimeNormalizationEvaluatorTest" time="0.0"/>
   <testcase name="KNOWN confidence but missing total minutes is treated as ambiguous not guessed" classname="com.mealplanner.domain.recipe.RecipeTimeNormalizationEvaluatorTest" time="0.0"/>
   <testcase name="KNOWN total over 30 excluded with WEEKDAY_TIME_OVER_30" classname="com.mealplanner.domain.recipe.RecipeTimeNormalizationEvaluatorTest" time="0.0"/>

@@ -24,17 +24,17 @@ object DiagnosticsUiMapper {
 <span class="fc bfc" id="L24" title="All 2 branches covered.">        return if (SENSITIVE.any { lowered.contains(it) }) &quot;Details unavailable for privacy.&quot; else raw</span>
     }
 
-<span class="nc" id="L27">    fun r05NoLocalDataRemoteUnavailable(bundledFallbackAvailable: Boolean = true): R05State = R05State(</span>
-<span class="nc" id="L28">        visible = true,</span>
-<span class="nc" id="L29">        message = &quot;No local data available and remote data is unavailable.&quot;,</span>
-<span class="nc" id="L30">        nextActions = buildList {</span>
-<span class="nc" id="L31">            add(R05NextAction.RETRY)</span>
-<span class="nc bnc" id="L32" title="All 2 branches missed.">            if (bundledFallbackAvailable) add(R05NextAction.USE_BUNDLED_FALLBACK_CATALOG)</span>
-<span class="nc" id="L33">            add(R05NextAction.CONTINUE_WITH_MANUAL_PLANNING)</span>
-<span class="nc" id="L34">        },</span>
-<span class="nc" id="L35">    )</span>
+<span class="pc" id="L27">    fun r05NoLocalDataRemoteUnavailable(bundledFallbackAvailable: Boolean = true): R05State = R05State(</span>
+<span class="fc" id="L28">        visible = true,</span>
+<span class="fc" id="L29">        message = &quot;No local data available and remote data is unavailable.&quot;,</span>
+<span class="fc" id="L30">        nextActions = buildList {</span>
+<span class="fc" id="L31">            add(R05NextAction.RETRY)</span>
+<span class="fc bfc" id="L32" title="All 2 branches covered.">            if (bundledFallbackAvailable) add(R05NextAction.USE_BUNDLED_FALLBACK_CATALOG)</span>
+<span class="fc" id="L33">            add(R05NextAction.CONTINUE_WITH_MANUAL_PLANNING)</span>
+<span class="fc" id="L34">        },</span>
+<span class="fc" id="L35">    )</span>
 
-<span class="pc bpc" id="L37" title="1 of 2 branches missed.">    fun fallbackMessage(reason: FallbackReason?): DiagnosticsUiMessage? = reason?.let {</span>
+<span class="fc bfc" id="L37" title="All 2 branches covered.">    fun fallbackMessage(reason: FallbackReason?): DiagnosticsUiMessage? = reason?.let {</span>
 <span class="pc bpc" id="L38" title="4 of 6 branches missed.">        val safe = sanitizeUserText(it.userActionRequired ?: it.message ?: it.code) ?: &quot;Fallback is active.&quot;</span>
 <span class="pc bpc" id="L39" title="3 of 6 branches missed.">        DiagnosticsUiMessage(userSafeText = safe, hasNextAction = !it.userActionRequired.isNullOrBlank())</span>
 <span class="fc" id="L40">    }</span>
@@ -51,22 +51,22 @@ object DiagnosticsUiMapper {
 
 <span class="fc" id="L52">    fun storeSuggestionLabel(status: StoreSuggestionStatus?, permission: LocationPermissionUiState): String = when {</span>
 <span class="fc bfc" id="L53" title="All 2 branches covered.">        permission == LocationPermissionUiState.DENIED -&gt; &quot;Location permission denied. Manual store selection is available.&quot;</span>
-<span class="pc bpc" id="L54" title="1 of 2 branches missed.">        status == StoreSuggestionStatus.DENIED -&gt; &quot;Suggestion denied. Manual store selection is available.&quot;</span>
+<span class="fc bfc" id="L54" title="All 2 branches covered.">        status == StoreSuggestionStatus.DENIED -&gt; &quot;Suggestion denied. Manual store selection is available.&quot;</span>
 <span class="fc bfc" id="L55" title="All 2 branches covered.">        status == StoreSuggestionStatus.UNAVAILABLE -&gt; &quot;Nearest store suggestion unavailable. Manual selection is always available.&quot;</span>
-<span class="pc bpc" id="L56" title="1 of 2 branches missed.">        status == StoreSuggestionStatus.NOT_FOUND -&gt; &quot;No nearby store found. Manual selection is available.&quot;</span>
-<span class="pc bpc" id="L57" title="1 of 2 branches missed.">        status == StoreSuggestionStatus.UNKNOWN -&gt; &quot;Store suggestion status unknown. Manual selection is available.&quot;</span>
-<span class="pc bpc" id="L58" title="1 of 2 branches missed.">        status == StoreSuggestionStatus.OK -&gt; &quot;Nearest store suggestion available.&quot;</span>
-<span class="pc bpc" id="L59" title="1 of 2 branches missed.">        permission == LocationPermissionUiState.NOT_ASKED -&gt; &quot;Location not requested. Manual store selection is available.&quot;</span>
-<span class="nc" id="L60">        else -&gt; &quot;Manual store selection is always available.&quot;</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">        status == StoreSuggestionStatus.NOT_FOUND -&gt; &quot;No nearby store found. Manual selection is available.&quot;</span>
+<span class="fc bfc" id="L57" title="All 2 branches covered.">        status == StoreSuggestionStatus.UNKNOWN -&gt; &quot;Store suggestion status unknown. Manual selection is available.&quot;</span>
+<span class="fc bfc" id="L58" title="All 2 branches covered.">        status == StoreSuggestionStatus.OK -&gt; &quot;Nearest store suggestion available.&quot;</span>
+<span class="fc bfc" id="L59" title="All 2 branches covered.">        permission == LocationPermissionUiState.NOT_ASKED -&gt; &quot;Location not requested. Manual store selection is available.&quot;</span>
+<span class="fc" id="L60">        else -&gt; &quot;Manual store selection is always available.&quot;</span>
 <span class="fc" id="L61">    }</span>
 
-<span class="pc bpc" id="L63" title="5 of 9 branches missed.">    fun presenceBatchLabel(status: PresenceBatchStatus?): String = when (status) {</span>
-<span class="nc" id="L64">        PresenceBatchStatus.OK -&gt; &quot;Presence check complete (name/presence only).&quot;</span>
+<span class="pc bpc" id="L63" title="1 of 9 branches missed.">    fun presenceBatchLabel(status: PresenceBatchStatus?): String = when (status) {</span>
+<span class="fc" id="L64">        PresenceBatchStatus.OK -&gt; &quot;Presence check complete (name/presence only).&quot;</span>
 <span class="fc" id="L65">        PresenceBatchStatus.PARTIAL -&gt; &quot;Presence check partially complete. Unknown items remain.&quot;</span>
 <span class="fc" id="L66">        PresenceBatchStatus.UNAVAILABLE -&gt; &quot;Presence check unavailable. Manual checklist available.&quot;</span>
-<span class="nc" id="L67">        PresenceBatchStatus.DENIED -&gt; &quot;Presence check denied. Manual checklist available.&quot;</span>
+<span class="fc" id="L67">        PresenceBatchStatus.DENIED -&gt; &quot;Presence check denied. Manual checklist available.&quot;</span>
 <span class="fc" id="L68">        PresenceBatchStatus.FAILED_MAPPED -&gt; &quot;Presence check failed safely. Manual checklist available.&quot;</span>
-<span class="nc" id="L69">        null -&gt; &quot;Presence not checked.&quot;</span>
+<span class="fc" id="L69">        null -&gt; &quot;Presence not checked.&quot;</span>
 <span class="fc" id="L70">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -129,3 +129,10 @@
 - All Steps 1–8 verified against existing project files and approved plan/contracts; checkboxes ticked.
 - Invariant-preserving drift fix applied to `SimpleContinuityMappers` (slot `planId` continuity on decode). No changes to `unit-test-instructions.md` required.
 - Tests **not executed** in this environment (missing `gradle/wrapper/gradle-wrapper.jar` / Android SDK). Exact unit-scoped commands are documented and must be run before claiming execution or coverage gates.
+
+
+## Loop-Back Repair Note (2026-11-10, Build-and-Test Loop-Back 1)
+- Brownfield replay: U1 implementation/tests already existed; steps marked satisfied after verification.
+- Added targeted JVM unit tests for coverage repair (no threshold weakening): `app/src/test/java/com/mealplanner/buildandtest/CoverageRepairEnumsTest.kt`, `CoverageRepairUiMapperTest.kt`, `CoverageRepairModelHelpersTest.kt`.
+- `./gradlew :app:testDebugUnitTest --console=plain` remained `BUILD SUCCESSFUL`.
+- Coverage gap is project-wide (58.55% line; Compose UI screens/navigation/components are largely untestable by plain JVM unit tests). Full repair continues across U2–U4 and Build and Test re-measurement.

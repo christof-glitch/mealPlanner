@@ -26,23 +26,23 @@ import com.mealplanner.domain.model.WeeklyPlanState
             )
         }
 <span class="fc" id="L28">        val slotIndex = plan.slots.indexOfFirst { it.slotRef == request.slotRef }</span>
-<span class="pc bpc" id="L29" title="1 of 2 branches missed.">        if (slotIndex &lt; 0) {</span>
-<span class="nc" id="L30">            return SlotSelectionChangeResult(</span>
-<span class="nc" id="L31">                status = SlotSelectionResultStatus.REJECTED,</span>
-<span class="nc" id="L32">                weeklyPlanState = plan,</span>
-<span class="nc" id="L33">                changedSlotRef = request.slotRef,</span>
-<span class="nc" id="L34">                rejectionReason = &quot;SLOT_NOT_FOUND&quot;,</span>
+<span class="fc bfc" id="L29" title="All 2 branches covered.">        if (slotIndex &lt; 0) {</span>
+<span class="fc" id="L30">            return SlotSelectionChangeResult(</span>
+<span class="fc" id="L31">                status = SlotSelectionResultStatus.REJECTED,</span>
+<span class="fc" id="L32">                weeklyPlanState = plan,</span>
+<span class="fc" id="L33">                changedSlotRef = request.slotRef,</span>
+<span class="fc" id="L34">                rejectionReason = &quot;SLOT_NOT_FOUND&quot;,</span>
             )
         }
-<span class="pc bpc" id="L37" title="1 of 3 branches missed.">        val newRecipeId = when (request.operation) {</span>
+<span class="fc bfc" id="L37" title="All 3 branches covered.">        val newRecipeId = when (request.operation) {</span>
 <span class="fc" id="L38">            SlotSelectionOperation.SET_SELECTION -&gt; request.recipeId</span>
-<span class="nc bnc" id="L39" title="All 2 branches missed.">            SlotSelectionOperation.REPLACE_WITH_ALTERNATIVE -&gt; request.alternativeRecipeId ?: request.recipeId</span>
+<span class="pc bpc" id="L39" title="1 of 2 branches missed.">            SlotSelectionOperation.REPLACE_WITH_ALTERNATIVE -&gt; request.alternativeRecipeId ?: request.recipeId</span>
 <span class="fc" id="L40">            SlotSelectionOperation.CLEAR_SELECTION -&gt; null</span>
         }
 <span class="fc" id="L42">        val updatedSlots = plan.slots.toMutableList()</span>
 <span class="fc" id="L43">        val current = updatedSlots[slotIndex]</span>
-<span class="pc bpc" id="L44" title="3 of 4 branches missed.">        if (current.assignedRecipeId == newRecipeId &amp;&amp; request.operation != SlotSelectionOperation.CLEAR_SELECTION) {</span>
-<span class="nc" id="L45">            return SlotSelectionChangeResult(SlotSelectionResultStatus.NO_CHANGE, plan, request.slotRef)</span>
+<span class="pc bpc" id="L44" title="1 of 4 branches missed.">        if (current.assignedRecipeId == newRecipeId &amp;&amp; request.operation != SlotSelectionOperation.CLEAR_SELECTION) {</span>
+<span class="fc" id="L45">            return SlotSelectionChangeResult(SlotSelectionResultStatus.NO_CHANGE, plan, request.slotRef)</span>
         }
 <span class="fc" id="L47">        updatedSlots[slotIndex] = current.copy(</span>
 <span class="fc" id="L48">            assignedRecipeId = newRecipeId,</span>
@@ -51,7 +51,7 @@ import com.mealplanner.domain.model.WeeklyPlanState
         )
 <span class="fc" id="L52">        var updated = plan.copy(slots = updatedSlots)</span>
 <span class="fc" id="L53">        var stale: LockStaleStatus? = null</span>
-<span class="pc bpc" id="L54" title="2 of 6 branches missed.">        if (lockOrListActive || plan.lockState != PlanLockState.UNLOCKED || plan.activeLockSnapshotId != null) {</span>
+<span class="pc bpc" id="L54" title="1 of 6 branches missed.">        if (lockOrListActive || plan.lockState != PlanLockState.UNLOCKED || plan.activeLockSnapshotId != null) {</span>
 <span class="fc" id="L55">            updated = Adr006LockRules.markPlanStale(updated)</span>
 <span class="fc" id="L56">            stale = LockStaleStatus(</span>
 <span class="fc" id="L57">                snapshotId = updated.activeLockSnapshotId,</span>

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.mealplanner.domain.availability.StoreAvailabilityContractsTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-09T21:40:18.069Z" hostname="jyu-mac-20260120.local" time="0.059">
+<testsuite name="com.mealplanner.domain.availability.StoreAvailabilityContractsTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-10T06:21:06.147Z" hostname="Mac.home" time="0.018">
   <properties/>
-  <testcase name="C5 use case never mutates shopping items" classname="com.mealplanner.domain.availability.StoreAvailabilityContractsTest" time="0.017"/>
-  <testcase name="PRISMA presence mapping is name presence only with PRESENT NOT_FOUND UNKNOWN" classname="com.mealplanner.domain.availability.StoreAvailabilityContractsTest" time="0.017"/>
-  <testcase name="nearest suggestion failure keeps manual fallback available" classname="com.mealplanner.domain.availability.StoreAvailabilityContractsTest" time="0.013"/>
+  <testcase name="C5 use case never mutates shopping items" classname="com.mealplanner.domain.availability.StoreAvailabilityContractsTest" time="0.007"/>
+  <testcase name="PRISMA presence mapping is name presence only with PRESENT NOT_FOUND UNKNOWN" classname="com.mealplanner.domain.availability.StoreAvailabilityContractsTest" time="0.005"/>
+  <testcase name="nearest suggestion failure keeps manual fallback available" classname="com.mealplanner.domain.availability.StoreAvailabilityContractsTest" time="0.003"/>
   <testcase name="manual store selection is always available" classname="com.mealplanner.domain.availability.StoreAvailabilityContractsTest" time="0.001"/>
-  <testcase name="batch partial unavailable denied and failed map to typed outcomes" classname="com.mealplanner.domain.availability.StoreAvailabilityContractsTest" time="0.011"/>
+  <testcase name="batch partial unavailable denied and failed map to typed outcomes" classname="com.mealplanner.domain.availability.StoreAvailabilityContractsTest" time="0.002"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

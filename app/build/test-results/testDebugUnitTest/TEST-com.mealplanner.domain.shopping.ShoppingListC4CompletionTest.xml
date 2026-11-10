@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.mealplanner.domain.shopping.ShoppingListC4CompletionTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-11-09T21:40:18.281Z" hostname="jyu-mac-20260120.local" time="0.002">
+<testsuite name="com.mealplanner.domain.shopping.ShoppingListC4CompletionTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-11-10T06:21:06.219Z" hostname="Mac.home" time="0.002">
   <properties/>
-  <testcase name="generation request carries locked snapshot and confirmation semantics" classname="com.mealplanner.domain.shopping.ShoppingListC4CompletionTest" time="0.001"/>
-  <testcase name="edited aggregate requires confirmation before destructive rebuild intent" classname="com.mealplanner.domain.shopping.ShoppingListC4CompletionTest" time="0.0"/>
+  <testcase name="generation request carries locked snapshot and confirmation semantics" classname="com.mealplanner.domain.shopping.ShoppingListC4CompletionTest" time="0.0"/>
+  <testcase name="edited aggregate requires confirmation before destructive rebuild intent" classname="com.mealplanner.domain.shopping.ShoppingListC4CompletionTest" time="0.001"/>
   <testcase name="applyPresenceCheckBatch remaps ambiguous identity to UNKNOWN with reason and preserves unrelated edits" classname="com.mealplanner.domain.shopping.ShoppingListC4CompletionTest" time="0.0"/>
   <testcase name="patch operations mark aggregate as user edited" classname="com.mealplanner.domain.shopping.ShoppingListC4CompletionTest" time="0.001"/>
   <testcase name="missing or changed source data is explicit and never fabricated" classname="com.mealplanner.domain.shopping.ShoppingListC4CompletionTest" time="0.0"/>

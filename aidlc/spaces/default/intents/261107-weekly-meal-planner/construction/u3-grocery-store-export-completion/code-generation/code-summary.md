@@ -40,6 +40,12 @@
 - FR9/FR10/BR3.8/BR3.9: deterministic merge/no fabrication; export uses current edited list; mandatory share/copy fallback instructions; S-ostoslista official method behind port/investigational; inward seam (domain use-case + DTO + platform/share port).
 - NFR3/NFR4/NFR5: no MealPlanner account/secrets/raw GPS in U3 domain; privacy-safe typed diagnostics/reasons; existing tests green; quality targets not weakened.
 
+## Loop-Back Repair Note (2026-11-10, Build-and-Test Loop-Back 1)
+
+- Brownfield replay: U3 implementation/tests/artifacts already satisfied plan steps; no production behavior changes made in this pass.
+- Verified U3-scoped: `./gradlew :app:testDebugUnitTest --tests "com.mealplanner.domain.shopping.*" --tests "com.mealplanner.domain.availability.*" --tests "com.mealplanner.domain.export.*" --console=plain` → `BUILD SUCCESSFUL`.
+- Preserved invariants: ADR-006/R-01–R-03 (locked snapshot IDs+context, re-resolve, exact stale warning, no auto-regeneration, explicit confirmation when edits exist), R-02/BR3.5 ShoppingList-owned presence projection/remap (C5 never mutates items), FR8 name/presence only (`PRESENT|NOT_FOUND|UNKNOWN`), FR10/BR3.9 mandatory share/copy fallback and inward export seam, OQ2–OQ4 investigational/fake-backed only, no MealPlanner account/secrets/raw GPS. Project-wide coverage and build-and-test cross-unit traceability/NFR evidence remain Build-and-Test concerns.
+
 ## Known limitations / follow-up
 
 - OQ2–OQ4 remain investigational: no live PRISMA lookup, nearest-store provider, or official S-ostoslista transport implemented; ports/fakes and mandatory fallbacks are in place.

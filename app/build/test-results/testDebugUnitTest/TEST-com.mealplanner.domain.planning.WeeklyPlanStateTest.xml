@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.mealplanner.domain.planning.WeeklyPlanStateTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-11-09T21:40:18.193Z" hostname="jyu-mac-20260120.local" time="0.001">
+<testsuite name="com.mealplanner.domain.planning.WeeklyPlanStateTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-11-10T06:21:06.187Z" hostname="Mac.home" time="0.002">
   <properties/>
   <testcase name="weekday recipe over 30 minutes is ineligible with WEEKDAY_TIME_OVER_30" classname="com.mealplanner.domain.planning.WeeklyPlanStateTest" time="0.001"/>
-  <testcase name="weekday recipe at 30 minutes is eligible" classname="com.mealplanner.domain.planning.WeeklyPlanStateTest" time="0.0"/>
+  <testcase name="weekday recipe at 30 minutes is eligible" classname="com.mealplanner.domain.planning.WeeklyPlanStateTest" time="0.001"/>
   <testcase name="weekend slots are not excluded by weekday time rule" classname="com.mealplanner.domain.planning.WeeklyPlanStateTest" time="0.0"/>
   <testcase name="empty slots remain visible and addressable" classname="com.mealplanner.domain.planning.WeeklyPlanStateTest" time="0.0"/>
   <testcase name="required 7-day slot structure includes weekend lunch and excludes weekday lunch" classname="com.mealplanner.domain.planning.WeeklyPlanStateTest" time="0.0"/>

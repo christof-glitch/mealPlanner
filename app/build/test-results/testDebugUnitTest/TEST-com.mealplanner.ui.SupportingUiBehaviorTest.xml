@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.mealplanner.ui.SupportingUiBehaviorTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-11-09T21:40:18.338Z" hostname="jyu-mac-20260120.local" time="0.005">
+<testsuite name="com.mealplanner.ui.SupportingUiBehaviorTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-11-10T06:21:06.234Z" hostname="Mac.home" time="0.005">
   <properties/>
-  <testcase name="user settings defaults and privacy labels are safe and resettable by state contract" classname="com.mealplanner.ui.SupportingUiBehaviorTest" time="0.0"/>
-  <testcase name="accessibility smoke labels remain explicit non-color-only text" classname="com.mealplanner.ui.SupportingUiBehaviorTest" time="0.001"/>
-  <testcase name="presence rows use FR8 name presence labels with unknown reasons" classname="com.mealplanner.ui.SupportingUiBehaviorTest" time="0.001"/>
-  <testcase name="grocery stale status exposes exact ADR006 warning through state" classname="com.mealplanner.ui.SupportingUiBehaviorTest" time="0.002"/>
+  <testcase name="user settings defaults and privacy labels are safe and resettable by state contract" classname="com.mealplanner.ui.SupportingUiBehaviorTest" time="0.001"/>
+  <testcase name="accessibility smoke labels remain explicit non-color-only text" classname="com.mealplanner.ui.SupportingUiBehaviorTest" time="0.0"/>
+  <testcase name="presence rows use FR8 name presence labels with unknown reasons" classname="com.mealplanner.ui.SupportingUiBehaviorTest" time="0.0"/>
+  <testcase name="grocery stale status exposes exact ADR006 warning through state" classname="com.mealplanner.ui.SupportingUiBehaviorTest" time="0.003"/>
   <testcase name="nutrition and season labels expose explicit unavailable or unknown text" classname="com.mealplanner.ui.SupportingUiBehaviorTest" time="0.0"/>
   <testcase name="manual checklist fallback remains available for presence batch states" classname="com.mealplanner.ui.SupportingUiBehaviorTest" time="0.0"/>
   <testcase name="export cancel or fallback messaging preserves current edited list" classname="com.mealplanner.ui.SupportingUiBehaviorTest" time="0.001"/>

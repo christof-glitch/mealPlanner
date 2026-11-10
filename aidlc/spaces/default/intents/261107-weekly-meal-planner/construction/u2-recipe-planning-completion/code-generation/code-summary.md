@@ -58,6 +58,11 @@ Additional verification during implementation: `WeeklyPlanStateTest` and targete
 - **S-ostoslista fallback / PRISMA boundaries:** unaffected by U2; PRISMA remains name/presence-only where applicable (U3/U4).
 - **NFR4.3:** no quality/coverage targets weakened.
 
+## Loop-Back Repair Note (2026-11-10, Build-and-Test Loop-Back 1)
+- Brownfield replay: U2 implementation/tests already existed and passed scoped verification; plan steps remained satisfied.
+- Added targeted JVM coverage-repair tests (no threshold/invariant weakening): `app/src/test/java/com/mealplanner/buildandtest/CoverageRepairU2BoundariesTest.kt` (FQ1=A default gate, `FallbackRecipeSourceBoundary` typed no-fabrication behavior, `RecipeCatalogPortAdapter` delegation, C3 missing-slot/no-change/replace/ADR-006 stale-when-active-snapshot cases).
+- Verified: `./gradlew :app:testDebugUnitTest --tests "com.mealplanner.buildandtest.CoverageRepairU2BoundariesTest" --console=plain` → `BUILD SUCCESSFUL`; U2 scoped command from `unit-test-instructions.md` previously/currently `BUILD SUCCESSFUL` (27 tasks up-to-date). Project-wide coverage/traceability gaps remain Build-and-Test cross-unit concerns.
+
 ## Artifacts
 - Plan: `aidlc/spaces/default/intents/261107-weekly-meal-planner/construction/u2-recipe-planning-completion/code-generation/code-generation-plan.md`
 - Unit test instructions: `.../code-generation/unit-test-instructions.md`

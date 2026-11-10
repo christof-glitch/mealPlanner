@@ -13,3 +13,13 @@
 
 ## Open questions
 <!-- example: 2026-05-29T10:14:32Z — confirm the retention window with compliance before the next stage hardens the schema -->
+
+## Interpretations
+- 2026-11-10T05:58Z — Build-and-Test Loop-Back 1 replay for U3 `u3-grocery-store-export-completion`: brownfield implementation and plan steps already satisfied; U3-scoped `:app:testDebugUnitTest` for `domain.shopping/availability/export` passed (`BUILD SUCCESSFUL`). Focused on preserving C4/C5/C6/ADR-006/R-02 invariants, confirming traceability/source-manifest alignment, and preparing for review/checkpoint.
+
+## Deviations
+- 2026-11-10T05:58Z — No new U3 production/test behavior changes required during this loop-back pass; existing U3 artifacts/tests remained valid. Project-wide coverage (58.55% line) and build-and-test sensor-traceability NFR gaps remain cross-unit Build-and-Test concerns.
+
+## Tradeoffs
+- 2026-11-10T05:58Z — Avoided speculative U3 refactors/tests that could risk BR3.5/ADR-006 behavior; prioritized verified, invariant-preserving replay and artifact consistency for review.
+- 2026-11-10T06:19Z — Build-and-Test Loop-Back 1 replay for U4 `u4-android-ui-experience`: brownfield implementation/plan satisfied; U4-scoped `:app:testDebugUnitTest --tests "com.mealplanner.ui.*"` passed (`BUILD SUCCESSFUL`). No production changes; added loop-back note to U4 code-summary. Compose/UI JVM coverage remains a structural project-wide carry-forward.

@@ -28,6 +28,11 @@
 - **Executed:** `./gradlew :app:testDebugUnitTest --tests "com.mealplanner.ui.*" --console=plain` — **BUILD SUCCESSFUL** (2026-11-09, repeated during Steps 2–12).
 - **Not executed in this step:** full-project `testDebugUnitTest` / assembled 80% line-coverage floor and CI-before-merge verification (additive project obligations checked by Build and Test on full suite). No thresholds weakened.
 
+## Loop-Back Repair Note (2026-11-10, Build-and-Test Loop-Back 1)
+- Brownfield replay: U4 implementation/tests/artifacts already satisfied plan steps; no production behavior changes made in this pass.
+- Verified U4-scoped: `./gradlew :app:testDebugUnitTest --tests "com.mealplanner.ui.*" --console=plain` → `BUILD SUCCESSFUL`.
+- Preserved invariants: ADR-005 thin UI, R-06 shared Today/Plan slot state/context, R-05 next actions (no dead-end core flows), ADR-006/R-01–R-03 (explicit generate/regenerate, confirmation when edits exist, exact stale warning `"Meal plan modified. Grocery list not up-to-date. Press the Regenerate button."`, no auto-regeneration, export current edited list), FR8 `PRESENT|NOT_FOUND|UNKNOWN` name/presence only, FR10/OQ4 mandatory share/copy fallback instructions, NFR3 privacy-safe/no MealPlanner account/no raw GPS/PII in UI diagnostics. Project-wide JaCoCo line coverage and build-and-test cross-unit traceability/NFR evidence remain Build-and-Test concerns (Compose/UI JVM coverage is structurally limited).
+
 ## Deviations / notes
 - Compose instrumentation/UI rendering tests were not added (unit/fake-backed scope per plan; `accessibility/content-description smoke` covered practically via state/mapper contracts and testTag/semantics in UI).
 - `GroceryExperienceFacade` uses local editable aggregate as current edited list for display/export; persistence/save path boundary remains explicit per BR3.9/NFR carry-forward and can be wired to C4 persistence in integration.

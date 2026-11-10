@@ -28,12 +28,12 @@ import com.mealplanner.domain.model.RecipeId
 <span class="pc" id="L28">    val statusLabels: List&lt;String&gt; = emptyList(),</span>
 <span class="fc" id="L29">)</span>
 
-<span class="nc" id="L31">enum class R05NextAction { RETRY, USE_BUNDLED_FALLBACK_CATALOG, CONTINUE_WITH_MANUAL_PLANNING }</span>
+<span class="pc" id="L31">enum class R05NextAction { RETRY, USE_BUNDLED_FALLBACK_CATALOG, CONTINUE_WITH_MANUAL_PLANNING }</span>
 
-<span class="nc" id="L33">data class R05State(</span>
-<span class="nc" id="L34">    val visible: Boolean = false,</span>
-<span class="nc" id="L35">    val message: String = &quot;No local data available and remote data is unavailable.&quot;,</span>
-<span class="nc" id="L36">    val nextActions: List&lt;R05NextAction&gt; = listOf(R05NextAction.RETRY, R05NextAction.USE_BUNDLED_FALLBACK_CATALOG, R05NextAction.CONTINUE_WITH_MANUAL_PLANNING),</span>
+<span class="pc" id="L33">data class R05State(</span>
+<span class="pc" id="L34">    val visible: Boolean = false,</span>
+<span class="pc" id="L35">    val message: String = &quot;No local data available and remote data is unavailable.&quot;,</span>
+<span class="pc" id="L36">    val nextActions: List&lt;R05NextAction&gt; = listOf(R05NextAction.RETRY, R05NextAction.USE_BUNDLED_FALLBACK_CATALOG, R05NextAction.CONTINUE_WITH_MANUAL_PLANNING),</span>
 <span class="nc" id="L37">)</span>
 
 <span class="fc" id="L39">data class PlanScreenState(</span>

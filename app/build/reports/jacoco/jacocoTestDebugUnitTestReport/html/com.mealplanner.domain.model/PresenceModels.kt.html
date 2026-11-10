@@ -6,7 +6,7 @@ import java.time.Instant
 <span class="fc" id="L6">data class StoreRef(</span>
 <span class="fc" id="L7">    val storeId: String? = null,</span>
 <span class="fc" id="L8">    val displayName: String,</span>
-<span class="pc" id="L9">    val chain: StoreChain? = null,</span>
+<span class="fc" id="L9">    val chain: StoreChain? = null,</span>
 <span class="pc" id="L10">    val selectionSource: StoreSelectionSource = StoreSelectionSource.MANUAL,</span>
 <span class="pc" id="L11">    val isConfirmed: Boolean = false,</span>
 <span class="fc" id="L12">)</span>
@@ -19,7 +19,7 @@ import java.time.Instant
 <span class="pc" id="L19">    val sourceStatus: String? = null,</span>
 <span class="fc" id="L20">)</span>
 
-<span class="nc bnc" id="L22" title="All 2 branches missed.">fun PrismaStoreRef.toStoreRef(): StoreRef = StoreRef(storeId = storeId, displayName = displayName ?: storeId, chain = StoreChain.PRISMA)</span>
+<span class="fc bfc" id="L22" title="All 2 branches covered.">fun PrismaStoreRef.toStoreRef(): StoreRef = StoreRef(storeId = storeId, displayName = displayName ?: storeId, chain = StoreChain.PRISMA)</span>
 
 /** ENT-U1-010: name/presence only, never stock quantity or guaranteed availability. */
 <span class="fc" id="L25">data class StorePresenceResult(</span>

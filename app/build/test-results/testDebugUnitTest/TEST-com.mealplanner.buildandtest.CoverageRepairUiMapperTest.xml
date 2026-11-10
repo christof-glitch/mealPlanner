@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.mealplanner.buildandtest.CoverageRepairUiMapperTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-10T06:21:06.123Z" hostname="Mac.home" time="0.005">
+  <properties/>
+  <testcase name="r05 and fallback messages" classname="com.mealplanner.buildandtest.CoverageRepairUiMapperTest" time="0.004"/>
+  <testcase name="sanitizeUserText redacts sensitive fragments" classname="com.mealplanner.buildandtest.CoverageRepairUiMapperTest" time="0.0"/>
+  <testcase name="presence rows and labels" classname="com.mealplanner.buildandtest.CoverageRepairUiMapperTest" time="0.0"/>
+  <testcase name="store suggestion labels cover permission and status branches" classname="com.mealplanner.buildandtest.CoverageRepairUiMapperTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

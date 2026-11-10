@@ -72,107 +72,128 @@
     {
       "id": "AC1.1.1",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/domain/planning/C3SlotSelectionService.kt; app/src/test/java/com/mealplanner/domain/planning/C3SlotSelectionServiceTest.kt"
+      "target": "app/src/main/java/com/mealplanner/domain/planning/C3SlotSelectionService.kt",
+      "note": "Also: app/src/test/java/com/mealplanner/domain/planning/C3SlotSelectionServiceTest.kt"
     },
     {
       "id": "AC1.1.2",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/domain/recipe/RecipeTimeNormalizationEvaluator.kt; app/src/test/java/com/mealplanner/domain/recipe/RecipeTimeNormalizationEvaluatorTest.kt"
+      "target": "app/src/main/java/com/mealplanner/domain/recipe/RecipeTimeNormalizationEvaluator.kt",
+      "note": "Also: app/src/test/java/com/mealplanner/domain/recipe/RecipeTimeNormalizationEvaluatorTest.kt"
     },
     {
       "id": "AC1.1.3",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/domain/recipe/RecipeTimeNormalizationEvaluator.kt; app/src/test/java/com/mealplanner/domain/recipe/RecipeTimeNormalizationEvaluatorTest.kt"
+      "target": "app/src/main/java/com/mealplanner/domain/recipe/RecipeTimeNormalizationEvaluator.kt",
+      "note": "Also: app/src/test/java/com/mealplanner/domain/recipe/RecipeTimeNormalizationEvaluatorTest.kt"
     },
     {
       "id": "AC1.1.4",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/domain/planning/C3SlotSelectionService.kt; app/src/main/java/com/mealplanner/domain/planning/Adr006LockRules.kt; app/src/test/java/com/mealplanner/domain/planning/C3SlotSelectionServiceTest.kt"
+      "target": "app/src/main/java/com/mealplanner/domain/planning/C3SlotSelectionService.kt",
+      "note": "Also: app/src/main/java/com/mealplanner/domain/planning/Adr006LockRules.kt, app/src/test/java/com/mealplanner/domain/planning/C3SlotSelectionServiceTest.kt"
     },
     {
       "id": "AC1.2.1",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/domain/recipe/AlternativeRecipesSelector.kt; app/src/test/java/com/mealplanner/domain/recipe/AlternativeRecipesServiceTest.kt"
+      "target": "app/src/main/java/com/mealplanner/domain/recipe/AlternativeRecipesSelector.kt",
+      "note": "Also: app/src/test/java/com/mealplanner/domain/recipe/AlternativeRecipesServiceTest.kt"
     },
     {
       "id": "AC1.2.2",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/domain/planning/C3SlotSelectionService.kt; app/src/test/java/com/mealplanner/domain/planning/C3SlotSelectionServiceTest.kt"
+      "target": "app/src/main/java/com/mealplanner/domain/planning/C3SlotSelectionService.kt",
+      "note": "Also: app/src/test/java/com/mealplanner/domain/planning/C3SlotSelectionServiceTest.kt"
     },
     {
       "id": "AC1.2.3",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/domain/recipe/RecipeCatalogService.kt; app/src/main/java/com/mealplanner/adapters/A1RecipeSourceAdapter.kt; app/src/test/java/com/mealplanner/domain/recipe/RecipeCatalogServiceTest.kt; app/src/test/java/com/mealplanner/adapters/A1RecipeSourceAdapterGateTest.kt"
+      "target": "app/src/main/java/com/mealplanner/domain/recipe/RecipeCatalogService.kt",
+      "note": "Also: app/src/main/java/com/mealplanner/adapters/A1RecipeSourceAdapter.kt, app/src/test/java/com/mealplanner/domain/recipe/RecipeCatalogServiceTest.kt, app/src/test/java/com/mealplanner/adapters/A1RecipeSourceAdapterGateTest.kt"
     },
     {
       "id": "AC2.1.1",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/adapters/A1RecipeSourceAdapter.kt; app/src/main/java/com/mealplanner/adapters/RecipeSourceBoundary.kt; app/src/test/java/com/mealplanner/adapters/A1RecipeSourceAdapterGateTest.kt"
+      "target": "app/src/main/java/com/mealplanner/adapters/A1RecipeSourceAdapter.kt",
+      "note": "Also: app/src/main/java/com/mealplanner/adapters/RecipeSourceBoundary.kt, app/src/test/java/com/mealplanner/adapters/A1RecipeSourceAdapterGateTest.kt"
     },
     {
       "id": "AC2.1.2",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/adapters/A1RecipeSourceAdapter.kt; app/src/main/java/com/mealplanner/domain/recipe/RecipeCatalogService.kt; app/src/test/java/com/mealplanner/adapters/A1RecipeSourceAdapterGateTest.kt; app/src/test/java/com/mealplanner/domain/recipe/RecipeCatalogServiceTest.kt"
+      "target": "app/src/main/java/com/mealplanner/adapters/A1RecipeSourceAdapter.kt",
+      "note": "Also: app/src/main/java/com/mealplanner/domain/recipe/RecipeCatalogService.kt, app/src/test/java/com/mealplanner/adapters/A1RecipeSourceAdapterGateTest.kt, app/src/test/java/com/mealplanner/domain/recipe/RecipeCatalogServiceTest.kt"
     },
     {
       "id": "AC2.1.3",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/adapters/A1RecipeSourceAdapter.kt; app/src/test/java/com/mealplanner/adapters/A1RecipeSourceAdapterGateTest.kt"
+      "target": "app/src/main/java/com/mealplanner/adapters/A1RecipeSourceAdapter.kt",
+      "note": "Also: app/src/test/java/com/mealplanner/adapters/A1RecipeSourceAdapterGateTest.kt"
     },
     {
       "id": "AC2.2.1",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/domain/recipe/RecipeTimeNormalizationEvaluator.kt; app/src/test/java/com/mealplanner/domain/recipe/RecipeTimeNormalizationEvaluatorTest.kt"
+      "target": "app/src/main/java/com/mealplanner/domain/recipe/RecipeTimeNormalizationEvaluator.kt",
+      "note": "Also: app/src/test/java/com/mealplanner/domain/recipe/RecipeTimeNormalizationEvaluatorTest.kt"
     },
     {
       "id": "AC2.2.2",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/domain/recipe/RecipeTimeNormalizationEvaluator.kt; app/src/test/java/com/mealplanner/domain/recipe/RecipeTimeNormalizationEvaluatorTest.kt"
+      "target": "app/src/main/java/com/mealplanner/domain/recipe/RecipeTimeNormalizationEvaluator.kt",
+      "note": "Also: app/src/test/java/com/mealplanner/domain/recipe/RecipeTimeNormalizationEvaluatorTest.kt"
     },
     {
       "id": "AC2.2.3",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/domain/recipe/RecipeTimeNormalizationEvaluator.kt; app/src/test/java/com/mealplanner/domain/recipe/RecipeTimeNormalizationEvaluatorTest.kt"
+      "target": "app/src/main/java/com/mealplanner/domain/recipe/RecipeTimeNormalizationEvaluator.kt",
+      "note": "Also: app/src/test/java/com/mealplanner/domain/recipe/RecipeTimeNormalizationEvaluatorTest.kt"
     },
     {
       "id": "AC2.3.1",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/domain/recipe/SeasonFitEvaluator.kt; app/src/test/java/com/mealplanner/domain/recipe/SeasonFitEvaluatorTest.kt"
+      "target": "app/src/main/java/com/mealplanner/domain/recipe/SeasonFitEvaluator.kt",
+      "note": "Also: app/src/test/java/com/mealplanner/domain/recipe/SeasonFitEvaluatorTest.kt"
     },
     {
       "id": "AC2.3.2",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/domain/recipe/SeasonFitEvaluator.kt; app/src/test/java/com/mealplanner/domain/recipe/SeasonFitEvaluatorTest.kt"
+      "target": "app/src/main/java/com/mealplanner/domain/recipe/SeasonFitEvaluator.kt",
+      "note": "Also: app/src/test/java/com/mealplanner/domain/recipe/SeasonFitEvaluatorTest.kt"
     },
     {
       "id": "AC2.3.3",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/domain/recipe/SeasonFitEvaluator.kt; app/src/test/java/com/mealplanner/domain/recipe/SeasonFitEvaluatorTest.kt"
+      "target": "app/src/main/java/com/mealplanner/domain/recipe/SeasonFitEvaluator.kt",
+      "note": "Also: app/src/test/java/com/mealplanner/domain/recipe/SeasonFitEvaluatorTest.kt"
     },
     {
       "id": "AC2.3.4",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/domain/recipe/SeasonFitEvaluator.kt; app/src/test/java/com/mealplanner/domain/recipe/SeasonFitEvaluatorTest.kt"
+      "target": "app/src/main/java/com/mealplanner/domain/recipe/SeasonFitEvaluator.kt",
+      "note": "Also: app/src/test/java/com/mealplanner/domain/recipe/SeasonFitEvaluatorTest.kt"
     },
     {
       "id": "AC2.4.1",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/domain/recipe/NutritionCueCalculator.kt; app/src/main/java/com/mealplanner/domain/model/U2Types.kt; app/src/test/java/com/mealplanner/domain/recipe/NutritionCueCalculatorTest.kt; app/src/test/java/com/mealplanner/domain/recipe/U2ModelValidationTest.kt"
+      "target": "app/src/main/java/com/mealplanner/domain/recipe/NutritionCueCalculator.kt",
+      "note": "Also: app/src/main/java/com/mealplanner/domain/model/U2Types.kt, app/src/test/java/com/mealplanner/domain/recipe/NutritionCueCalculatorTest.kt, app/src/test/java/com/mealplanner/domain/recipe/U2ModelValidationTest.kt"
     },
     {
       "id": "AC2.4.2",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/domain/recipe/NutritionCueCalculator.kt; app/src/test/java/com/mealplanner/domain/recipe/NutritionCueCalculatorTest.kt"
+      "target": "app/src/main/java/com/mealplanner/domain/recipe/NutritionCueCalculator.kt",
+      "note": "Also: app/src/test/java/com/mealplanner/domain/recipe/NutritionCueCalculatorTest.kt"
     },
     {
       "id": "AC2.4.3",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/domain/recipe/NutritionCueCalculator.kt; app/src/main/java/com/mealplanner/domain/model/U2Types.kt; app/src/test/java/com/mealplanner/domain/recipe/NutritionCueCalculatorTest.kt"
+      "target": "app/src/main/java/com/mealplanner/domain/recipe/NutritionCueCalculator.kt",
+      "note": "Also: app/src/main/java/com/mealplanner/domain/model/U2Types.kt, app/src/test/java/com/mealplanner/domain/recipe/NutritionCueCalculatorTest.kt"
     },
     {
       "id": "AC2.4.4",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/domain/recipe/NutritionCueCalculator.kt; app/src/test/java/com/mealplanner/domain/recipe/NutritionCueCalculatorTest.kt"
+      "target": "app/src/main/java/com/mealplanner/domain/recipe/NutritionCueCalculator.kt",
+      "note": "Also: app/src/test/java/com/mealplanner/domain/recipe/NutritionCueCalculatorTest.kt"
     },
     {
       "id": "AC2.5.1",
@@ -192,82 +213,98 @@
     {
       "id": "AC5.4.1",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/domain/planning/C3SlotSelectionService.kt; app/src/test/java/com/mealplanner/domain/planning/C3SlotSelectionServiceTest.kt"
+      "target": "app/src/main/java/com/mealplanner/domain/planning/C3SlotSelectionService.kt",
+      "note": "Also: app/src/test/java/com/mealplanner/domain/planning/C3SlotSelectionServiceTest.kt"
     },
     {
       "id": "AC5.4.2",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/domain/model/U2Types.kt; app/src/main/java/com/mealplanner/domain/model/PlanModels.kt"
+      "target": "app/src/main/java/com/mealplanner/domain/model/U2Types.kt",
+      "note": "Also: app/src/main/java/com/mealplanner/domain/model/PlanModels.kt"
     },
     {
       "id": "AC5.4.3",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/adapters/A1RecipeSourceAdapter.kt; app/src/main/java/com/mealplanner/domain/recipe/RecipeCatalogService.kt; app/src/test/java/com/mealplanner/adapters/A1RecipeSourceAdapterGateTest.kt; app/src/test/java/com/mealplanner/domain/recipe/RecipeCatalogServiceTest.kt"
+      "target": "app/src/main/java/com/mealplanner/adapters/A1RecipeSourceAdapter.kt",
+      "note": "Also: app/src/main/java/com/mealplanner/domain/recipe/RecipeCatalogService.kt, app/src/test/java/com/mealplanner/adapters/A1RecipeSourceAdapterGateTest.kt, app/src/test/java/com/mealplanner/domain/recipe/RecipeCatalogServiceTest.kt"
     },
     {
       "id": "AC5.5.1",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/domain/recipe/AlternativeRecipesSelector.kt; app/src/main/java/com/mealplanner/domain/recipe/RecipeCatalogService.kt; app/src/test/java/com/mealplanner/domain/recipe/AlternativeRecipesServiceTest.kt"
+      "target": "app/src/main/java/com/mealplanner/domain/recipe/AlternativeRecipesSelector.kt",
+      "note": "Also: app/src/main/java/com/mealplanner/domain/recipe/RecipeCatalogService.kt, app/src/test/java/com/mealplanner/domain/recipe/AlternativeRecipesServiceTest.kt"
     },
     {
       "id": "AC5.5.2",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/adapters/A1RecipeSourceAdapter.kt; app/src/main/java/com/mealplanner/domain/recipe/RecipeCatalogService.kt"
+      "target": "app/src/main/java/com/mealplanner/adapters/A1RecipeSourceAdapter.kt",
+      "note": "Also: app/src/main/java/com/mealplanner/domain/recipe/RecipeCatalogService.kt"
     },
     {
       "id": "AC5.5.3",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/adapters/A1RecipeSourceAdapter.kt; app/src/test/java/com/mealplanner/adapters/A1RecipeSourceAdapterGateTest.kt; app/src/test/java/com/mealplanner/domain/recipe/RecipeCatalogServiceTest.kt"
+      "target": "app/src/main/java/com/mealplanner/adapters/A1RecipeSourceAdapter.kt",
+      "note": "Also: app/src/test/java/com/mealplanner/adapters/A1RecipeSourceAdapterGateTest.kt, app/src/test/java/com/mealplanner/domain/recipe/RecipeCatalogServiceTest.kt"
     },
     {
       "id": "AC5.6.1",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/diagnostics/Diagnostics.kt; app/src/main/java/com/mealplanner/adapters/A1RecipeSourceAdapter.kt; app/src/test/java/com/mealplanner/diagnostics/U2DiagnosticsHookTest.kt"
+      "target": "app/src/main/java/com/mealplanner/diagnostics/Diagnostics.kt",
+      "note": "Also: app/src/main/java/com/mealplanner/adapters/A1RecipeSourceAdapter.kt, app/src/test/java/com/mealplanner/diagnostics/U2DiagnosticsHookTest.kt"
     },
     {
       "id": "AC5.6.2",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/adapters/A1RecipeSourceAdapter.kt; app/src/test/java/com/mealplanner/adapters/A1RecipeSourceAdapterGateTest.kt"
+      "target": "app/src/main/java/com/mealplanner/adapters/A1RecipeSourceAdapter.kt",
+      "note": "Also: app/src/test/java/com/mealplanner/adapters/A1RecipeSourceAdapterGateTest.kt"
     },
     {
       "id": "AC5.6.3",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/domain/model/U2Types.kt; aidlc/spaces/default/intents/261107-weekly-meal-planner/construction/u2-recipe-planning-completion/code-generation/code-summary.md"
+      "target": "app/src/main/java/com/mealplanner/domain/model/U2Types.kt",
+      "note": "Also: aidlc/spaces/default/intents/261107-weekly-meal-planner/construction/u2-recipe-planning-completion/code-generation/code-summary.md"
     },
     {
       "id": "NFR5.1",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/domain/recipe/RecipeTimeNormalizationEvaluator.kt; app/src/main/java/com/mealplanner/domain/recipe/SeasonFitEvaluator.kt"
+      "target": "app/src/main/java/com/mealplanner/domain/recipe/RecipeTimeNormalizationEvaluator.kt",
+      "note": "Also: app/src/main/java/com/mealplanner/domain/recipe/SeasonFitEvaluator.kt"
     },
     {
       "id": "NFR5.2",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/adapters/A1RecipeSourceAdapter.kt; app/src/test/java/com/mealplanner/adapters/A1RecipeSourceAdapterGateTest.kt"
+      "target": "app/src/main/java/com/mealplanner/adapters/A1RecipeSourceAdapter.kt",
+      "note": "Also: app/src/test/java/com/mealplanner/adapters/A1RecipeSourceAdapterGateTest.kt"
     },
     {
       "id": "NFR5.3",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/domain/recipe/RecipeTimeNormalizationEvaluator.kt; app/src/main/java/com/mealplanner/domain/recipe/NutritionCueCalculator.kt; app/src/test/java/com/mealplanner/domain/recipe/RecipeTimeNormalizationEvaluatorTest.kt; app/src/test/java/com/mealplanner/domain/recipe/NutritionCueCalculatorTest.kt"
+      "target": "app/src/main/java/com/mealplanner/domain/recipe/RecipeTimeNormalizationEvaluator.kt",
+      "note": "Also: app/src/main/java/com/mealplanner/domain/recipe/NutritionCueCalculator.kt, app/src/test/java/com/mealplanner/domain/recipe/RecipeTimeNormalizationEvaluatorTest.kt, app/src/test/java/com/mealplanner/domain/recipe/NutritionCueCalculatorTest.kt"
     },
     {
       "id": "NFR3.1",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/adapters/A1RecipeSourceAdapter.kt; app/src/main/java/com/mealplanner/adapters/RecipeSourceBoundary.kt"
+      "target": "app/src/main/java/com/mealplanner/adapters/A1RecipeSourceAdapter.kt",
+      "note": "Also: app/src/main/java/com/mealplanner/adapters/RecipeSourceBoundary.kt"
     },
     {
       "id": "NFR3.2",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/adapters/A1RecipeSourceAdapter.kt; app/src/test/java/com/mealplanner/adapters/A1RecipeSourceAdapterGateTest.kt"
+      "target": "app/src/main/java/com/mealplanner/adapters/A1RecipeSourceAdapter.kt",
+      "note": "Also: app/src/test/java/com/mealplanner/adapters/A1RecipeSourceAdapterGateTest.kt"
     },
     {
       "id": "NFR3.3",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/adapters/A1RecipeSourceAdapter.kt; app/src/test/java/com/mealplanner/adapters/A1RecipeSourceAdapterGateTest.kt"
+      "target": "app/src/main/java/com/mealplanner/adapters/A1RecipeSourceAdapter.kt",
+      "note": "Also: app/src/test/java/com/mealplanner/adapters/A1RecipeSourceAdapterGateTest.kt"
     },
     {
       "id": "NFR3.6",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/domain/model/U2Validation.kt; app/src/test/java/com/mealplanner/domain/recipe/U2ModelValidationTest.kt; app/src/test/java/com/mealplanner/domain/planning/C3SlotSelectionServiceTest.kt"
+      "target": "app/src/main/java/com/mealplanner/domain/model/U2Validation.kt",
+      "note": "Also: app/src/test/java/com/mealplanner/domain/recipe/U2ModelValidationTest.kt, app/src/test/java/com/mealplanner/domain/planning/C3SlotSelectionServiceTest.kt"
     },
     {
       "id": "NFR3.4",
@@ -277,139 +314,166 @@
     {
       "id": "NFR3.5",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/adapters/A1RecipeSourceAdapter.kt; app/src/test/java/com/mealplanner/adapters/A1RecipeSourceAdapterGateTest.kt; app/src/test/java/com/mealplanner/domain/recipe/RecipeCatalogServiceTest.kt"
+      "target": "app/src/main/java/com/mealplanner/adapters/A1RecipeSourceAdapter.kt",
+      "note": "Also: app/src/test/java/com/mealplanner/adapters/A1RecipeSourceAdapterGateTest.kt, app/src/test/java/com/mealplanner/domain/recipe/RecipeCatalogServiceTest.kt"
     },
     {
       "id": "NFR1.1",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/domain/recipe/RecipeCatalogService.kt; app/src/main/java/com/mealplanner/domain/recipe/AlternativeRecipesSelector.kt"
+      "target": "app/src/main/java/com/mealplanner/domain/recipe/RecipeCatalogService.kt",
+      "note": "Also: app/src/main/java/com/mealplanner/domain/recipe/AlternativeRecipesSelector.kt"
     },
     {
       "id": "NFR1.2",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/domain/recipe/RecipeTimeNormalizationEvaluator.kt; app/src/test/java/com/mealplanner/domain/recipe/RecipeTimeNormalizationEvaluatorTest.kt"
+      "target": "app/src/main/java/com/mealplanner/domain/recipe/RecipeTimeNormalizationEvaluator.kt",
+      "note": "Also: app/src/test/java/com/mealplanner/domain/recipe/RecipeTimeNormalizationEvaluatorTest.kt"
     },
     {
       "id": "NFR1.3",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/adapters/RecipeSourceBoundary.kt; app/src/main/java/com/mealplanner/adapters/A1RecipeSourceAdapter.kt"
+      "target": "app/src/main/java/com/mealplanner/adapters/RecipeSourceBoundary.kt",
+      "note": "Also: app/src/main/java/com/mealplanner/adapters/A1RecipeSourceAdapter.kt"
     },
     {
       "id": "NFR2.1",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/adapters/A1RecipeSourceAdapter.kt; app/src/test/java/com/mealplanner/adapters/A1RecipeSourceAdapterGateTest.kt"
+      "target": "app/src/main/java/com/mealplanner/adapters/A1RecipeSourceAdapter.kt",
+      "note": "Also: app/src/test/java/com/mealplanner/adapters/A1RecipeSourceAdapterGateTest.kt"
     },
     {
       "id": "NFR2.2",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/domain/model/U2Types.kt; app/src/main/java/com/mealplanner/adapters/A1RecipeSourceAdapter.kt; app/src/test/java/com/mealplanner/adapters/A1RecipeSourceAdapterGateTest.kt"
+      "target": "app/src/main/java/com/mealplanner/domain/model/U2Types.kt",
+      "note": "Also: app/src/main/java/com/mealplanner/adapters/A1RecipeSourceAdapter.kt, app/src/test/java/com/mealplanner/adapters/A1RecipeSourceAdapterGateTest.kt"
     },
     {
       "id": "NFR2.3",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/domain/planning/C3SlotSelectionService.kt; app/src/main/java/com/mealplanner/domain/planning/Adr006LockRules.kt; app/src/test/java/com/mealplanner/domain/planning/C3SlotSelectionServiceTest.kt"
+      "target": "app/src/main/java/com/mealplanner/domain/planning/C3SlotSelectionService.kt",
+      "note": "Also: app/src/main/java/com/mealplanner/domain/planning/Adr006LockRules.kt, app/src/test/java/com/mealplanner/domain/planning/C3SlotSelectionServiceTest.kt"
     },
     {
       "id": "NFR2.4",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/adapters/A1RecipeSourceAdapter.kt; app/src/main/java/com/mealplanner/domain/recipe/AlternativeRecipesSelector.kt; app/src/test/java/com/mealplanner/adapters/A1RecipeSourceAdapterGateTest.kt; app/src/test/java/com/mealplanner/domain/recipe/AlternativeRecipesServiceTest.kt"
+      "target": "app/src/main/java/com/mealplanner/adapters/A1RecipeSourceAdapter.kt",
+      "note": "Also: app/src/main/java/com/mealplanner/domain/recipe/AlternativeRecipesSelector.kt, app/src/test/java/com/mealplanner/adapters/A1RecipeSourceAdapterGateTest.kt, app/src/test/java/com/mealplanner/domain/recipe/AlternativeRecipesServiceTest.kt"
     },
     {
       "id": "NFR2.5",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/domain/recipe/RecipeTimeNormalizationEvaluator.kt; app/src/main/java/com/mealplanner/domain/recipe/SeasonFitEvaluator.kt; app/src/main/java/com/mealplanner/domain/recipe/NutritionCueCalculator.kt"
+      "target": "app/src/main/java/com/mealplanner/domain/recipe/RecipeTimeNormalizationEvaluator.kt",
+      "note": "Also: app/src/main/java/com/mealplanner/domain/recipe/SeasonFitEvaluator.kt, app/src/main/java/com/mealplanner/domain/recipe/NutritionCueCalculator.kt"
     },
     {
       "id": "BR1.1",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/domain/planning/C3SlotSelectionService.kt; app/src/main/java/com/mealplanner/domain/model/PlanModels.kt"
+      "target": "app/src/main/java/com/mealplanner/domain/planning/C3SlotSelectionService.kt",
+      "note": "Also: app/src/main/java/com/mealplanner/domain/model/PlanModels.kt"
     },
     {
       "id": "BR1.14",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/domain/recipe/NutritionCueCalculator.kt; app/src/main/java/com/mealplanner/domain/model/U2Types.kt; app/src/test/java/com/mealplanner/domain/recipe/NutritionCueCalculatorTest.kt"
+      "target": "app/src/main/java/com/mealplanner/domain/recipe/NutritionCueCalculator.kt",
+      "note": "Also: app/src/main/java/com/mealplanner/domain/model/U2Types.kt, app/src/test/java/com/mealplanner/domain/recipe/NutritionCueCalculatorTest.kt"
     },
     {
       "id": "BR2.1",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/adapters/A1RecipeSourceAdapter.kt; app/src/test/java/com/mealplanner/adapters/A1RecipeSourceAdapterGateTest.kt"
+      "target": "app/src/main/java/com/mealplanner/adapters/A1RecipeSourceAdapter.kt",
+      "note": "Also: app/src/test/java/com/mealplanner/adapters/A1RecipeSourceAdapterGateTest.kt"
     },
     {
       "id": "BR2.2",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/domain/recipe/RecipeCatalogService.kt; app/src/main/java/com/mealplanner/domain/model/U2Types.kt; app/src/main/java/com/mealplanner/domain/model/U2Validation.kt; app/src/test/java/com/mealplanner/domain/recipe/RecipeCatalogServiceTest.kt; app/src/test/java/com/mealplanner/domain/recipe/U2ModelValidationTest.kt"
+      "target": "app/src/main/java/com/mealplanner/domain/recipe/RecipeCatalogService.kt",
+      "note": "Also: app/src/main/java/com/mealplanner/domain/model/U2Types.kt, app/src/main/java/com/mealplanner/domain/model/U2Validation.kt, app/src/test/java/com/mealplanner/domain/recipe/RecipeCatalogServiceTest.kt, app/src/test/java/com/mealplanner/domain/recipe/U2ModelValidationTest.kt"
     },
     {
       "id": "BR2.3",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/domain/recipe/RecipeTimeNormalizationEvaluator.kt; app/src/test/java/com/mealplanner/domain/recipe/RecipeTimeNormalizationEvaluatorTest.kt"
+      "target": "app/src/main/java/com/mealplanner/domain/recipe/RecipeTimeNormalizationEvaluator.kt",
+      "note": "Also: app/src/test/java/com/mealplanner/domain/recipe/RecipeTimeNormalizationEvaluatorTest.kt"
     },
     {
       "id": "BR1.2",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/domain/recipe/RecipeTimeNormalizationEvaluator.kt; app/src/test/java/com/mealplanner/domain/recipe/RecipeTimeNormalizationEvaluatorTest.kt"
+      "target": "app/src/main/java/com/mealplanner/domain/recipe/RecipeTimeNormalizationEvaluator.kt",
+      "note": "Also: app/src/test/java/com/mealplanner/domain/recipe/RecipeTimeNormalizationEvaluatorTest.kt"
     },
     {
       "id": "BR2.4",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/domain/recipe/SeasonFitEvaluator.kt; app/src/test/java/com/mealplanner/domain/recipe/SeasonFitEvaluatorTest.kt"
+      "target": "app/src/main/java/com/mealplanner/domain/recipe/SeasonFitEvaluator.kt",
+      "note": "Also: app/src/test/java/com/mealplanner/domain/recipe/SeasonFitEvaluatorTest.kt"
     },
     {
       "id": "BR1.4",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/domain/recipe/SeasonFitEvaluator.kt; app/src/test/java/com/mealplanner/domain/recipe/SeasonFitEvaluatorTest.kt"
+      "target": "app/src/main/java/com/mealplanner/domain/recipe/SeasonFitEvaluator.kt",
+      "note": "Also: app/src/test/java/com/mealplanner/domain/recipe/SeasonFitEvaluatorTest.kt"
     },
     {
       "id": "BR2.5",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/domain/recipe/NutritionCueCalculator.kt; app/src/test/java/com/mealplanner/domain/recipe/NutritionCueCalculatorTest.kt"
+      "target": "app/src/main/java/com/mealplanner/domain/recipe/NutritionCueCalculator.kt",
+      "note": "Also: app/src/test/java/com/mealplanner/domain/recipe/NutritionCueCalculatorTest.kt"
     },
     {
       "id": "BR2.7",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/domain/planning/C3SlotSelectionService.kt; app/src/test/java/com/mealplanner/domain/planning/C3SlotSelectionServiceTest.kt"
+      "target": "app/src/main/java/com/mealplanner/domain/planning/C3SlotSelectionService.kt",
+      "note": "Also: app/src/test/java/com/mealplanner/domain/planning/C3SlotSelectionServiceTest.kt"
     },
     {
       "id": "BR2.6",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/domain/recipe/AlternativeRecipesSelector.kt; app/src/test/java/com/mealplanner/domain/recipe/AlternativeRecipesServiceTest.kt"
+      "target": "app/src/main/java/com/mealplanner/domain/recipe/AlternativeRecipesSelector.kt",
+      "note": "Also: app/src/test/java/com/mealplanner/domain/recipe/AlternativeRecipesServiceTest.kt"
     },
     {
       "id": "BR2.8",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/domain/model/U2Validation.kt; app/src/main/java/com/mealplanner/domain/planning/C3SlotSelectionService.kt; app/src/test/java/com/mealplanner/domain/recipe/U2ModelValidationTest.kt; app/src/test/java/com/mealplanner/domain/planning/C3SlotSelectionServiceTest.kt"
+      "target": "app/src/main/java/com/mealplanner/domain/model/U2Validation.kt",
+      "note": "Also: app/src/main/java/com/mealplanner/domain/planning/C3SlotSelectionService.kt, app/src/test/java/com/mealplanner/domain/recipe/U2ModelValidationTest.kt, app/src/test/java/com/mealplanner/domain/planning/C3SlotSelectionServiceTest.kt"
     },
     {
       "id": "BR1.9",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/domain/planning/C3SlotSelectionService.kt; app/src/main/java/com/mealplanner/domain/planning/Adr006LockRules.kt; app/src/test/java/com/mealplanner/domain/planning/C3SlotSelectionServiceTest.kt"
+      "target": "app/src/main/java/com/mealplanner/domain/planning/C3SlotSelectionService.kt",
+      "note": "Also: app/src/main/java/com/mealplanner/domain/planning/Adr006LockRules.kt, app/src/test/java/com/mealplanner/domain/planning/C3SlotSelectionServiceTest.kt"
     },
     {
       "id": "BR2.9",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/domain/model/U2Validation.kt; app/src/main/java/com/mealplanner/domain/recipe/RecipeTimeNormalizationEvaluator.kt; app/src/main/java/com/mealplanner/adapters/A1RecipeSourceAdapter.kt"
+      "target": "app/src/main/java/com/mealplanner/domain/model/U2Validation.kt",
+      "note": "Also: app/src/main/java/com/mealplanner/domain/recipe/RecipeTimeNormalizationEvaluator.kt, app/src/main/java/com/mealplanner/adapters/A1RecipeSourceAdapter.kt"
     },
     {
       "id": "BR1.13",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/diagnostics/Diagnostics.kt; app/src/main/java/com/mealplanner/adapters/A1RecipeSourceAdapter.kt; app/src/test/java/com/mealplanner/diagnostics/U2DiagnosticsHookTest.kt"
+      "target": "app/src/main/java/com/mealplanner/diagnostics/Diagnostics.kt",
+      "note": "Also: app/src/main/java/com/mealplanner/adapters/A1RecipeSourceAdapter.kt, app/src/test/java/com/mealplanner/diagnostics/U2DiagnosticsHookTest.kt"
     }
   ],
   "reverse": [
     {
       "id": "FQ1=A",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/adapters/A1RecipeSourceAdapter.kt; app/src/test/java/com/mealplanner/adapters/A1RecipeSourceAdapterGateTest.kt"
+      "target": "app/src/main/java/com/mealplanner/adapters/A1RecipeSourceAdapter.kt",
+      "note": "Also: app/src/test/java/com/mealplanner/adapters/A1RecipeSourceAdapterGateTest.kt"
     },
     {
       "id": "ADR-006",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/domain/planning/Adr006LockRules.kt; app/src/main/java/com/mealplanner/domain/planning/C3SlotSelectionService.kt; app/src/test/java/com/mealplanner/domain/planning/C3SlotSelectionServiceTest.kt"
+      "target": "app/src/main/java/com/mealplanner/domain/planning/Adr006LockRules.kt",
+      "note": "Also: app/src/main/java/com/mealplanner/domain/planning/C3SlotSelectionService.kt, app/src/test/java/com/mealplanner/domain/planning/C3SlotSelectionServiceTest.kt"
     },
     {
       "id": "R-06",
       "status": "OK",
-      "target": "app/src/main/java/com/mealplanner/domain/planning/C3SlotSelectionService.kt; app/src/main/java/com/mealplanner/domain/recipe/NutritionCueCalculator.kt; app/src/test/java/com/mealplanner/domain/planning/C3SlotSelectionServiceTest.kt; app/src/test/java/com/mealplanner/domain/recipe/NutritionCueCalculatorTest.kt"
+      "target": "app/src/main/java/com/mealplanner/domain/planning/C3SlotSelectionService.kt",
+      "note": "Also: app/src/main/java/com/mealplanner/domain/recipe/NutritionCueCalculator.kt, app/src/test/java/com/mealplanner/domain/planning/C3SlotSelectionServiceTest.kt, app/src/test/java/com/mealplanner/domain/recipe/NutritionCueCalculatorTest.kt"
     }
   ]
 }

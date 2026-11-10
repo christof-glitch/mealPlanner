@@ -10,18 +10,18 @@ import com.mealplanner.domain.model.RecipeSummary
 
 /** C2/A1 boundary. U1 provides typed fallback-safe contracts; U2 completes behavior. */
 interface RecipeSourceBoundary {
-<span class="nc" id="L13">    suspend fun findCandidates(query: Map&lt;String, String&gt; = emptyMap()): RecipeCandidateResult</span>
+<span class="fc" id="L13">    suspend fun findCandidates(query: Map&lt;String, String&gt; = emptyMap()): RecipeCandidateResult</span>
     suspend fun getRecipeSummary(recipeId: RecipeId): RecipeSummary?
     suspend fun resolveIngredients(recipeIds: List&lt;RecipeId&gt;): Map&lt;RecipeId, List&lt;IngredientLine&gt;&gt;
     fun sourceStatus(): RecipeSourceStatus
 
     /** U2 A1 execution path. Default keeps U1-compatible boundaries typed/unavailable. */
     suspend fun execute(request: RecipeSourceAdapterRequest): RecipeSourceAdapterResult =
-<span class="nc" id="L20">        RecipeSourceAdapterResult(</span>
-<span class="nc" id="L21">            status = com.mealplanner.domain.model.RecipeAdapterStatus.unavailable,</span>
-<span class="nc" id="L22">            investigationOutcome = com.mealplanner.domain.model.A1InvestigationOutcome.unknown,</span>
-<span class="nc" id="L23">            sourceStatus = sourceStatus(),</span>
-<span class="nc" id="L24">            fallbackReason = com.mealplanner.domain.model.FallbackReason(&quot;NOT_IMPLEMENTED&quot;, &quot;U2 adapter execution not configured.&quot;),</span>
-<span class="nc" id="L25">        )</span>
+<span class="fc" id="L20">        RecipeSourceAdapterResult(</span>
+<span class="fc" id="L21">            status = com.mealplanner.domain.model.RecipeAdapterStatus.unavailable,</span>
+<span class="fc" id="L22">            investigationOutcome = com.mealplanner.domain.model.A1InvestigationOutcome.unknown,</span>
+<span class="fc" id="L23">            sourceStatus = sourceStatus(),</span>
+<span class="fc" id="L24">            fallbackReason = com.mealplanner.domain.model.FallbackReason(&quot;NOT_IMPLEMENTED&quot;, &quot;U2 adapter execution not configured.&quot;),</span>
+<span class="fc" id="L25">        )</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

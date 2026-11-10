@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.mealplanner.buildandtest.CoverageRepairU2BoundariesTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-10T06:21:06.112Z" hostname="Mac.home" time="0.01">
+  <properties/>
+  <testcase name="FallbackRecipeSourceBoundary returns typed unavailable and no fabricated data" classname="com.mealplanner.buildandtest.CoverageRepairU2BoundariesTest" time="0.002"/>
+  <testcase name="C3 rejects missing slot and handles replace and no-change" classname="com.mealplanner.buildandtest.CoverageRepairU2BoundariesTest" time="0.002"/>
+  <testcase name="RecipeCatalogPortAdapter delegates catalog and details" classname="com.mealplanner.buildandtest.CoverageRepairU2BoundariesTest" time="0.005"/>
+  <testcase name="DefaultA1LiveAccessGate is default-off until OQ1 approved" classname="com.mealplanner.buildandtest.CoverageRepairU2BoundariesTest" time="0.0"/>
+  <testcase name="C3 marks stale when active lock snapshot exists" classname="com.mealplanner.buildandtest.CoverageRepairU2BoundariesTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

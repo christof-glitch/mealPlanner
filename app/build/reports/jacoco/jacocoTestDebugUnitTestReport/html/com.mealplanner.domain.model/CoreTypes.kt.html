@@ -12,7 +12,7 @@ enum class DayOfWeek {
 <span class="fc" id="L12">    MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY</span>
 <span class="fc" id="L13">}</span>
 
-<span class="pc" id="L15">enum class MealSlotType { BREAKFAST, LUNCH, DINNER }</span>
+<span class="fc" id="L15">enum class MealSlotType { BREAKFAST, LUNCH, DINNER }</span>
 
 <span class="pc" id="L17">enum class DayKind { WEEKDAY, WEEKEND }</span>
 
@@ -21,34 +21,34 @@ enum class DayOfWeek {
 <span class="fc" id="L21">    else -&gt; DayKind.WEEKDAY</span>
 <span class="fc" id="L22">}</span>
 
-<span class="pc" id="L24">enum class SlotStatus { EMPTY, SUGGESTED, SELECTED, LOCKED }</span>
+<span class="fc" id="L24">enum class SlotStatus { EMPTY, SUGGESTED, SELECTED, LOCKED }</span>
 
-<span class="pc" id="L26">enum class PlanLockState { UNLOCKED, LOCKED, STALE_LOCK }</span>
+<span class="fc" id="L26">enum class PlanLockState { UNLOCKED, LOCKED, STALE_LOCK }</span>
 
 <span class="pc" id="L28">enum class SelectionSource { USER_SELECTED, SUGGESTED_ACCEPTED, FALLBACK }</span>
 
-<span class="pc" id="L30">enum class GenerationStatus { GENERATED, REGENERATED, FAILED, CANCELLED, NEEDS_CONFIRMATION }</span>
+<span class="fc" id="L30">enum class GenerationStatus { GENERATED, REGENERATED, FAILED, CANCELLED, NEEDS_CONFIRMATION }</span>
 
 /** C5 raw/name-presence result states (FR8). `NOT_CHECKED` is a C4 projection pre-check state. */
-<span class="pc" id="L33">enum class StorePresenceStatus { PRESENT, NOT_FOUND, UNKNOWN, NOT_CHECKED }</span>
+<span class="fc" id="L33">enum class StorePresenceStatus { PRESENT, NOT_FOUND, UNKNOWN, NOT_CHECKED }</span>
 
 /** Legacy U1 batch status; U3 adds [PresenceBatchStatus] with C5/A2 mapped outcomes. */
 <span class="pc" id="L36">enum class PresenceBatchOverallStatus { COMPLETE, PARTIAL, FAILED }</span>
 
 /** U3/C5 batch mapped outcomes (BR3.7): name/presence only, typed fallback reasons. */
-<span class="pc" id="L39">enum class PresenceBatchStatus { OK, PARTIAL, UNAVAILABLE, DENIED, FAILED_MAPPED }</span>
+<span class="fc" id="L39">enum class PresenceBatchStatus { OK, PARTIAL, UNAVAILABLE, DENIED, FAILED_MAPPED }</span>
 
 <span class="pc" id="L41">enum class ApplyPresenceStatus { APPLIED, PARTIAL, FAILED }</span>
 
 <span class="pc" id="L43">enum class ShareStatus { SHARED, COPIED, CANCELLED, FAILED, FALLBACK_INSTRUCTIONS_SHOWN }</span>
 
-<span class="pc" id="L45">enum class ShareMethod { ANDROID_SHARE_SHEET, COPY_TEXT, MANUAL_INSTRUCTIONS }</span>
+<span class="fc" id="L45">enum class ShareMethod { ANDROID_SHARE_SHEET, COPY_TEXT, MANUAL_INSTRUCTIONS }</span>
 
-<span class="pc" id="L47">enum class TimeConfidence { KNOWN, MISSING, AMBIGUOUS }</span>
+<span class="fc" id="L47">enum class TimeConfidence { KNOWN, MISSING, AMBIGUOUS }</span>
 
 <span class="pc" id="L49">enum class SydanmerkkiStatus { VERIFIED, CURATED_FALLBACK, UNAVAILABLE }</span>
 
-<span class="nc" id="L51">enum class SeasonFit { IN_SEASON, OUT_OF_SEASON, SEASON_FIT_UNKNOWN }</span>
+<span class="fc" id="L51">enum class SeasonFit { IN_SEASON, OUT_OF_SEASON, SEASON_FIT_UNKNOWN }</span>
 
 <span class="pc" id="L53">enum class NutritionAvailability { AVAILABLE, UNAVAILABLE, PARTIAL }</span>
 

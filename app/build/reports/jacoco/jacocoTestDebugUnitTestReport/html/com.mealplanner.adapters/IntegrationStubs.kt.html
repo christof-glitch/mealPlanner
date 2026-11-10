@@ -19,24 +19,24 @@ import com.mealplanner.domain.model.StorePresenceResult
 import com.mealplanner.domain.model.StorePresenceStatus
 
 /** Fallback-safe C2 stub: no live Sydänmerkki calls in U1. */
-<span class="nc" id="L22">class FallbackRecipeSourceBoundary : RecipeSourceBoundary {</span>
-<span class="nc" id="L23">    private val status = RecipeSourceStatus(</span>
-<span class="nc" id="L24">        sourceType = RecipeSourceType.NONE,</span>
-<span class="nc" id="L25">        freshness = Freshness.UNKNOWN,</span>
-<span class="nc" id="L26">        fallbackUsed = true,</span>
-<span class="nc" id="L27">        fallbackReason = FallbackReason(&quot;RECIPE_SOURCE_UNAVAILABLE&quot;, &quot;Live recipe source not configured in U1 foundation.&quot;),</span>
-<span class="nc" id="L28">        userActionRequired = &quot;Use curated recipes or configure recipe source in a later unit.&quot;,</span>
+<span class="fc" id="L22">class FallbackRecipeSourceBoundary : RecipeSourceBoundary {</span>
+<span class="fc" id="L23">    private val status = RecipeSourceStatus(</span>
+<span class="fc" id="L24">        sourceType = RecipeSourceType.NONE,</span>
+<span class="fc" id="L25">        freshness = Freshness.UNKNOWN,</span>
+<span class="fc" id="L26">        fallbackUsed = true,</span>
+<span class="fc" id="L27">        fallbackReason = FallbackReason(&quot;RECIPE_SOURCE_UNAVAILABLE&quot;, &quot;Live recipe source not configured in U1 foundation.&quot;),</span>
+<span class="fc" id="L28">        userActionRequired = &quot;Use curated recipes or configure recipe source in a later unit.&quot;,</span>
     )
 
     override suspend fun findCandidates(query: Map&lt;String, String&gt;): RecipeCandidateResult =
-<span class="nc" id="L32">        RecipeCandidateResult(status = RecipeQueryStatus.UNAVAILABLE, sourceStatus = status, fallbackReason = status.fallbackReason)</span>
+<span class="fc" id="L32">        RecipeCandidateResult(status = RecipeQueryStatus.UNAVAILABLE, sourceStatus = status, fallbackReason = status.fallbackReason)</span>
 
-<span class="nc" id="L34">    override suspend fun getRecipeSummary(recipeId: RecipeId): RecipeSummary? = null</span>
+<span class="fc" id="L34">    override suspend fun getRecipeSummary(recipeId: RecipeId): RecipeSummary? = null</span>
 
     override suspend fun resolveIngredients(recipeIds: List&lt;RecipeId&gt;): Map&lt;RecipeId, List&lt;IngredientLine&gt;&gt; =
-<span class="nc" id="L37">        recipeIds.associateWith { emptyList() }</span>
+<span class="fc" id="L37">        recipeIds.associateWith { emptyList() }</span>
 
-<span class="nc" id="L39">    override fun sourceStatus(): RecipeSourceStatus = status</span>
+<span class="fc" id="L39">    override fun sourceStatus(): RecipeSourceStatus = status</span>
 }
 
 /**

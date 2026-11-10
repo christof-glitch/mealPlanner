@@ -80,7 +80,7 @@ enum class MergeReasonCode {
 <span class="fc" id="L80">    val removed: Boolean = false,</span>
 <span class="fc" id="L81">)</span>
 
-<span class="pc bpc" id="L83" title="1 of 2 branches missed.">fun ShoppingListItem.effectiveDisplayText(): String = displayText.ifBlank { displayName }</span>
+<span class="fc bfc" id="L83" title="All 2 branches covered.">fun ShoppingListItem.effectiveDisplayText(): String = displayText.ifBlank { displayName }</span>
 <span class="fc bfc" id="L84" title="All 2 branches covered.">fun ShoppingListItem.effectiveQuantityText(): String? = quantityText ?: amountText</span>
 
 /** ADR-006/R-03 exact warning text (must not change). */

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.mealplanner.domain.shopping.ShoppingListGenerationRulesTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-11-09T21:40:18.284Z" hostname="jyu-mac-20260120.local" time="0.001">
+<testsuite name="com.mealplanner.domain.shopping.ShoppingListGenerationRulesTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-11-10T06:21:06.222Z" hostname="Mac.home" time="0.001">
   <properties/>
   <testcase name="known resolvable items do not invent amount or unit" classname="com.mealplanner.domain.shopping.ShoppingListGenerationRulesTest" time="0.0"/>
   <testcase name="blank name known ingredient is not fabricated into resolved item" classname="com.mealplanner.domain.shopping.ShoppingListGenerationRulesTest" time="0.0"/>

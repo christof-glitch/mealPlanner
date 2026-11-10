@@ -4,9 +4,9 @@ import com.mealplanner.domain.model.RecipeCandidateResult
 import com.mealplanner.domain.model.RecipeDetail
 
 /** Adapter to let RecipeCatalogService satisfy RecipeCatalogPort without changing service API. */
-<span class="nc" id="L7">class RecipeCatalogPortAdapter(private val service: RecipeCatalogService) : RecipeCatalogPort {</span>
-<span class="nc" id="L8">    override suspend fun catalogCandidates(): RecipeCandidateResult = service.catalog()</span>
-<span class="nc" id="L9">    override suspend fun detailsByIds(ids: List&lt;String&gt;): List&lt;RecipeDetail&gt; =</span>
-<span class="nc" id="L10">        service.getByIds(ids).mapNotNull { it.recipe }</span>
+<span class="fc" id="L7">class RecipeCatalogPortAdapter(private val service: RecipeCatalogService) : RecipeCatalogPort {</span>
+<span class="fc" id="L8">    override suspend fun catalogCandidates(): RecipeCandidateResult = service.catalog()</span>
+<span class="fc" id="L9">    override suspend fun detailsByIds(ids: List&lt;String&gt;): List&lt;RecipeDetail&gt; =</span>
+<span class="fc" id="L10">        service.getByIds(ids).mapNotNull { it.recipe }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

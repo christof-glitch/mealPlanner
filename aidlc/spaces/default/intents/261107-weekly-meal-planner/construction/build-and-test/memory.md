@@ -13,3 +13,5 @@
 
 ## Open questions
 <!-- example: 2026-05-29T10:14:32Z — confirm the retention window with compliance before the next stage hardens the schema -->
+
+- 2026-11-10T06:20Z — Build-and-Test replay after Loop-Back 1 (U1–U4 Code Generation replays completed with READY reviews/checkpoints). Executed `./gradlew :app:testDebugUnitTest :app:jacocoTestDebugUnitTestReport --console=plain` → `BUILD SUCCESSFUL`. JaCoCo LINE `60.38%` (`1955/3238`, improved from 58.55%) still below MVP 80% floor; uncovered concentrated in 0% Compose/UI packages. `aidlc engine sensor-traceability --stage build-and-test` (`/tmp/mealplanner-trace4.json`) `pass:false`, uncovered `NFR1–NFR4` (residual not_built/not_applicable markers) while FR1–FR12/ACs/NFR5 covered. Artifacts updated (test-results, summary, cross-unit-traceability). No threshold/invariant weakening. Loop-backs used 1/3; no impact-estimated fix identified to clear all blocking failures (coverage requires plan-affecting UI test infra), so halt-and-ask required per protocol.

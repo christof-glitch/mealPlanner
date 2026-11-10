@@ -27,6 +27,7 @@
     {"path": "app/src/test/java/com/mealplanner/domain/recipe/RecipeCatalogServiceTest.kt"},
     {"path": "app/src/test/java/com/mealplanner/domain/recipe/RecipeTimeNormalizationEvaluatorTest.kt"},
     {"path": "app/src/test/java/com/mealplanner/domain/recipe/SeasonFitEvaluatorTest.kt"},
-    {"path": "app/src/test/java/com/mealplanner/domain/recipe/U2ModelValidationTest.kt"}
+    {"path": "app/src/test/java/com/mealplanner/domain/recipe/U2ModelValidationTest.kt"},
+    {"path": "app/src/test/java/com/mealplanner/buildandtest/CoverageRepairU2BoundariesTest.kt"}
   ]
 }

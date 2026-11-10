@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.mealplanner.ui.UiRunnerSmokeTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-11-09T21:40:18.343Z" hostname="jyu-mac-20260120.local" time="0.0">
+<testsuite name="com.mealplanner.ui.UiRunnerSmokeTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-11-10T06:21:06.239Z" hostname="Mac.home" time="0.0">
   <properties/>
   <testcase name="uiTestRunnerDiscoversPackage" classname="com.mealplanner.ui.UiRunnerSmokeTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>
