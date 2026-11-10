@@ -48,6 +48,7 @@ android {
 
     testOptions {
         unitTests.isReturnDefaultValues = true
+        unitTests.isIncludeAndroidResources = true
         unitTests.all {
             it.extensions.configure<org.gradle.testing.jacoco.plugins.JacocoTaskExtension> {
                 isIncludeNoLocationClasses = true
@@ -112,6 +113,8 @@ dependencies {
     testImplementation(libs.turbine)
     testImplementation(libs.androidx.test.core)
     testImplementation(libs.androidx.room.testing)
+    testImplementation(libs.androidx.compose.ui.test.junit4)
+    testImplementation(libs.robolectric)
 
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
